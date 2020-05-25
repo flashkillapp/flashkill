@@ -1,11 +1,14 @@
 const SEASON_START_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[2]/td[1]/a";
 const SEASON_END_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[last()]/td[1]/a";
 const SEASON_NAME_XPATH_EXPRESSION = "//div[@class='l2']";
-var seasonResultsToggled = new Array(getNumberOfSeasons()).fill(false);
+const MEMBER_LIST_XPATH_EXPRESSION = "//ul[@class='content-portrait-grid-l']/li";
+var seasonResultsToggled = false;//new Array(getNumberOfSeasons()).fill(false);
 
-improveMemberTable();
+// improveMemberTable();
 
-improveResultsTable();
+// improveResultsTable();
+
+improveMemberCards();
 
 async function getSeasonStartAndEndDates(seasonUrl) {
     //TODO: fetch Logik in background.js
@@ -181,15 +184,6 @@ async function getMembersPerSeason() {
     return seasonsMembers;
 }
 
-function getMembers() {
-    //Returns the names of all current team members
-    return new Array();
-}
-
-function parseTeamEvents() {
-    //Returns memberships of all the current team members
-}
-
 function formatDateToStandard(date) {
     //Gets date in "dd mmm yyyy" format where mmm are letters
     //Returns date in yyyy-mm-dd format where mm are digits
@@ -245,45 +239,12 @@ class Season {
     }
 }
 
-function improveMemberTable() {
-    const memberTable = document.getElementById("content").getElementsByTagName("table")[0];
-    memberTable.id = "member-table";
-    memberTable.lastChild.removeChild(memberTable.lastChild.childNodes[0]);
-    memberTable.appendChild(getMemberTableHead());
-    const memberTrs = memberTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-    const steamIds = Array.from(memberTrs).map(getSteamId);
-    const addedColumsForEachRow = initialiseMemberRows(memberTrs);
-    makeMemberTableADatatable();
-    chrome.runtime.sendMessage(
-        { contentScriptQuery: "queryPlayerInfo", steamIds: steamIds },
-        playerInfos => {
-            playerInfos.forEach(playerInfo => {
-                const columns = addedColumsForEachRow.find(columns => columns.steamId == playerInfo.steamId);
-                fillMemberRow(columns, playerInfo);
-            });
-            // reinitialiseMemberDatatable();
-            const faceitEloMean = calcFaceitEloMean(playerInfos);
-            insertFaceitEloMean(faceitEloMean);
-            addEventListenerToShowSteamIdCheckbox(addedColumsForEachRow);
-        }
-    );
-}
-
-function addEventListenerToShowSteamIdCheckbox(addedColumsForEachRow) {
-    document.getElementById("showSteamIdsCheckbox").addEventListener("change", event => showSteamIdsCheckboxClicked(addedColumsForEachRow, event));
-}
-
-function reinitialiseMemberDatatable(centerSteamIdColumn = true) {
-    $('#member-table').DataTable().destroy();
-    makeMemberTableADatatable(centerSteamIdColumn);
-}
-
 function insertFaceitEloMean(faceitEloMean) {
     const faceitEloMeanH2 = document.createElement("h2");
     faceitEloMeanH2.innerHTML = "FACEIT Elo: " + Math.round(faceitEloMean);
     faceitEloMeanH2.title = "Durchschnittliche FACEIT Elo";
-    const firstH2 = document.getElementById("content").getElementsByTagName("h2")[1];
-    firstH2.parentNode.insertBefore(faceitEloMeanH2, firstH2.nextSibling);
+    const teamHeader = document.getElementsByClassName("content-portrait-head")[0];
+    teamHeader.parentNode.appendChild(faceitEloMeanH2);
 }
 
 function calcFaceitEloMean(playerInfos) {
@@ -291,120 +252,90 @@ function calcFaceitEloMean(playerInfos) {
     return average(playerInfos.filter(playerInfo => playerInfo.faceitInfo != null).map(playerInfo => playerInfo.faceitInfo.games.csgo.faceit_elo));
 }
 
-function makeMemberTableADatatable(centerSteamIdColumn = true) {
-    $('#member-table').DataTable({
-        autoWidth: false,
-        paging: false,
-        searching: false,
-        bInfo: false,
-        aaSorting: [],
-        scrollX: true,
-        columnDefs: [
-            {
-                targets: [0, 1],
-                className: 'dt-body-center'
-            },
-            {
-                targets: [2, 3, 4],
-                className: 'dt-body-left'
-            },
-            {
-                targets: [2, 3, 4],
-                className: 'dt-head-left'
-            },
-            {
-                targets: [5],
-                className: (centerSteamIdColumn ? "dt-center" : "dt-left")
-            },
-            {
-                targets: [4, 5],
-                sortable: false
-            }
-        ],
-        language: {
-            url: "//cdn.datatables.net/plug-ins/1.10.19/i18n/German.json"
-        },
-        rowCallback: function (row, data, index) {
-            if (row.className == "odd") {
-                $(row).css('backgroundColor', "WhiteSmoke");
-            }
-            else if (row.className == "even") {
-                $(row).css('backgroundColor', "");
-            }
-        }
-    });
-}
-
-function initialiseMemberRows(memberTrs) {
-
-    var addedColumns = new Array();
-
-    for (var i = 0; i < memberTrs.length; i++) {
-        if (i % 2 == 0) {
-            memberTrs[i].className = "even";
-        } else {
-            memberTrs[i].className = "odd";
-        }
-
-        const faceitEloTd = document.createElement("td");
-        faceitEloTd.innerHTML = "lädt...";
-        faceitEloTd.align = "center";
-        memberTrs[i].insertBefore(faceitEloTd, memberTrs[i].firstChild);
-
-        const faceitTd = document.createElement("td");
-        faceitTd.innerHTML = "lädt...";
-        faceitTd.align = "center";
-        memberTrs[i].insertBefore(faceitTd, memberTrs[i].firstChild);
-
-        const steamProfileTd = document.createElement("td");
-        const steamProfileA = document.createElement("a");
-        steamProfileA.innerHTML = "lädt...";
-        chrome.runtime.sendMessage(
-            { contentScriptQuery: "querySteamLink", steamId: getSteamId(memberTrs[i]) },
-            steamLink => {
-                steamProfileA.href = steamLink;
-                steamProfileA.target = "_blank";
-            }
-        );
-        steamProfileTd.appendChild(steamProfileA);
-        const steamIdColumn = memberTrs[i].getElementsByTagName("td")[memberTrs[i].getElementsByTagName("td").length - 1];
-        memberTrs[i].insertBefore(steamProfileTd, steamIdColumn);
-
-        addedColumns.push({ steamId: getSteamId(memberTrs[i]), faceitTd, faceitEloTd, steamProfileTd, steamProfileA, steamIdColumn });
-        steamIdColumn.innerHTML = "...";
+function improveMemberCards() {
+    const memberCards = document.getElementsByClassName("content-portrait-grid-l")[0].getElementsByTagName("li");
+    var memberCardWrappers = [];
+    for (var i = 0; i < memberCards.length; i++) {
+        const memberCard = memberCards[i];
+        memberCardWrappers.push( { memberCard: memberCard, steamId: getSteamId(memberCard) } );
     }
-
-    return addedColumns;
+    const steamIds = memberCardWrappers.map(memberCard => { return memberCard.steamId });
+    chrome.runtime.sendMessage(
+        { contentScriptQuery: "queryPlayerInfo", steamIds: steamIds },
+        playerInfos => {
+            playerInfos.forEach(playerInfo => {
+                const memberCardWrapper = memberCardWrappers.find(memberCard => memberCard.steamId == playerInfo.steamId);
+                inject(playerInfo, memberCardWrapper.memberCard);
+            });
+            const faceitEloMean = calcFaceitEloMean(playerInfos);
+            insertFaceitEloMean(faceitEloMean);
+        }
+    );
 }
 
-function fillMemberRow(columns, playerInfo) {
+function inject(playerInfo, memberCard) {
     const steamId64 = playerInfo.steamId64;
 
-    if (steamId64 == "") {
-        columns.steamProfileTd.innerHTML = "N/A";
-    } else {
-        columns.steamProfileA.innerHTML = playerInfo.steamName;
+    const table = document.createElement("table");
+    const tableBody = document.createElement("tbody"); 
+
+    if (steamId64 != "") {
+        const steamRow = document.createElement("tr");
+
+        const steamTd = document.createElement("td");
+        steamTd.colSpan = "2";
+        const steamDiv = document.createElement("div");
+        steamDiv.className = "txt-subtitle";
+        steamDiv.innerText = "Steam: ";
+        steamDiv.style = "padding-top:5px;"
+        const steamLink = document.createElement("a");
+        steamLink.href = `https://steamcommunity.com/profiles/${steamId64}`;
+        steamLink.innerHTML = playerInfo.steamName;
+        steamLink.target = "_blank";
+
+        steamDiv.appendChild(steamLink);
+        steamTd.appendChild(steamDiv);
+        steamRow.appendChild(steamTd);
+
+        tableBody.appendChild(steamRow);
     }
 
+
     if (playerInfo.faceitInfo != null) {
+        const faceitInfo = playerInfo.faceitInfo;
+
+        const faceitRow = document.createElement("tr");
+
+        const logoTd = document.createElement("td");
+        logoTd.style = "padding-left:10px;";
+        const faceitA = document.createElement("a");
+        faceitA.href = getFaceitLink(faceitInfo.nickname);
+        faceitA.target = "_blank";
+
         const faceitImg = document.createElement("img");
         faceitImg.style.width = "28px";
         faceitImg.style.height = "28px";
-        const faceitInfo = playerInfo.faceitInfo;
         faceitImg.src = getFaceitLevel(faceitInfo.games.csgo.skill_level);
         faceitImg.alt = faceitInfo.games.csgo.skill_level;
-        const faceitA = document.createElement("a");
+
         faceitA.appendChild(faceitImg);
-        faceitA.href = getFaceitLink(faceitInfo.nickname);
-        faceitA.target = "_blank";
-        columns.faceitTd.setAttribute("data-sort", faceitInfo.games.csgo.faceit_elo);
-        columns.faceitTd.innerHTML = "";
-        columns.faceitTd.appendChild(faceitA);
-        columns.faceitEloTd.innerHTML = faceitInfo.games.csgo.faceit_elo;
-    } else {
-        columns.faceitTd.innerHTML = "N/A";
-        columns.faceitEloTd.innerHTML = "N/A";
+        logoTd.appendChild(faceitA);
+
+        const eloTd = document.createElement("td");
+        const eloDiv = document.createElement("div");
+        eloDiv.className = "txt-subtitle";
+        eloDiv.innerHTML = `FACEIT: ${faceitInfo.games.csgo.faceit_elo}`;
+
+        eloTd.appendChild(eloDiv);
+
+        faceitRow.appendChild(eloTd);
+        faceitRow.appendChild(logoTd);
+
+        tableBody.appendChild(faceitRow);
     }
+
+    table.appendChild(tableBody);
+    memberCard.appendChild(table);
 }
 
 function getFaceitLevel(faceitLevel) {
@@ -415,67 +346,8 @@ function getFaceitLink(name) {
     return `https://www.faceit.com/en/players/${name}`;
 }
 
-function getSteamId(memberTr) {
-    return memberTr.getElementsByTagName("td")[memberTr.getElementsByTagName("td").length - 1].innerHTML;
-}
-
-function getMemberTableHead() {
-    const memberTableThead = document.createElement("thead");
-    const headerTr = document.createElement("tr");
-    const faceitTh = document.createElement("th");
-    const faceitEloTh = document.createElement("th");
-    const userTh = document.createElement("th");
-    const statusTh = document.createElement("th");
-    const steamProfileTh = document.createElement("th");
-    const steamIdTh = document.createElement("th");
-    faceitTh.innerHTML = "FACEIT Profil";
-    faceitEloTh.innerHTML = "FACEIT Elo";
-    userTh.innerHTML = "Benutzer";
-    statusTh.innerHTML = "Status";
-    steamProfileTh.innerHTML = "Steam Profil";
-    const showSteamIdsCheckbox = document.createElement("input");
-    showSteamIdsCheckbox.type = "checkbox";
-    showSteamIdsCheckbox.id = "showSteamIdsCheckbox";
-    showSteamIdsCheckbox.name = "steamId";
-    showSteamIdsCheckbox.value = "0";
-    steamIdTh.appendChild(showSteamIdsCheckbox);
-    steamIdTh.innerHTML += "Steam ID";
-    steamIdTh.id = "steamIdTableHeader";
-    headerTr.appendChild(faceitTh);
-    headerTr.appendChild(faceitEloTh);
-    headerTr.appendChild(userTh);
-    headerTr.appendChild(statusTh);
-    headerTr.appendChild(steamProfileTh);
-    headerTr.appendChild(steamIdTh);
-    memberTableThead.appendChild(headerTr);
-    return memberTableThead;
-}
-
-function showSteamIdsCheckboxClicked(columns, event) {
-    if (!event.target.checked) {
-        columns.forEach(column => {
-            column.steamIdColumn.innerHTML = "...";
-        });
-        resetClassNamesOfSteamIdColumn();
-        reinitialiseMemberDatatable(true);
-    } else {
-        columns.forEach(column => {
-            column.steamIdColumn.innerHTML = column.steamId;
-        });
-        resetClassNamesOfSteamIdColumn();
-        reinitialiseMemberDatatable(false);
-    }
-}
-
-function resetClassNamesOfSteamIdColumn() {
-    const memberTable = document.getElementById("member-table");
-    const steamIdTableHeader = document.getElementById("steamIdTableHeader");
-    steamIdTableHeader.className = "";
-    Array.from(memberTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr")).forEach(tableRow => {
-        const columns = tableRow.getElementsByTagName("td");
-        const steamIdColumn = columns[columns.length - 1];
-        steamIdColumn.className = "";
-    });
+function getSteamId(memberCard) {
+    return memberCard.getElementsByTagName("span")[0].innerHTML;
 }
 
 function getNumberOfSeasons() {

@@ -11,12 +11,12 @@ var teamName;
 var teamShorthand;
 
 function insertResultsTable(container, seasonTd, teamName, teamShorthand, season) {
-    container.innerHTML = "Ergebnisse werden geladen...";
+    container.textContent = "Ergebnisse werden geladen...";
     chrome.runtime.sendMessage(
         { contentScriptQuery: "queryMatches", linkInformation: buildLinkInformation(seasonTd), teamName, teamShorthand },
         matches => {
             if (matches.length == 0) {
-                container.innerHTML = "Keine Ergebnisse gefunden.";
+                container.textContent = "Keine Ergebnisse gefunden.";
             } else {
                 const table = document.createElement("table");
                 table.className = "display";
@@ -39,7 +39,7 @@ function insertResultsTable(container, seasonTd, teamName, teamShorthand, season
                 linkCell.outerHTML = "<th>Matchroom</th>";
 
                 const body = table.createTBody();
-                container.innerHTML = "";
+                container.textContent = "";
                 container.appendChild(table);
                 matches.filter(match => match.mapResults.length > 0).flatMap(match => match.mapResults).map(map => {
                     var row = body.insertRow(0);
@@ -85,7 +85,7 @@ function buildLinkInformation(seasonTd) {
         return {
             seasonUrl: links[0].href,
             additionalUrl: links[1].href,
-            additionalInfo: links[1].innerHTML
+            additionalInfo: links[1].textContent
         }
     }
     return {
@@ -111,23 +111,23 @@ function fillMapRow(row, mapResult) {
     const map = row.insertCell(-1);
     const link = row.insertCell(-1);
     date.setAttribute("data-sort", mapResult.date);
-    date.innerHTML = formatDate(mapResult.date);
+    date.textContent = formatDate(mapResult.date);
     if (mapResult.additionalInfo != null) {
-        date.innerHTML = date.innerHTML + " " + mapResult.additionalInfo;
+        date.textContent = date.textContent + " " + mapResult.additionalInfo;
     }
     const team1A = document.createElement("a");
-    team1A.innerHTML = mapResult.team1;
+    team1A.textContent = mapResult.team1;
     team1A.href = mapResult.team1Link;
     team1A.target = "_blank";
     team1.appendChild(team1A);
     const team2A = document.createElement("a");
-    team2A.innerHTML = mapResult.team2;
+    team2A.textContent = mapResult.team2;
     team2A.href = mapResult.team2Link;
     team2A.target = "_blank";
     team2.appendChild(team2A);
-    score1.innerHTML = mapResult.scoreTeam1;
-    score2.innerHTML = mapResult.scoreTeam2;
-    map.innerHTML = mapResult.map;
+    score1.textContent = mapResult.scoreTeam1;
+    score2.textContent = mapResult.scoreTeam2;
+    map.textContent = mapResult.map;
     const mapImageLink = getMapImage(mapResult.map);
     map.style = `
         background-image:url(${mapImageLink});
@@ -139,7 +139,7 @@ function fillMapRow(row, mapResult) {
     const linkA = document.createElement("a");
     linkA.href = mapResult.link;
     linkA.target = "_blank";
-    linkA.innerHTML = "mehr";
+    linkA.textContent = "mehr";
     link.appendChild(linkA);
 }
 

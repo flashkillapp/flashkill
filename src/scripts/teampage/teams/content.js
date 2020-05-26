@@ -1,7 +1,7 @@
 const DEFAULT_SEASON_URL = "https://csgo.99damage.de/de/leagues/99dmg/1360-saison-12";
 
 function insertTeamTable(container, seasonUrl = DEFAULT_SEASON_URL) {
-    container.innerHTML = "Teamtabelle wird geladen...";
+    container.textContent = "Teamtabelle wird geladen...";
     chrome.runtime.sendMessage(
         { contentScriptQuery: "queryTeams", seasonUrl },
         teams => {
@@ -27,24 +27,24 @@ function insertTeamTable(container, seasonUrl = DEFAULT_SEASON_URL) {
                 const row = body.insertRow(0);
                 const team = row.insertCell(-1);
                 const teamA = document.createElement("a");
-                teamA.innerHTML = entry.name;
+                teamA.textContent = entry.name;
                 teamA.target = "_blank";
                 teamA.href = entry.link;
                 team.appendChild(teamA);
                 const division = row.insertCell(-1);
                 const divisionA = document.createElement("a");
-                divisionA.innerHTML = entry.divisionName;
+                divisionA.textContent = entry.divisionName;
                 divisionA.target = "_blank";
                 divisionA.href = entry.divisionLink;
                 division.appendChild(divisionA);
                 const mapsWon = row.insertCell(-1);
-                mapsWon.innerHTML = entry.mapsWon;
+                mapsWon.textContent = entry.mapsWon;
                 const mapsLost = row.insertCell(-1);
-                mapsLost.innerHTML = entry.mapsLost;
+                mapsLost.textContent = entry.mapsLost;
                 const rounds = row.insertCell(-1);
-                rounds.innerHTML = entry.rounds
+                rounds.textContent = entry.rounds
             })
-            container.innerHTML = "";
+            container.textContent = "";
             container.appendChild(table);
             $('#team-table').DataTable({
                 pageLength: 50,

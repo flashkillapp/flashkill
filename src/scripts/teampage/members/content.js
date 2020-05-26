@@ -16,7 +16,7 @@ async function getSeasonStartAndEndDates(seasonUrl) {
     const text = await response.text();
     const seasonDocument = new DOMParser().parseFromString(text, "text/html"); 
     const seasonNameElements = seasonDocument.evaluate(SEASON_NAME_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
-    const seasonName = seasonNameElements.snapshotItem(0).innerHTML;
+    const seasonName = seasonNameElements.snapshotItem(0).textContent;
     if (seasonName == "Saison 12") {
         return new Season(seasonName, new Date(Date.now()), new Date(Date.now()));
     }
@@ -34,17 +34,17 @@ function improveResultsTable() {
     const tableHead = document.createElement("thead");
     const headerTr = document.createElement("tr");
     const seasonTh = document.createElement("th");
-    seasonTh.innerHTML = "Saison";
+    seasonTh.textContent = "Saison";
     headerTr.appendChild(seasonTh);
     const divisionTh = document.createElement("th");
-    divisionTh.innerHTML = "Division";
+    divisionTh.textContent = "Division";
     headerTr.appendChild(divisionTh);
     const resultsTh = document.createElement("th");
-    resultsTh.innerHTML = "Ergebnisse";
+    resultsTh.textContent = "Ergebnisse";
     resultsTh.colSpan = "2";
     headerTr.appendChild(resultsTh);
     const konsensTh = document.createElement("th");
-    konsensTh.innerHTML = "Konsens";
+    konsensTh.textContent = "Konsens";
     konsensTh.title = "Anteil des aktuellen Linups, das während dieser Saison in diesem Team gespielt hat.";
     headerTr.appendChild(konsensTh);
     tableHead.appendChild(headerTr);
@@ -66,7 +66,7 @@ function insertMembersPerSeason() {
             const seasonTr = resultsTableRows[i];
             const seasonName = seasonTr.firstChild.nextSibling.innerText;
             konsensTd.id = `${seasonName} Consensus`;
-            konsensTd.innerHTML = getConsensusFromSeasonMembers(seasonMembers[i])+"%";
+            konsensTd.textContent = getConsensusFromSeasonMembers(seasonMembers[i])+"%";
             konsensTd.title = seasonMembers[i].join(", ");
             konsensTd.style.verticalAlign = "top";
             konsensTd.align = "center";
@@ -123,21 +123,21 @@ function getRelevantTeamLogRows(members) {
     Array.from(teamLogRows).forEach(log => {
         const logElements = log.getElementsByTagName("td");
         if (logElements.length == 4) {
-        if (logElements[2].innerHTML == "create") {
-            if (members.includes(logElements[1].innerHTML)) {
-                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].innerHTML, action: "join"});
+        if (logElements[2].textContent == "create") {
+            if (members.includes(logElements[1].textContent)) {
+                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].textContent, action: "join"});
             }
-        } else if (logElements[2].innerHTML == "member_join") {
-            if (members.includes(logElements[1].innerHTML)) {
-                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].innerHTML, action: "join"});
+        } else if (logElements[2].textContent == "member_join") {
+            if (members.includes(logElements[1].textContent)) {
+                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].textContent, action: "join"});
             }
-        } else if (logElements[2].innerHTML == "member_leave") {
-            if (members.includes(logElements[1].innerHTML)) {
-                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].innerHTML, action: "leave"});
+        } else if (logElements[2].textContent == "member_leave") {
+            if (members.includes(logElements[1].textContent)) {
+                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[1].textContent, action: "leave"});
             }
-        } else if (logElements[2].innerHTML == "member_kick") {
-            if (members.includes(logElements[3].innerHTML)) {
-                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[3].innerHTML, action: "leave"});
+        } else if (logElements[2].textContent == "member_kick") {
+            if (members.includes(logElements[3].textContent)) {
+                relevantLogs.push({date: new Date(getDateFromTeamLogEntry(logElements[0])), member: logElements[3].textContent, action: "leave"});
             }
         }
         }
@@ -164,7 +164,7 @@ async function getMembersPerSeason() {
         return getSeasonStartAndEndDates(seasonUrl);
     }));
     //Get each Member
-    const teamMembers = Array.from(document.getElementById("member-table").getElementsByTagName("tbody")[0].getElementsByTagName("tr")).map(member => member.getElementsByTagName("td")[2].firstChild.innerHTML);
+    const teamMembers = Array.from(document.getElementById("member-table").getElementsByTagName("tbody")[0].getElementsByTagName("tr")).map(member => member.getElementsByTagName("td")[2].firstChild.textContent);
     //Get all Memberships for Members
     const membershipsMembers = getMemberships(teamMembers);
     //Check for each season if Member had membership during timeframe update Season with Membername
@@ -241,7 +241,7 @@ class Season {
 
 function insertFaceitEloMean(faceitEloMean) {
     const faceitEloMeanH2 = document.createElement("h2");
-    faceitEloMeanH2.innerHTML = "FACEIT Elo: " + Math.round(faceitEloMean);
+    faceitEloMeanH2.textContent = "FACEIT Elo: " + Math.round(faceitEloMean);
     faceitEloMeanH2.title = "Durchschnittliche FACEIT Elo";
     const teamHeader = document.getElementsByClassName("content-portrait-head")[0];
     teamHeader.parentNode.appendChild(faceitEloMeanH2);
@@ -290,7 +290,7 @@ function inject(playerInfo, memberCard) {
         steamDiv.style = "padding-top:5px;"
         const steamLink = document.createElement("a");
         steamLink.href = `https://steamcommunity.com/profiles/${steamId64}`;
-        steamLink.innerHTML = playerInfo.steamName;
+        steamLink.textContent = playerInfo.steamName;
         steamLink.target = "_blank";
 
         steamDiv.appendChild(steamLink);
@@ -324,7 +324,7 @@ function inject(playerInfo, memberCard) {
         const eloTd = document.createElement("td");
         const eloDiv = document.createElement("div");
         eloDiv.className = "txt-subtitle";
-        eloDiv.innerHTML = `FACEIT: ${faceitInfo.games.csgo.faceit_elo}`;
+        eloDiv.textContent = `FACEIT: ${faceitInfo.games.csgo.faceit_elo}`;
 
         eloTd.appendChild(eloDiv);
 
@@ -347,7 +347,7 @@ function getFaceitLink(name) {
 }
 
 function getSteamId(memberCard) {
-    return memberCard.getElementsByTagName("span")[0].innerHTML;
+    return memberCard.getElementsByTagName("span")[0].textContent;
 }
 
 function getNumberOfSeasons() {
@@ -371,13 +371,13 @@ function insertSeasonResultsButtonInto(element, i) {
 
 function getTeamName() {
     const teamNameH2 = document.getElementsByTagName("h2")[0];
-    const teamName = teamNameH2.innerHTML.split("(")[0];
+    const teamName = teamNameH2.textContent.split("(")[0];
     return teamName.trim();
 }
 
 function getTeamShorthand() {
     const teamNameH2 = document.getElementsByTagName("h2")[0];
-    const teamShorthandRaw = teamNameH2.innerHTML.split("(")[1];
+    const teamShorthandRaw = teamNameH2.textContent.split("(")[1];
     const teamShorthand = teamShorthandRaw.substring(0, teamShorthandRaw.length-1);
     return teamShorthand.trim();
 }
@@ -416,16 +416,16 @@ function getActualTableIndexForSeason(season) {
 
 function getSeasonResultsButton(season) {
     const seasonResult = document.createElement("a");
-    seasonResult.innerHTML = "Ergebnisse anzeigen";
+    seasonResult.textContent = "Ergebnisse anzeigen";
     seasonResult.addEventListener("click", () => {
         if (seasonResultsToggled[season] == false) {
             const seasonUrl = "";
             insertSeasonResults(season);
-            seasonResult.innerHTML = "Ergebnisse ausblenden";
+            seasonResult.textContent = "Ergebnisse ausblenden";
             seasonResultsToggled[season] = true;
         } else {
             removeSeasonResults(season);
-            seasonResult.innerHTML = "Ergebnisse anzeigen";
+            seasonResult.textContent = "Ergebnisse anzeigen";
             seasonResultsToggled[season] = false;
         }
     })

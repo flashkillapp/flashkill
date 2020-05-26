@@ -27,7 +27,7 @@ function addFlashkillNavigationButton() {
 
     const teamSucheLi = document.createElement("li");
     const teamSucheA = document.createElement("a");
-    teamSucheA.innerHTML = "Teamsuche";
+    teamSucheA.textContent = "Teamsuche";
     teamSucheA.addEventListener("click", () => {
         const currentActive = document.getElementsByClassName("active");
         if (currentActive != null && currentActive.length > 0) {

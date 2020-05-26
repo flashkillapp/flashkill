@@ -20,16 +20,16 @@ function insertMapsButton() {
 
 function getMapsButton() {
     const mapsButton = document.createElement("a");
-    mapsButton.innerHTML = "Map Übersicht (BETA) anzeigen";
+    mapsButton.textContent = "Map Übersicht (BETA) anzeigen";
     mapsButton.addEventListener("click", () => {
         if (mapsTableShown == false) {
             const seasonUrl = "";
             insertMapsTable();
-            mapsButton.innerHTML = "Map Übersicht (BETA) ausblenden";
+            mapsButton.textContent = "Map Übersicht (BETA) ausblenden";
             mapsTableShown = true;
         } else {
             removeMapsTable();
-            mapsButton.innerHTML = "Map Übersicht (BETA) anzeigen";
+            mapsButton.textContent = "Map Übersicht (BETA) anzeigen";
             mapsTableShown = false;
         }
     })
@@ -91,7 +91,7 @@ function getConsensusSelection(season) {
 }
 
 function getSeasonConsensus(seasonName) {
-    const seasonConsensusString = document.getElementById(`${seasonName} Consensus`).innerHTML;
+    const seasonConsensusString = document.getElementById(`${seasonName} Consensus`).textContent;
     const seasonConsensusValue = seasonConsensusString.replace(/%/g, "");
     return seasonConsensusValue;
 }
@@ -163,7 +163,7 @@ function buildTable(mapInfos) {
 
         const row = body.insertRow(-1);
         const mapCell = row.insertCell(-1);
-        mapCell.innerHTML = map;
+        mapCell.textContent = map;
         mapCell.style = "background-image:url(" + getMapImage(map) + "); text-align:center; background-size:cover; color:#fff; text-shadow:0 0 4px #000, 0px 0 4px #000, 0px 0 3px #000"
         insertCell(row, percentageMapPlayed, countMapPlayed, "Das Team spielte " + map + " " + countMapPlayed + " mal.");
         insertCell(row, percentagePicked, countPicked, map + " war zum Pickzeitpunkt noch " + countPickable + " mal pickbar und " + countPicked + " mal davon pickte das Team die Map.", countPickable);
@@ -207,7 +207,7 @@ function makeMultiselect(selectId, mapInfosPerSeason) {
 function insertHeading(filter) {
     const heading = document.createElement("h2");
     heading.id = ("maps-table-header");
-    heading.innerHTML = "Map Übersicht (BETA)";
+    heading.textContent = "Map Übersicht (BETA)";
     filter.parentNode.insertBefore(heading, filter);
 }
 
@@ -230,7 +230,7 @@ function addSeasonsToFilter(select, mapInfosPerSeason) {
 function addSeasonToFilter(select, mapInfoPerSeason) {
     const option = document.createElement("option");
     option.value = mapInfoPerSeason.seasonName;
-    option.innerHTML = mapInfoPerSeason.seasonName;
+    option.textContent = mapInfoPerSeason.seasonName;
     option.selected = mapInfoPerSeason.preSelection;
     select.appendChild(option);
 }
@@ -278,9 +278,9 @@ function insertCell(row, percentage, absolute, title, fromAbsolute = null) {
     cell.setAttribute("data-sort", absolute);
     cell.setAttribute("title", title);
     if (fromAbsolute) {
-        cell.innerHTML = formatPercentageWithAbsoluteAndFromAbsolute(percentage, absolute, fromAbsolute);
+        cell.textContent = formatPercentageWithAbsoluteAndFromAbsolute(percentage, absolute, fromAbsolute);
     } else {
-        cell.innerHTML = formatPercentageWithAbsolute(percentage, absolute);
+        cell.textContent = formatPercentageWithAbsolute(percentage, absolute);
     }
 }
 

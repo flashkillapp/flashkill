@@ -7,7 +7,7 @@ function insertTeamSearch() {
     const seasonSelectDivs = Array.from(document.getElementById("content").getElementsByTagName("div")).filter(element => {
         const elements = element.getElementsByTagName("select");
         return elements.length == 1
-        && elements[0].getElementsByTagName("option")[0].innerHTML == "Saison 1";
+        && elements[0].getElementsByTagName("option")[0].textContent == "Saison 1";
     });
 
     seasonSelectDivs.forEach(element => {
@@ -30,17 +30,17 @@ function insertTeamSearchTable(element) {
 
 function getTeamSearchButton() {
     const teamsucheA = document.createElement("a");
-    teamsucheA.innerHTML = "Teamsuche";
+    teamsucheA.textContent = "Teamsuche";
     teamsucheA.addEventListener("click", () => {
         const teamtableDiv = document.getElementById("team-table-div");
         if (teamsucheToggled == false) {
             const seasonUrl = window.location.href;
             insertTeamTable(teamtableDiv, seasonUrl);
-            teamsucheA.innerHTML = "Teamsuche ausblenden";
+            teamsucheA.textContent = "Teamsuche ausblenden";
             teamsucheToggled = true;
         } else {
-            teamtableDiv.innerHTML = "";
-            teamsucheA.innerHTML = "Teamsuche";
+            teamtableDiv.textContent = "";
+            teamsucheA.textContent = "Teamsuche";
             teamsucheToggled = false;
         }
     })

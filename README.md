@@ -14,12 +14,12 @@ The Firefox store has removed the extension until requested changes to the code 
 
 # Features
 
-- Search teams by name across all divisions
-- Show season results and match links on team page
-- Steam Profile Name/Link on team page
-- Faceit Rank/Elo/Link on team page
-- Show pick/ban/result statistics per map
-- Compare current lineup to previous seasons
+- Search teams by name across all divisions - now obsolete, [use this](https://liga.99damage.de/de/leagues/teams) instead
+- Show season results and match links on team page ❌
+- Steam Profile Name/Link on team page ✔️
+- Faceit Rank/Elo/Link on team page ✔️
+- Show pick/ban/result statistics per map ❌
+- Compare current lineup to previous seasons ❌
 
 # Links
 

@@ -1,7 +1,7 @@
 # flashkill Browser Extension
 
 This browser extension aims to improve the user experience on for both players and spectators of the 99Damage league websites.
-Recently 99Damage rolled out an update to their league pages which requires a major overhaul of the extensions code base.
+Recently 99Damage rolled out an update to their league pages which requires a major overhaul of the extension's code base.
 To get some help with this work, we decided to make the code base open source on 24.05.2020.
 Because this was an afterthought, we are unfortunately not able to provide the full commit history.
 

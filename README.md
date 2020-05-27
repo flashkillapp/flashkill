@@ -10,7 +10,7 @@ Because this was an afterthought, we are unfortunately not able to provide the f
 - [Chrome](https://chrome.google.com/webstore/detail/haodokcagfamodepjecmfemicdkdcekk) <img valign="middle" src="https://img.shields.io/chrome-web-store/v/haodokcagfamodepjecmfemicdkdcekk?label=%20"> <img valign="middle" src="https://img.shields.io/chrome-web-store/users/haodokcagfamodepjecmfemicdkdcekk"> <img valign="middle" src="https://img.shields.io/chrome-web-store/rating/haodokcagfamodepjecmfemicdkdcekk">
 - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/flashkill/) <img valign="middle" src="https://img.shields.io/amo/v/flashkill?label=%20"> <img valign="middle" src="https://img.shields.io/amo/users/flashkill"> <img valign="middle" src="https://img.shields.io/amo/rating/flashkill">
 
-[Or install your version of choice manually.](https://github.com/flashkillapp/flashkill/wiki/Manual-browser-extension-install)
+[Or install your version of choice manually.](https://github.com/flashkillapp/flashkill/wiki/Manual-browser-extension-installation)
 
 # Features
 

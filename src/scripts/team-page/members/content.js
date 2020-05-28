@@ -18,7 +18,7 @@ async function getSeasonStartAndEndDates(seasonUrl) {
     const seasonNameElements = seasonDocument.evaluate(SEASON_NAME_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
     const seasonName = seasonNameElements.snapshotItem(0).textContent;
     if (seasonName == "Saison 12") {
-        return new Season(seasonName, new Date(Date.now()), new Date(Date.now()));
+        return new SeasonBounds(seasonName, new Date(Date.now()), new Date(Date.now()));
     }
     const startDateRawElements = seasonDocument.evaluate(SEASON_START_DATE_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
     const endDateRawElements = seasonDocument.evaluate(SEASON_END_DATE_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
@@ -26,7 +26,7 @@ async function getSeasonStartAndEndDates(seasonUrl) {
     const endDateRaw = endDateRawElements.snapshotItem(0).text.trim();
     var startDate = new Date(formatDateToStandard(startDateRaw));
     startDate = startDate.setDate(startDate.getDate() - 7);
-    return new Season(seasonName, new Date(startDate), new Date(formatDateToStandard(endDateRaw)));
+    return new SeasonBounds(seasonName, new Date(startDate), new Date(formatDateToStandard(endDateRaw)));
 }
 
 function improveResultsTable() {
@@ -231,7 +231,7 @@ function getMonthNumber(monthName) {
     }
 }
 
-class Season {
+class SeasonBounds {
     constructor(seasonNumber, startDate, endDate) {
         this.seasonNumber = seasonNumber;
         this.startDate = startDate;

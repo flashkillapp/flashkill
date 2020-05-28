@@ -8,10 +8,10 @@
             "thirdParty/uint64.js",
             "thirdParty/jquery-3.4.0.min.js",
             "scripts/util/background/fetchCached.js",
-            "scripts/teampage/matches/background.js",
-            "scripts/teampage/members/background.js",
-            "scripts/teampage/maps/background.js",
-            "scripts/teampage/teams/background.js"
+            "scripts/team-page/matches/background.js",
+            "scripts/team-page/members/background.js",
+            "scripts/team-page/maps/background.js",
+            "scripts/season-page/teams/background.js"
         ]
     },
     "content_scripts": [
@@ -22,7 +22,7 @@
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/tooltipster.bundle.min.js",
                 "thirdParty/jquery.multiselect.js",
-                "scripts/teampage/teams/content.js",
+                "scripts/season-page/teams/content.js",
                 "scripts/resultsgetter.js",
                 "scripts/content.js"
             ],
@@ -34,13 +34,13 @@
         {
             "matches": ["https://csgo.99damage.de/de/leagues/99dmg/*-saison-*"],
             "js": [
-                "scripts/saison.js"
+                "scripts/season.js"
             ]
         },
         {
             "matches": ["https://liga.99damage.de/de/leagues/teams*"],
             "js": [
-                "scripts/teampage/members/content.js"
+                "scripts/team-page/members/content.js"
             ]
         }
     ],

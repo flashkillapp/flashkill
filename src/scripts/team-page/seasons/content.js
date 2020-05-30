@@ -86,7 +86,13 @@ function insertSeasonResults(season) {
     seasonDiv.className = "section-content";
     const seasonHeader = document.createElement("div");
     seasonHeader.textContent = season.name;
-    seasonHeader.className = "txt-subtitle";
+    seasonHeader.style = "color: black; font-size: 16px; font-weight: bold";
+    const providedByFlashkillSpan = document.createElement("a");
+    providedByFlashkillSpan.style = "color: grey; float: right; font-size: 10px; font-weight: normal; font-style: italic";
+    providedByFlashkillSpan.textContent = "provided by flashkill";
+    providedByFlashkillSpan.href = "https://github.com/flashkillapp/flashkill";
+    providedByFlashkillSpan.target = "_blank";
+    seasonHeader.appendChild(providedByFlashkillSpan);
     seasonDiv.appendChild(seasonHeader);
 
     matches = season.matches;

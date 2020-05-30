@@ -15,7 +15,7 @@ Because this was an afterthought, we are unfortunately not able to provide the f
 # Features
 
 - Search teams by name across all divisions - now obsolete, [use this](https://liga.99damage.de/de/leagues/teams) instead
-- Show season results and match links on team page ❌
+- Show season results and match links on team page ✔️
 - Steam Profile Name/Link on team page ✔️
 - Faceit Rank/Elo/Link on team page ✔️
 - Show pick/ban/result statistics per map ❌

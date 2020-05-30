@@ -117,6 +117,20 @@ function getSeasonsWithSeasonInformation(seasonTr) {
     }
 }
 
+function buildLinkInformation(seasonTd) {
+    const links = seasonTd.getElementsByTagName("a");
+    if (links.length == 2) {
+        return {
+            seasonUrl: links[0].href,
+            additionalUrl: links[1].href,
+            additionalInfo: links[1].textContent
+        }
+    }
+    return {
+        seasonUrl: links[0].href
+    }
+}
+
 function buildTable(mapInfos) {
     const table = document.createElement("table");
     table.className = "display";

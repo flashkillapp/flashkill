@@ -8,10 +8,10 @@
             "thirdParty/uint64.js",
             "thirdParty/jquery-3.4.0.min.js",
             "scripts/util/background/fetchCached.js",
-            "scripts/teampage/matches/background.js",
-            "scripts/teampage/members/background.js",
-            "scripts/teampage/maps/background.js",
-            "scripts/teampage/teams/background.js"
+            "scripts/team-page/matches/background.js",
+            "scripts/team-page/members/background.js",
+            "scripts/team-page/maps/background.js",
+            "scripts/team-page/seasons/background.js"
         ]
     },
     "content_scripts": [
@@ -22,8 +22,6 @@
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/tooltipster.bundle.min.js",
                 "thirdParty/jquery.multiselect.js",
-                "scripts/teampage/teams/content.js",
-                "scripts/resultsgetter.js",
                 "scripts/content.js"
             ],
             "css": [
@@ -32,15 +30,18 @@
             ]
         },
         {
-            "matches": ["https://csgo.99damage.de/de/leagues/99dmg/*-saison-*"],
-            "js": [
-                "scripts/saison.js"
-            ]
-        },
-        {
             "matches": ["https://liga.99damage.de/de/leagues/teams*"],
             "js": [
-                "scripts/teampage/members/content.js"
+                "thirdParty/jquery-3.4.0.min.js",
+                "thirdParty/jquery.dataTables.js",
+                "thirdParty/jquery.multiselect.js",
+                "scripts/util/content/util.js",
+                "scripts/team-page/members/content.js",
+                "scripts/team-page/seasons/content.js"
+            ],
+            "css": [
+                "thirdParty/jquery.multiselect.css",
+                "thirdParty/tooltipster.bundle.min.css"
             ]
         }
     ],
@@ -54,6 +55,7 @@
     },
     "permissions": [
         "https://open.faceit.com/*",
+        "https://flashkill.smatify.com/api/*",
         "https://steamcommunity.com/profiles/*",
         "https://csgo.99damage.de/*",
         "https://liga.99damage.de/*",

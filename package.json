@@ -5,10 +5,10 @@
   "scripts": {
     "clean:remove-files": "find dist -regextype posix-extended -regex '.*\\.(js|html|css)' | xargs --no-run-if-empty -t rm",
     "clean:remove-tree": "find dist -type d -empty -delete",
-    "clean": "npm run clean:remove-files && npm run clean:remove-tree",
+    "clean": "npm-run-all clean:*",
     "build:compile-ts": "find src -type f -name '*.ts' | xargs --no-run-if-empty -t npx tsc --target es5 --outDir dist/scripts",
     "build:copy-other": "cd src && find . -regextype posix-extended -regex '.*\\.(js|html|css)' -exec cp --parents \\{\\} ../dist \\;",
-    "build": "npm run build:compile-ts && npm run build:copy-other",
+    "build": "npm-run-all build:*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.114",
     "@types/node": "^14.0.6",
+    "npm-run-all": "^4.1.5",
     "typescript": "^3.9.3"
   },
   "dependencies": {

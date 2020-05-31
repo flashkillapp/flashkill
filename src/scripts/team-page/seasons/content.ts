@@ -1,19 +1,54 @@
 
-const mapImageInferno = "https://cdn0.gamesports.net/map_thumbs_big/90.png?1487240877";
-const mapImageMirage = "https://cdn0.gamesports.net/map_thumbs_big/94.jpg?1543845869";
-const mapImageDust2 = "https://cdn0.gamesports.net/map_thumbs_big/88.png?1525340267";
-const mapImageCache = "https://cdn0.gamesports.net/map_thumbs_big/127.jpg?0";
-const mapImageCobblestone = "https://cdn0.gamesports.net/map_thumbs_big/293.jpg?0";
-const mapImageTrain = "https://cdn0.gamesports.net/map_thumbs_big/89.jpg?0";
-const mapImageOverpass = "https://cdn0.gamesports.net/map_thumbs_big/295.jpg?0";
-const mapImageVertigo = "https://cdn0.gamesports.net/map_thumbs_big/417.jpg?1554321447";
-const mapImageNuke = "https://cdn0.gamesports.net/map_thumbs_big/91.jpg?1457434550";
+import { insertDataTablesCss, formatDate, getMapImage } from "../../util/content/util";
 
 const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
-const teamId = window.location.href.match(teamIdRegex)[1];
+const teamId = Number(window.location.href.match(teamIdRegex)[1]);
+
+class ApiMatch {
+    id: number;
+    season: number;
+    team1: ApiTeam;
+    team2: ApiTeam;
+    maps: ApiMap[]; 
+    createdAt: string;
+
+    makeHomeTeam(teamId: number) : void {
+        if (this.team1.id != teamId) {
+            const tmp = this.team1;
+            this.team1 = this.team2;
+            this.team2 = tmp;
+            this.maps.forEach(map => {
+                map.swapTeams();
+            });
+        }
+    }
+}
+
+class ApiTeam {
+    id: number;
+    name: string;
+}
+
+class ApiMap {
+    map: string;
+    score1: number;
+    score2: number;
+
+    swapTeams() : void {
+        const tmp = this.score1;
+        this.score1 = this.score2;
+        this.score1 = tmp;
+    }
+}
 
 class Season {
-    constructor(name, startDate, endDate, id) {
+    name: string;
+    startDate: number;
+    endDate: number;
+    id: number;
+    matches: ApiMatch[];
+
+    constructor(name: string, startDate: string, endDate: string, id: number) {
         this.name = name;
         this.startDate = Date.parse(startDate);
         this.endDate = Date.parse(endDate);
@@ -48,21 +83,19 @@ function insertMatchResults() {
     chrome.runtime.sendMessage(
         { contentScriptQuery: "apiMatches", teamId },
         matches => {
-            for (matchEntry in matches) {
-                let match = matches[matchEntry];
-                if (match.team1 == undefined) {
-                    continue;
+            for (let matchEntry in matches) {
+                const match = matches[matchEntry];
+                if (match instanceof ApiMatch) {
+                    match.makeHomeTeam(teamId);
+                    seasons.find(season => season.id == match.season).matches.push(match);
                 }
-                match = makeHomeMatch(match, teamId);
-                const season = seasons.find(season => season.id == match.season)
-                if (season != undefined) season.matches.push(match);
             }
             insertSeasons(seasons);
         }
     );
 }
 
-function insertSeasons(seasons) {
+function insertSeasons(seasons: Season[]) : void {
     const activeSeasons = Array.from(seasons).filter(season => season.matches.length > 0);
 
     const parentDiv = document.querySelector("#container > main > section.boxed-section.hybrid");
@@ -77,7 +110,7 @@ function insertSeasons(seasons) {
     }
 }
 
-function insertSeasonResults(season) {
+function insertSeasonResults(season : Season) : void {
     const dividerDiv = document.createElement("div");
     const dividerBr = document.createElement("br");
     dividerDiv.appendChild(dividerBr);
@@ -86,16 +119,18 @@ function insertSeasonResults(season) {
     seasonDiv.className = "section-content";
     const seasonHeader = document.createElement("div");
     seasonHeader.textContent = season.name;
-    seasonHeader.style = "color: black; font-size: 16px; font-weight: bold";
+    seasonHeader.setAttribute("style",
+        "color: black; font-size: 16px; font-weight: bold");
     const providedByFlashkillSpan = document.createElement("a");
-    providedByFlashkillSpan.style = "color: grey; float: right; font-size: 10px; font-weight: normal; font-style: italic";
+    providedByFlashkillSpan.setAttribute("style",
+        "color: grey; float: right; font-size: 10px; font-weight: normal; font-style: italic");
     providedByFlashkillSpan.textContent = "provided by flashkill";
     providedByFlashkillSpan.href = "https://github.com/flashkillapp/flashkill";
     providedByFlashkillSpan.target = "_blank";
     seasonHeader.appendChild(providedByFlashkillSpan);
     seasonDiv.appendChild(seasonHeader);
 
-    matches = season.matches;
+    const matches = season.matches;
     const table = document.createElement("table");
     table.className = "display";
     table.id = "matches-table" + season.id;
@@ -133,7 +168,9 @@ function insertSeasonResults(season) {
     seasonResultsDiv.appendChild(dividerDiv);
     seasonResultsDiv.appendChild(seasonDiv);
 
-    $('#' + table.id).DataTable({
+    const dataTable : any = $('#' + table.id)
+    
+    dataTable.DataTable({
         paging: false,
         searching: false,
         columnDefs: [
@@ -200,18 +237,4 @@ function fillMapRow(row, matchId, map, team1, team2, matchDate) {
     linkA.target = "_blank";
     linkA.textContent = "mehr";
     linkC.appendChild(linkA);
-}
-
-function makeHomeMatch(match, teamId) {
-    if (match.team1.id != teamId) {
-        const tmpTeam = match.team1;
-        match.team1 = match.team2;
-        match.team2 = tmpTeam;
-        match.maps.forEach(map => {
-            const tmpScore = map.score1;
-            map.score1 = map.score2;
-            map.score2 = tmpScore;
-        });
-    }
-    return match;
 }

@@ -16,20 +16,6 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://csgo.99damage.de/*"],
-            "js": [
-                "thirdParty/jquery-3.4.0.min.js",
-                "thirdParty/jquery.dataTables.js",
-                "thirdParty/tooltipster.bundle.min.js",
-                "thirdParty/jquery.multiselect.js",
-                "scripts/content.js"
-            ],
-            "css": [
-                "thirdParty/jquery.multiselect.css",
-                "thirdParty/tooltipster.bundle.min.css"
-            ]
-        },
-        {
             "matches": ["https://liga.99damage.de/de/leagues/teams*"],
             "js": [
                 "thirdParty/jquery-3.4.0.min.js",

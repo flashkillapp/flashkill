@@ -1,5 +1,15 @@
+const mapImageInferno = "https://cdn0.gamesports.net/map_thumbs_big/90.png?1487240877";
+const mapImageMirage = "https://cdn0.gamesports.net/map_thumbs_big/94.jpg?1543845869";
+const mapImageDust2 = "https://cdn0.gamesports.net/map_thumbs_big/88.png?1525340267";
+const mapImageCache = "https://cdn0.gamesports.net/map_thumbs_big/127.jpg?0";
+const mapImageCobblestone = "https://cdn0.gamesports.net/map_thumbs_big/293.jpg?0";
+const mapImageTrain = "https://cdn0.gamesports.net/map_thumbs_big/89.jpg?0";
+const mapImageOverpass = "https://cdn0.gamesports.net/map_thumbs_big/295.jpg?0";
+const mapImageVertigo = "https://cdn0.gamesports.net/map_thumbs_big/417.jpg?1554321447";
+const mapImageNuke = "https://cdn0.gamesports.net/map_thumbs_big/91.jpg?1457434550";
 
-function insertDataTablesCss() {
+
+function insertDataTablesCss() : void {
     const datatablescss = document.createElement("link");
     datatablescss.setAttribute("rel", "stylesheet");
     datatablescss.setAttribute("type", "text/css");
@@ -7,7 +17,7 @@ function insertDataTablesCss() {
     document.body.appendChild(datatablescss);
 }
 
-function formatDate(date) {
+function formatDate(date: string) : string {
     //Gets date in yyyy-mm-dd format
     //Returns date in dd.mm.yy format
     const year = date.substring(2, 4);
@@ -16,7 +26,7 @@ function formatDate(date) {
     return day + "." + month + "." + year;
 }
 
-function getMapImage(mapName) {
+function getMapImage(mapName: string) : string {
     switch (mapName) {
         case "de_inferno":
             return mapImageInferno;

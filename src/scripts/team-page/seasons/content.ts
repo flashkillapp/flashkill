@@ -1,44 +1,44 @@
 
-import { insertDataTablesCss, formatDate, getMapImage } from "../../util/content/util";
-
 const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
 const teamId = Number(window.location.href.match(teamIdRegex)[1]);
 
-class ApiMatch {
+interface ApiMatch {
     id: number;
     season: number;
     team1: ApiTeam;
     team2: ApiTeam;
     maps: ApiMap[]; 
     createdAt: string;
-
-    makeHomeTeam(teamId: number) : void {
-        if (this.team1.id != teamId) {
-            const tmp = this.team1;
-            this.team1 = this.team2;
-            this.team2 = tmp;
-            this.maps.forEach(map => {
-                map.swapTeams();
-            });
-        }
-    }
 }
 
-class ApiTeam {
+function makeHomeTeam(teamId: number, match: ApiMatch) : ApiMatch {
+    if(match.team1.id != teamId) {
+        const tmp = match.team1;
+        match.team1 = match.team2;
+        match.team2 = tmp;
+        match.maps.forEach(map => {
+            map = swapTeams(map);
+        });
+    }
+    return match;
+}
+
+interface ApiTeam {
     id: number;
     name: string;
 }
 
-class ApiMap {
+interface ApiMap {
     map: string;
     score1: number;
     score2: number;
+}
 
-    swapTeams() : void {
-        const tmp = this.score1;
-        this.score1 = this.score2;
-        this.score1 = tmp;
-    }
+function swapTeams(map: ApiMap) : ApiMap {
+    const tmp = map.score1;
+    map.score1 = map.score2;
+    map.score1 = tmp;
+    return map;
 }
 
 class Season {
@@ -84,10 +84,11 @@ function insertMatchResults() {
         { contentScriptQuery: "apiMatches", teamId },
         matches => {
             for (let matchEntry in matches) {
-                const match = matches[matchEntry];
-                if (match instanceof ApiMatch) {
-                    match.makeHomeTeam(teamId);
-                    seasons.find(season => season.id == match.season).matches.push(match);
+                let match = matches[matchEntry];
+                if (match.team1 != undefined) {
+                    match = makeHomeTeam(teamId, match);
+                    const season = seasons.find(season => season.id == match.season);
+                    if (season != undefined) season.matches.push(match);
                 }
             }
             insertSeasons(seasons);

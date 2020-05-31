@@ -3,6 +3,12 @@
   "version": "1.3.13",
   "description": "This browser extension aims to improve the user experience on for both players and spectators of the 99Damage league websites.",
   "scripts": {
+    "clean:remove-files": "find dist -regextype posix-extended -regex '.*\\.(js|html|css)' | xargs --no-run-if-empty -t rm",
+    "clean:remove-tree": "find dist -type d -empty -delete",
+    "clean": "npm run clean:remove-files && npm run clean:remove-tree",
+    "build:compile-ts": "find src -type f -name '*.ts' | xargs --no-run-if-empty -t npx tsc --target es5 --outDir dist/scripts",
+    "build:copy-other": "cd src && find . -regextype posix-extended -regex '.*\\.(js|html|css)' -exec cp --parents \\{\\} ../dist \\;",
+    "build": "npm run build:compile-ts && npm run build:copy-other",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -1,11 +1,11 @@
 
 const backgroundConfig = {
     entry: [
-        './src/scripts/team-page/maps/background.js',
-        './src/scripts/team-page/matches/background.js',
-        './src/scripts/team-page/members/background.js',
-        './src/scripts/team-page/seasons/background.js',
-        './src/scripts/util/background/fetchCached.js',
+        './src/team-page/maps/background.js',
+        './src/team-page/matches/background.js',
+        './src/team-page/members/background.js',
+        './src/team-page/seasons/background.js',
+        './src/util/background/fetchCached.js',
     ],
     module: {
         rules: [
@@ -30,9 +30,9 @@ const backgroundConfig = {
 
 const contentConfig = {
     entry: [
-        './src/scripts/team-page/maps/content.js',
-        './src/scripts/team-page/members/content.js',
-        './src/scripts/team-page/seasons/content.ts',
+        './src/team-page/maps/content.js',
+        './src/team-page/members/content.js',
+        './src/team-page/seasons/content.ts',
     ],
     module: {
         rules: [

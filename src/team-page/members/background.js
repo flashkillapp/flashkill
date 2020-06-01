@@ -1,3 +1,6 @@
+
+import { fetchCached, cacheForOneDay, faceitExtractor } from "../../util/background/fetchCached";
+
 const STEAM_NAME_XPATH_EXPRESSION = "//head/title";
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = "Steam Community :: ";
 

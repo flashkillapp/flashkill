@@ -3,7 +3,7 @@ const ONE_DAY_IN_SECONDS = 86400;
 const ONE_WEEK_IN_SECONDS = ONE_DAY_IN_SECONDS * 7;
 const MATCH_DATE_XPATH_EXPRESSION = "//div[@class='match_head']/div[@class='right']/text()";
 
-async function fetchCached(url, cacheValidCondition = defaultCacheValidCondition, extractor = response => response.text(), header = null) {
+export async function fetchCached(url, cacheValidCondition = defaultCacheValidCondition, extractor = response => response.text(), header = null) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(url, cachedItems => {
             if (cachedItems[url]) {
@@ -64,7 +64,7 @@ function getMonthNumber(monthName) {
 }
 
 
-function faceitExtractor(faceitResponse) {
+export function faceitExtractor(faceitResponse) {
     if (faceitResponse.ok) {
         return faceitResponse.json();
     } else {
@@ -95,7 +95,7 @@ function defaultCacheValidCondition(cacheResponse) {
     return timeDependentCacheValidCondition(cacheResponse.cacheTime, DEFAULT_CACHE_TIME);
 }
 
-function cacheForOneDay(cacheResponse) {
+export function cacheForOneDay(cacheResponse) {
     return timeDependentCacheValidCondition(cacheResponse.cacheTime, ONE_DAY_IN_SECONDS);
 }
 

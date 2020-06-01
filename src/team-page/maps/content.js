@@ -1,16 +1,25 @@
+
+const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
+const pageMatches = window.location.href.match(teamPageRegex);
+const contentScriptActive = pageMatches != undefined && pageMatches.length > 0;
+
 const SEASON_TR_XPATH_EXPRESSION = "//*[@id='content']/table[preceding::h2[text()='Werdegang'] and following::h2]/tbody/tr";
 const TEAM_LOG_XPATH_EXPRESSION = "//*[@id='content']/h2[contains(text(), 'Team Log')]";
 
 var mapsTableShown = false;
 
-chrome.storage.sync.get(['mapsTableAutoLoad'], function(result) {
-    var mapsTableAutoLoad = result.mapsTableAutoLoad;
-    if (mapsTableAutoLoad) {
-        insertMapsTable();
-    } else {
-        insertMapsButton();
-    }
-});
+if (contentScriptActive) {
+    // execute content script
+
+    chrome.storage.sync.get(['mapsTableAutoLoad'], function (result) {
+        var mapsTableAutoLoad = result.mapsTableAutoLoad;
+        if (mapsTableAutoLoad) {
+            insertMapsTable();
+        } else {
+            insertMapsButton();
+        }
+    });
+}
 
 function insertMapsButton() {
     const mapsButton = getMapsButton();

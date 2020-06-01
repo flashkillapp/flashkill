@@ -1,45 +1,9 @@
 
-const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
-const teamId = Number(window.location.href.match(teamIdRegex)[1]);
+import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
 
-interface ApiMatch {
-    id: number;
-    season: number;
-    team1: ApiTeam;
-    team2: ApiTeam;
-    maps: ApiMap[]; 
-    createdAt: string;
-}
-
-function makeHomeTeam(teamId: number, match: ApiMatch) : ApiMatch {
-    if(match.team1.id != teamId) {
-        const tmp = match.team1;
-        match.team1 = match.team2;
-        match.team2 = tmp;
-        match.maps.forEach(map => {
-            map = swapTeams(map);
-        });
-    }
-    return match;
-}
-
-interface ApiTeam {
-    id: number;
-    name: string;
-}
-
-interface ApiMap {
-    map: string;
-    score1: number;
-    score2: number;
-}
-
-function swapTeams(map: ApiMap) : ApiMap {
-    const tmp = map.score1;
-    map.score1 = map.score2;
-    map.score1 = tmp;
-    return map;
-}
+const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
+const pageMatches = window.location.href.match(teamPageRegex);
+const contentScriptActive = pageMatches != undefined && pageMatches.length > 0;
 
 class Season {
     name: string;
@@ -75,11 +39,56 @@ const seasons = [
     new Season('Saison 1', '09 Aug 2015', '25 Oct 2015', 65),
 ];
 
-insertDataTablesCss();
+if (contentScriptActive) {
+    // execute content script
+    const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
+    const teamId = Number(window.location.href.match(teamIdRegex)[1]);
 
-insertMatchResults();
+    insertDataTablesCss();
 
-function insertMatchResults() {
+    insertMatchResults(teamId);
+}
+
+interface ApiMatch {
+    id: number;
+    season: number;
+    team1: ApiTeam;
+    team2: ApiTeam;
+    maps: ApiMap[];
+    createdAt: string;
+}
+
+function makeHomeTeam(teamId: number, match: ApiMatch): ApiMatch {
+    if (match.team1.id != teamId) {
+        const tmp = match.team1;
+        match.team1 = match.team2;
+        match.team2 = tmp;
+        match.maps.forEach(map => {
+            map = swapTeams(map);
+        });
+    }
+    return match;
+}
+
+interface ApiTeam {
+    id: number;
+    name: string;
+}
+
+interface ApiMap {
+    map: string;
+    score1: number;
+    score2: number;
+}
+
+function swapTeams(map: ApiMap): ApiMap {
+    const tmp = map.score1;
+    map.score1 = map.score2;
+    map.score1 = tmp;
+    return map;
+}
+
+function insertMatchResults(teamId: number) {
     chrome.runtime.sendMessage(
         { contentScriptQuery: "apiMatches", teamId },
         matches => {
@@ -96,7 +105,7 @@ function insertMatchResults() {
     );
 }
 
-function insertSeasons(seasons: Season[]) : void {
+function insertSeasons(seasons: Season[]): void {
     const activeSeasons = Array.from(seasons).filter(season => season.matches.length > 0);
 
     const parentDiv = document.querySelector("#container > main > section.boxed-section.hybrid");
@@ -111,7 +120,7 @@ function insertSeasons(seasons: Season[]) : void {
     }
 }
 
-function insertSeasonResults(season : Season) : void {
+function insertSeasonResults(season: Season): void {
     const dividerDiv = document.createElement("div");
     const dividerBr = document.createElement("br");
     dividerDiv.appendChild(dividerBr);
@@ -157,7 +166,6 @@ function insertSeasonResults(season : Season) : void {
         if (match.maps.length > 0) {
             match.maps.forEach(map => {
                 var row = body.insertRow(0);
-                console.log(match, match.team1, match.team2);
                 fillMapRow(row, match.id, map, match.team1, match.team2, match.createdAt);
             });
         }
@@ -169,8 +177,8 @@ function insertSeasonResults(season : Season) : void {
     seasonResultsDiv.appendChild(dividerDiv);
     seasonResultsDiv.appendChild(seasonDiv);
 
-    const dataTable : any = $('#' + table.id)
-    
+    const dataTable: any = $('#' + table.id)
+
     dataTable.DataTable({
         paging: false,
         searching: false,

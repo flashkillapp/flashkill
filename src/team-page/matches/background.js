@@ -1,3 +1,6 @@
+
+import { fetchCached } from "../../util/background/fetchCached";
+
 const MATCH_LINK_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr/td[1]/a";
 const MATCH_TEAM1_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr/td[2]/a";
 const MATCH_TEAM2_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr/td[3]/a";

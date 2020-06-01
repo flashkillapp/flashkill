@@ -9,7 +9,7 @@ const mapImageVertigo = "https://cdn0.gamesports.net/map_thumbs_big/417.jpg?1554
 const mapImageNuke = "https://cdn0.gamesports.net/map_thumbs_big/91.jpg?1457434550";
 
 
-function insertDataTablesCss() : void {
+export function insertDataTablesCss() : void {
     const datatablescss = document.createElement("link");
     datatablescss.setAttribute("rel", "stylesheet");
     datatablescss.setAttribute("type", "text/css");
@@ -17,7 +17,7 @@ function insertDataTablesCss() : void {
     document.body.appendChild(datatablescss);
 }
 
-function formatDate(date: string) : string {
+export function formatDate(date: string) : string {
     //Gets date in yyyy-mm-dd format
     //Returns date in dd.mm.yy format
     const year = date.substring(2, 4);
@@ -26,7 +26,7 @@ function formatDate(date: string) : string {
     return day + "." + month + "." + year;
 }
 
-function getMapImage(mapName: string) : string {
+export function getMapImage(mapName: string) : string {
     switch (mapName) {
         case "de_inferno":
             return mapImageInferno;

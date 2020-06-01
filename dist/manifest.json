@@ -7,11 +7,7 @@
         "scripts": [
             "thirdParty/uint64.js",
             "thirdParty/jquery-3.4.0.min.js",
-            "scripts/util/background/fetchCached.js",
-            "scripts/team-page/matches/background.js",
-            "scripts/team-page/members/background.js",
-            "scripts/team-page/maps/background.js",
-            "scripts/team-page/seasons/background.js"
+            "background.js"
         ]
     },
     "content_scripts": [
@@ -21,9 +17,7 @@
                 "thirdParty/jquery-3.4.0.min.js",
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/jquery.multiselect.js",
-                "scripts/util/content/util.js",
-                "scripts/team-page/members/content.js",
-                "scripts/team-page/seasons/content.js"
+                "content.js"
             ],
             "css": [
                 "thirdParty/jquery.multiselect.css",

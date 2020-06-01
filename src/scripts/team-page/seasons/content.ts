@@ -1,4 +1,6 @@
 
+import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
+
 const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
 const teamId = Number(window.location.href.match(teamIdRegex)[1]);
 

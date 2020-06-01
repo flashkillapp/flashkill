@@ -2,7 +2,6 @@
 const backgroundConfig = {
     entry: [
         './src/team-page/maps/background.js',
-        './src/team-page/matches/background.js',
         './src/team-page/members/background.js',
         './src/team-page/seasons/background.js',
         './src/util/background/fetchCached.js',
@@ -30,7 +29,6 @@ const backgroundConfig = {
 
 const contentConfig = {
     entry: [
-        './src/team-page/maps/content.js',
         './src/team-page/members/content.js',
         './src/team-page/seasons/content.ts',
     ],

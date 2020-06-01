@@ -6,7 +6,7 @@
     "clean:remove-files": "find dist -regextype posix-extended -regex '.*\\.(js|html|css)' | xargs --no-run-if-empty -t rm",
     "clean:remove-tree": "find dist -type d -empty -delete",
     "clean": "npm-run-all clean:*",
-    "build:compile-ts": "find src -type f -name '*.ts' | xargs --no-run-if-empty -t npx tsc --target es5 --outDir dist/scripts",
+    "build:compile-ts": "find src -type f -name '*.ts' | xargs --no-run-if-empty -t npx tsc --target es2020 --outDir dist/scripts",
     "build:copy-other": "cd src && find . -regextype posix-extended -regex '.*\\.(js|html|css)' -exec cp --parents \\{\\} ../dist \\;",
     "build": "npm-run-all build:*",
     "test": "echo \"Error: no test specified\" && exit 1"

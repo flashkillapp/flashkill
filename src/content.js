@@ -1,9 +1,8 @@
 addTeamsButton();
 
 function addTeamsButton() {
-    const headerNavUl = document.querySelector("#header-nav > nav > ul");
     const nextLi = document.querySelector("#header-nav > nav > ul > li:nth-child(3)");
-    if (!headerNavUl || !nextLi) {
+    if (!nextLi) {
         return;
     }
 
@@ -13,5 +12,5 @@ function addTeamsButton() {
     const teamsLi = document.createElement("li");
     teamsLi.appendChild(teamsA);
 
-    headerNavUl.insertBefore(teamsLi, nextLi);
+    teamsLi.parentNode.insertBefore(teamsLi, nextLi);
 }

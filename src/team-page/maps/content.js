@@ -193,7 +193,6 @@ function insertFilter(filter) {
 function createFilterSelectElement() {
     const select = document.createElement("select");
     select.id = "maps-table-filter";
-    select.setAttribute("style", "font-size: 14px");
     select.setAttribute("multiple", "multiple");
     return select;
 }

@@ -286,66 +286,63 @@ function improveMemberCards() {
 function inject(playerInfo, memberCard) {
     const steamId64 = playerInfo.steamId64;
 
-    const table = document.createElement("table");
-    const tableBody = document.createElement("tbody"); 
-
     if (steamId64 != "") {
-        const steamRow = document.createElement("tr");
-
-        const steamTd = document.createElement("td");
-        steamTd.colSpan = "2";
         const steamDiv = document.createElement("div");
         steamDiv.className = "txt-subtitle";
         steamDiv.innerText = "Steam: ";
-        steamDiv.style = "padding-top:5px;"
+        steamDiv.style.paddingTop = "5px";
+        steamDiv.style.whiteSpace = "nowrap";
+        steamDiv.style.overflow = "hidden";
         const steamLink = document.createElement("a");
         steamLink.href = `https://steamcommunity.com/profiles/${steamId64}`;
         steamLink.textContent = playerInfo.steamName;
         steamLink.target = "_blank";
 
         steamDiv.appendChild(steamLink);
-        steamTd.appendChild(steamDiv);
-        steamRow.appendChild(steamTd);
 
-        tableBody.appendChild(steamRow);
+        memberCard.appendChild(steamDiv);
     }
-
 
     if (playerInfo.faceitInfo != null) {
         const faceitInfo = playerInfo.faceitInfo;
 
-        const faceitRow = document.createElement("tr");
+        const eloDiv = document.createElement("div");
+        eloDiv.style.textAlign = "left";
+        eloDiv.style.float = "left";
+        eloDiv.style.paddingTop = "7px";
 
-        const logoTd = document.createElement("td");
-        logoTd.style = "padding-left:10px;";
-        const faceitA = document.createElement("a");
-        faceitA.href = getFaceitLink(faceitInfo.nickname);
-        faceitA.target = "_blank";
+        const faceitTextA = document.createElement("a");
+        faceitTextA.href = getFaceitLink(faceitInfo.nickname);
+        faceitTextA.target = "_blank";
+        faceitTextA.textContent = faceitInfo.games.csgo.faceit_elo;
+
+        eloDiv.textContent = "FACEIT: "
+        eloDiv.appendChild(faceitTextA);
+
+        const imageDiv = document.createElement("div");
+        imageDiv.style.textAlign = "right";
 
         const faceitImg = document.createElement("img");
         faceitImg.style.width = "28px";
         faceitImg.style.height = "28px";
         faceitImg.src = getFaceitLevel(faceitInfo.games.csgo.skill_level);
         faceitImg.alt = faceitInfo.games.csgo.skill_level;
+        
+        const faceitImageA = document.createElement("a");
+        faceitImageA.href = getFaceitLink(faceitInfo.nickname);
+        faceitImageA.target = "_blank";
+        faceitImageA.appendChild(faceitImg);
 
-        faceitA.appendChild(faceitImg);
-        logoTd.appendChild(faceitA);
+        imageDiv.appendChild(faceitImageA);
 
-        const eloTd = document.createElement("td");
-        const eloDiv = document.createElement("div");
-        eloDiv.className = "txt-subtitle";
-        eloDiv.textContent = `FACEIT: ${faceitInfo.games.csgo.faceit_elo}`;
+        const faceitDiv = document.createElement("div");
+        faceitDiv.className = "txt-subtitle";
+        faceitDiv.style.width = "17.5em";
+        faceitDiv.appendChild(eloDiv);
+        faceitDiv.appendChild(imageDiv);
 
-        eloTd.appendChild(eloDiv);
-
-        faceitRow.appendChild(eloTd);
-        faceitRow.appendChild(logoTd);
-
-        tableBody.appendChild(faceitRow);
+        memberCard.appendChild(faceitDiv);
     }
-
-    table.appendChild(tableBody);
-    memberCard.appendChild(table);
 }
 
 function getFaceitLevel(faceitLevel) {

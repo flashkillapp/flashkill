@@ -17,6 +17,12 @@
     },
     "content_scripts": [
         {
+            "matches": ["https://liga.99damage.de/*"],
+            "js": [
+                "content.js"
+            ]
+        },
+        {
             "matches": ["https://liga.99damage.de/de/leagues/teams*"],
             "js": [
                 "thirdParty/jquery-3.4.0.min.js",

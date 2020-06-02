@@ -29,6 +29,7 @@ const backgroundConfig = {
 
 const contentConfig = {
     entry: [
+        './src/content.js',
         './src/team-page/members/content.js',
         './src/team-page/seasons/content.ts',
     ],

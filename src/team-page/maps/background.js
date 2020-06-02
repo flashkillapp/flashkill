@@ -1,3 +1,5 @@
+import {getMatchMapVotes} from "../matches/background"
+
 const ALL_MAPS = [
     "de_inferno",
     "de_mirage",

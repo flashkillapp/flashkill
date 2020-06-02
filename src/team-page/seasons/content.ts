@@ -1,5 +1,6 @@
 
 import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
+import { insertMapStatistics } from "../maps/content";
 
 const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
 const pageMatches = window.location.href.match(teamPageRegex);
@@ -49,7 +50,7 @@ if (contentScriptActive) {
     insertMatchResults(teamId);
 }
 
-interface ApiMatch {
+export interface ApiMatch {
     id: number;
     season: number;
     team1: ApiTeam;
@@ -100,6 +101,7 @@ function insertMatchResults(teamId: number) {
                     if (season != undefined) season.matches.push(match);
                 }
             }
+            insertMapStatistics(seasons, teamId);
             insertSeasons(seasons);
         }
     );
@@ -109,6 +111,9 @@ function insertSeasons(seasons: Season[]): void {
     const activeSeasons = Array.from(seasons).filter(season => season.matches.length > 0);
 
     const parentDiv = document.querySelector("#container > main > section.boxed-section.hybrid");
+    const mapStatisticsDiv = document.createElement("div");
+    mapStatisticsDiv.id = "flashkill-map-statistics";
+    parentDiv.appendChild(mapStatisticsDiv);
     const resultsDiv = document.createElement("div");
     resultsDiv.id = "flashkill-results";
     parentDiv.appendChild(resultsDiv);
@@ -120,6 +125,16 @@ function insertSeasons(seasons: Season[]): void {
     }
 }
 
+export function byFlashkillLink() : HTMLAnchorElement {
+    const byFlashkillLink = document.createElement("a");
+    byFlashkillLink.setAttribute("style",
+        "color: grey; float: right; font-size: 10px; font-weight: normal; font-style: italic");
+    byFlashkillLink.textContent = "by flashkill";
+    byFlashkillLink.href = "https://github.com/flashkillapp/flashkill";
+    byFlashkillLink.target = "_blank";
+    return byFlashkillLink;
+}
+
 function insertSeasonResults(season: Season): void {
     const dividerDiv = document.createElement("div");
     const dividerBr = document.createElement("br");
@@ -127,17 +142,9 @@ function insertSeasonResults(season: Season): void {
 
     const seasonDiv = document.createElement("div");
     seasonDiv.className = "section-content";
-    const seasonHeader = document.createElement("div");
+    const seasonHeader = document.createElement("h2");
     seasonHeader.textContent = season.name;
-    seasonHeader.setAttribute("style",
-        "color: black; font-size: 16px; font-weight: bold");
-    const providedByFlashkillSpan = document.createElement("a");
-    providedByFlashkillSpan.setAttribute("style",
-        "color: grey; float: right; font-size: 10px; font-weight: normal; font-style: italic");
-    providedByFlashkillSpan.textContent = "provided by flashkill";
-    providedByFlashkillSpan.href = "https://github.com/flashkillapp/flashkill";
-    providedByFlashkillSpan.target = "_blank";
-    seasonHeader.appendChild(providedByFlashkillSpan);
+    seasonDiv.appendChild(byFlashkillLink());
     seasonDiv.appendChild(seasonHeader);
 
     const matches = season.matches;

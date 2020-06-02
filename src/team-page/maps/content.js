@@ -1,6 +1,9 @@
+import { byFlashkillLink } from "../seasons/content";
+import { getMapImage } from "../../util/content/util"
+
 var mapsTableShown = false;
 
-function insertMapStatistics(seasons) {
+export function insertMapStatistics(seasons, teamId) {
     chrome.storage.sync.get(['mapsTableAutoLoad'], result => {
         prepareDOM();
         var mapsTableAutoLoad = result.mapsTableAutoLoad;
@@ -151,7 +154,6 @@ function prepareDOM() {
 
 function buildFilter(mapInfosPerSeason) {
     const select = createFilterSelectElement();
-    select.id = "maps-table-filter";
     addSeasonsToFilter(select, mapInfosPerSeason);
     insertFilter(select);
     makeMultiselect(select.id, mapInfosPerSeason);
@@ -190,7 +192,8 @@ function insertFilter(filter) {
 
 function createFilterSelectElement() {
     const select = document.createElement("select");
-    select.id = "map-filter-select";
+    select.id = "maps-table-filter";
+    select.setAttribute("style", "font-size: 14px");
     select.setAttribute("multiple", "multiple");
     return select;
 }

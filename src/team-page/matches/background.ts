@@ -1,3 +1,6 @@
+import { fetchCached, cacheOnlyPastMatches } from "../../util/background/fetchCached";
+import { ApiMatch } from "../seasons/content";
+
 const MAP_VOTE_XPATH_EXPRESSION = "//td/span[text()='mapvote_ended']/../following-sibling::td/span/text()";
 const MAP_VOTE_REGEX = /(T[12]+) (bans|picks) (de_[a-z2]+)/g;
 
@@ -16,7 +19,7 @@ interface MatchMapVotes {
     mapVoteTeam2: MapVote;
 }
 
-async function getMatchMapVotes(matches: ApiMatch[]): Promise<MatchMapVotes[]> {
+export async function getMatchMapVotes(matches: ApiMatch[]): Promise<MatchMapVotes[]> {
     return Promise.all(matches.map(async (match) => {
         const matchLink = `https://liga.99damage.de/de/leagues/matches/${match.id}`;
         const htmlContent = await fetchCached(matchLink, cacheOnlyPastMatches);

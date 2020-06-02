@@ -27,31 +27,39 @@ const backgroundConfig = {
     },
 }
 
-const contentConfig = {
-    entry: [
-        './src/content.js',
-        './src/team-page/members/content.js',
-        './src/team-page/seasons/content.ts',
-    ],
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                loader: 'babel-loader'
-            },
-            {
-                test: /\.js$/,
-                use: ['source-map-loader'],
-                enforce: 'pre',
-            }
-        ]
-    },
-    output: {
-        filename: 'content.js',
-    },
-    resolve: {
-        extensions: ['.ts', '.js']
-    },
-}
+const contentScripts = [
+    'content.js',
+    'team-page/seasons/content.ts',
+    'team-page/members/content.js',
+];
 
-module.exports = [ backgroundConfig, contentConfig ];
+const contentScriptConfigs = contentScripts.map(contentScriptPath => {
+    const jsFilePath = contentScriptPath.replace(".ts", ".js");
+    return {
+        entry: './src/' + contentScriptPath,
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    loader: 'babel-loader'
+                },
+                {
+                    test: /\.js$/,
+                    use: ['source-map-loader'],
+                    enforce: 'pre',
+                }
+            ]
+        },
+        output: {
+            filename: 'content/' + jsFilePath,
+        },
+        resolve: {
+            extensions: ['.ts', '.js'],
+        },
+    }
+});
+
+const allConfigs = contentScriptConfigs;
+allConfigs.push(backgroundConfig);
+
+module.exports = allConfigs;

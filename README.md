@@ -18,7 +18,7 @@ Because this was an afterthought, we are unfortunately not able to provide the f
 - Show season results and match links on team page ✔️
 - Steam Profile Name/Link on team page ✔️
 - Faceit Rank/Elo/Link on team page ✔️
-- Show pick/ban/result statistics per map ❌
+- Show pick/ban/result statistics per map ✔️
 - Compare current lineup to previous seasons ❌
 
 # Links

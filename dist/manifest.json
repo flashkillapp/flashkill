@@ -1,9 +1,4 @@
 {
-    "applications": {
-        "gecko": {
-            "id": "extension@flashkill.app"
-        }
-    },
     "manifest_version": 2,
     "name": "flashkill",
     "description": "Diese Extension soll den Umgang mit der 99Damage Homepage erleichtern.",
@@ -19,16 +14,18 @@
         {
             "matches": ["https://liga.99damage.de/*"],
             "js": [
-                "content.js"
+                "content/content.js"
             ]
         },
         {
-            "matches": ["https://liga.99damage.de/de/leagues/teams*"],
+            "matches": ["https://liga.99damage.de/de/leagues/teams/*-*"],
             "js": [
                 "thirdParty/jquery-3.4.0.min.js",
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/tooltipster.bundle.min.js",
-                "thirdParty/jquery.multiselect.js"
+                "thirdParty/jquery.multiselect.js",
+                "content/team-page/members/content.js",
+                "content/team-page/seasons/content.js"
             ],
             "css": [
                 "thirdParty/jquery.multiselect.css",

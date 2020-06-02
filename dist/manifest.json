@@ -28,8 +28,7 @@
                 "thirdParty/jquery-3.4.0.min.js",
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/tooltipster.bundle.min.js",
-                "thirdParty/jquery.multiselect.js",
-                "content.js"
+                "thirdParty/jquery.multiselect.js"
             ],
             "css": [
                 "thirdParty/jquery.multiselect.css",

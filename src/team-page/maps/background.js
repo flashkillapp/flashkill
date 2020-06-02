@@ -11,7 +11,7 @@ const ALL_MAPS = [
     "de_vertigo",
     "de_nuke"
 ]
-console.log("loaded");
+
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.contentScriptQuery == "queryMapInfosPerSeason") {

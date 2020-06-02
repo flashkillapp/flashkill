@@ -1,3 +1,5 @@
+import {getMatchMapVotes} from "../matches/background"
+
 const ALL_MAPS = [
     "de_inferno",
     "de_mirage",
@@ -13,7 +15,7 @@ const ALL_MAPS = [
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.contentScriptQuery == "queryMapInfosPerSeason") {
-            getMapInfosPerSeason(request.seasons, request.teamName, request.teamShorthand).then(mapInfos => {
+            getMapInfosPerSeason(request.seasons, request.teamId).then(mapInfos => {
                 sendResponse(mapInfos);
             }).catch(console.log);
             return true;  // Will respond asynchronously.
@@ -21,36 +23,44 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-async function getMapInfosPerSeason(seasons, teamName, teamShorthand) {
-    return Promise.all(seasons.map(async season => {
-        const matches = await getMatches(season.seasonInformation, teamName, teamShorthand);
+async function getMapInfosPerSeason(seasons, teamId) {
+    return Promise.all(seasons.filter(season => season.matches.length > 0).map(async season => {
+        const matchMapVotes = await getMatchMapVotes(season.matches, teamId);
+        makeRequestedTeamTeam1(matchMapVotes, teamId);
         return {
-            seasonName: season.seasonName,
-            mapInfos: calcMapInfos(matches.filter(match => match.mapVoteTeam1 != null && match.mapVoteTeam2 != null))
+            seasonName: season.name,
+            mapInfos: calcMapInfos(matchMapVotes.filter(matchMapVote => matchMapVote.mapVoteTeam1 != null && matchMapVote.mapVoteTeam2 != null))
         }
     }));
 }
 
-function calcMapInfos(matches) {
-    const matchesThatGotPlayed = matches.filter(match => match.mapResults.length > 0);
-    const mapResultsOfAllMatches = matchesThatGotPlayed.flatMap(match => match.mapResults);
+function makeRequestedTeamTeam1(matchMapVotes, teamId) {
+    matchMapVotes.filter(matchMapVote => matchMapVote.mapVoteTeam1.teamId != teamId).forEach(matchMapVote => {
+        const tempMapVoteTeam1 = matchMapVote.mapVoteTeam1;
+        matchMapVote.mapVoteTeam1 = matchMapVote.mapVoteTeam2;
+        matchMapVote.mapVoteTeam2 = tempMapVoteTeam1;
+    });
+}
+
+function calcMapInfos(matchMapVotes) {
+    const mapResultsOfAllMatches = matchMapVotes.flatMap(matchMapVote => matchMapVote.match.maps);
     //TODO: spaeter wieder einbauen
     // return getAllMapsThatGotPickedOrBanned(matches).map(mapOfInterest => {
-        return ALL_MAPS.map(mapOfInterest => {
+    return ALL_MAPS.map(mapOfInterest => {
         const mapResultsWithThisMap = mapResultsOfAllMatches.filter(mapResult => mapResult.map == mapOfInterest);
         const countMapPlayed = mapResultsWithThisMap.length;
-        const countWins = mapResultsWithThisMap.filter(mapResult => parseInt(mapResult.scoreTeam1) > parseInt(mapResult.scoreTeam2)).length;
-        const countLosses = mapResultsWithThisMap.filter(mapResult => parseInt(mapResult.scoreTeam1) < parseInt(mapResult.scoreTeam2)).length;
-        const countPicked = matchesThatGotPlayed.filter(match => match.mapVoteTeam1.pick == mapOfInterest).length;
-        const countPickable = matchesThatGotPlayed.filter(match =>
+        const countWins = mapResultsWithThisMap.filter(mapResult => parseInt(mapResult.score1) > parseInt(mapResult.score2)).length;
+        const countLosses = mapResultsWithThisMap.filter(mapResult => parseInt(mapResult.score1) < parseInt(mapResult.score2)).length;
+        const countPicked = matchMapVotes.filter(match => match.mapVoteTeam1.pick == mapOfInterest).length;
+        const countPickable = matchMapVotes.filter(match =>
             match.mapVoteTeam2.firstBan != mapOfInterest
             && match.mapVoteTeam2.secondBan != mapOfInterest
             && match.mapVoteTeam1.firstBan != mapOfInterest
             && match.mapVoteTeam1.secondBan != mapOfInterest).length;
-        const countFirstBan = matchesThatGotPlayed.filter(match => match.mapVoteTeam1.firstBan == mapOfInterest).length;
-        const countSecondBan = matchesThatGotPlayed.filter(match => match.mapVoteTeam1.secondBan == mapOfInterest).length;
-        const countFirstBanable = matchesThatGotPlayed.filter(match => mapWasFirstBanable(match, mapOfInterest)).length;
-        const countSecondBanable = matchesThatGotPlayed.filter(match => mapWasSecondBanable(match, mapOfInterest)).length;
+        const countFirstBan = matchMapVotes.filter(match => match.mapVoteTeam1.firstBan == mapOfInterest).length;
+        const countSecondBan = matchMapVotes.filter(match => match.mapVoteTeam1.secondBan == mapOfInterest).length;
+        const countFirstBanable = matchMapVotes.filter(match => mapWasFirstBanable(match, mapOfInterest)).length;
+        const countSecondBanable = matchMapVotes.filter(match => mapWasSecondBanable(match, mapOfInterest)).length;
         return {
             map: mapOfInterest,
             countMapPlayed,

@@ -1,50 +1,44 @@
-
-const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
-const pageMatches = window.location.href.match(teamPageRegex);
-const contentScriptActive = pageMatches != undefined && pageMatches.length > 0;
-
-const SEASON_TR_XPATH_EXPRESSION = "//*[@id='content']/table[preceding::h2[text()='Werdegang'] and following::h2]/tbody/tr";
-const TEAM_LOG_XPATH_EXPRESSION = "//*[@id='content']/h2[contains(text(), 'Team Log')]";
+import { byFlashkillLink } from "../seasons/content";
+import { getMapImage } from "../../util/content/util"
 
 var mapsTableShown = false;
 
-if (contentScriptActive) {
-    // execute content script
-
-    chrome.storage.sync.get(['mapsTableAutoLoad'], function (result) {
+export function insertMapStatistics(seasons, teamId) {
+    chrome.storage.sync.get(['mapsTableAutoLoad'], result => {
+        prepareDOM();
         var mapsTableAutoLoad = result.mapsTableAutoLoad;
         if (mapsTableAutoLoad) {
-            insertMapsTable();
+            insertMapsTable(seasons, teamId);
         } else {
-            insertMapsButton();
+            insertMapsButton(seasons, teamId);
         }
     });
 }
 
-function insertMapsButton() {
-    const mapsButton = getMapsButton();
-    const teamLog = document.evaluate(TEAM_LOG_XPATH_EXPRESSION, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-    teamLog.parentNode.insertBefore(mapsButton, teamLog);
+function insertMapsButton(seasons, teamId) {
+    const mapsButton = getMapsButton(seasons, teamId);
+    document.getElementById("flashkill-map-statistics-toggle-button").appendChild(mapsButton);
 }
 
-function getMapsButton() {
+function getMapsButton(seasons, teamId) {
     const mapsButton = document.createElement("a");
-    mapsButton.textContent = "Map Übersicht (BETA) anzeigen";
+    const showMapStatisticsText = "Map Übersicht (BETA) anzeigen";
+    mapsButton.textContent = showMapStatisticsText;
     mapsButton.addEventListener("click", () => {
         if (mapsTableShown == false) {
-            const seasonUrl = "";
-            insertMapsTable();
+            insertMapsTable(seasons, teamId);
             mapsButton.textContent = "Map Übersicht (BETA) ausblenden";
             mapsTableShown = true;
         } else {
             removeMapsTable();
-            mapsButton.textContent = "Map Übersicht (BETA) anzeigen";
+            mapsButton.textContent = showMapStatisticsText;
             mapsTableShown = false;
         }
     })
     mapsButton.href = "javascript:void(0);"
+    mapsButton.className = "btn btn-showall"
     const div = document.createElement("div");
-    div.className = "ylinks";
+    div.className = "btn-container center";
     div.appendChild(mapsButton);
     return div;
 }
@@ -62,11 +56,11 @@ function removeMapsTable() {
     tableSelect.parentNode.removeChild(tableSelect);
 }
 
-function insertMapsTable() {
+function insertMapsTable(seasons, teamId) {
     chrome.runtime.sendMessage(
-        { contentScriptQuery: "queryMapInfosPerSeason", seasons: getAllSeasons(), teamName: getTeamName(), teamShorthand: getTeamShorthand() },
+        { contentScriptQuery: "queryMapInfosPerSeason", seasons, teamId },
         mapInfosPerSeason => {
-            mapInfosPerSeason = addPreSelection(mapInfosPerSeason);
+            mapInfosPerSeason = addPreSelection(seasons, mapInfosPerSeason);
             const mapInfosPerSelectedSeason = mapInfosPerSeason.filter(season => season.preSelection);
             const mapInfosForSeasonsToShow = mapInfosPerSelectedSeason.flatMap(mapInfoPerSeason => mapInfoPerSeason.mapInfos);
             buildTable(mapInfosForSeasonsToShow);
@@ -75,69 +69,9 @@ function insertMapsTable() {
     );
 }
 
-function addPreSelection(mapInfosPerSeason) {
-    if (mapInfosPerSeason.length <= 2) {
-        mapInfosPerSeason.map(season => {
-            season.preSelection = getConsensusSelection(season);
-        });
-    } else {
-        const firstNSeasons = mapInfosPerSeason.slice(0, -2);
-        firstNSeasons.map(season => season.preSelection = false);
-        const lastTwoSeasons = mapInfosPerSeason.slice(-2);
-        lastTwoSeasons.map(season => season.preSelection = getConsensusSelection(season));
-        mapInfosPerSeason = firstNSeasons.concat(lastTwoSeasons);
-    }
-
+function addPreSelection(seasons, mapInfosPerSeason) {
+    mapInfosPerSeason.slice(0, 2).map(season => season.preSelection = true);
     return mapInfosPerSeason;
-}
-
-function getConsensusSelection(season) {
-    const consensus = getSeasonConsensus(season.seasonName);
-    if (consensus >= 50) {
-        return true;
-    }
-    return false;
-}
-
-function getSeasonConsensus(seasonName) {
-    const seasonConsensusString = document.getElementById(`${seasonName} Consensus`).textContent;
-    const seasonConsensusValue = seasonConsensusString.replace(/%/g, "");
-    return seasonConsensusValue;
-}
-
-function getAllSeasons() {
-    const seasonTrs = document.evaluate(SEASON_TR_XPATH_EXPRESSION, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-    const seasons = new Array();
-    for (var i = 0; i < seasonTrs.snapshotLength; i++) {
-        const currentSeasonsTr = seasonTrs.snapshotItem(i);
-
-        if (currentSeasonsTr.className != "season-results") {
-            seasons.push(getSeasonsWithSeasonInformation(currentSeasonsTr));
-        }
-    }
-    return seasons;
-}
-
-function getSeasonsWithSeasonInformation(seasonTr) {
-    const tableColumns = seasonTr.getElementsByTagName("td");
-    return {
-        seasonName: tableColumns[0].innerText,
-        seasonInformation: buildLinkInformation(tableColumns[1])
-    }
-}
-
-function buildLinkInformation(seasonTd) {
-    const links = seasonTd.getElementsByTagName("a");
-    if (links.length == 2) {
-        return {
-            seasonUrl: links[0].href,
-            additionalUrl: links[1].href,
-            additionalInfo: links[1].textContent
-        }
-    }
-    return {
-        seasonUrl: links[0].href
-    }
 }
 
 function buildTable(mapInfos) {
@@ -195,15 +129,31 @@ function buildTable(mapInfos) {
         insertCell(row, percentageWon, countWins, "Das Team gewann " + map + " " + countWins + " von " + countMapPlayed + " mal.");
         insertCell(row, percentageLost, countLosses, "Das Team verlor " + map + " " + countLosses + " von " + countMapPlayed + " mal.");
     });
-    const teamLog = document.evaluate(TEAM_LOG_XPATH_EXPRESSION, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-    teamLog.parentNode.insertBefore(table, teamLog);
+    document.getElementById("flashkill-map-statistics-table").appendChild(table);
     const dataTable = makeDatatable(table.id);
     dataTable.$('td').tooltipster();
 }
 
+function prepareDOM() {
+    const mapStatisticsDiv = document.getElementById("flashkill-map-statistics");
+    const dividerDiv = document.createElement("div");
+    dividerDiv.appendChild(document.createElement("br"));
+    mapStatisticsDiv.appendChild(dividerDiv);
+    const wrapperDiv = document.createElement("div");
+    const mapStatisticsToggleButtonDiv = document.createElement("div");
+    mapStatisticsToggleButtonDiv.id = "flashkill-map-statistics-toggle-button";
+    mapStatisticsToggleButtonDiv.style = "margin-bottom: 10px";
+    const mapStatisticsTableDiv = document.createElement("div");
+    mapStatisticsTableDiv.id = "flashkill-map-statistics-table";
+    wrapperDiv.className = "section-content";
+    wrapperDiv.appendChild(byFlashkillLink());
+    wrapperDiv.appendChild(mapStatisticsToggleButtonDiv);
+    wrapperDiv.appendChild(mapStatisticsTableDiv);
+    mapStatisticsDiv.appendChild(wrapperDiv);
+}
+
 function buildFilter(mapInfosPerSeason) {
     const select = createFilterSelectElement();
-    select.id = "maps-table-filter";
     addSeasonsToFilter(select, mapInfosPerSeason);
     insertFilter(select);
     makeMultiselect(select.id, mapInfosPerSeason);
@@ -229,8 +179,9 @@ function makeMultiselect(selectId, mapInfosPerSeason) {
 
 function insertHeading(filter) {
     const heading = document.createElement("h2");
-    heading.id = ("maps-table-header");
+    heading.id = "maps-table-header";
     heading.textContent = "Map Übersicht (BETA)";
+    heading.style = "margin-bottom: 10px";
     filter.parentNode.insertBefore(heading, filter);
 }
 
@@ -241,7 +192,7 @@ function insertFilter(filter) {
 
 function createFilterSelectElement() {
     const select = document.createElement("select");
-    select.id = "map-filter-select";
+    select.id = "maps-table-filter";
     select.setAttribute("multiple", "multiple");
     return select;
 }

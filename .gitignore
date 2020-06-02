@@ -1,4 +1,4 @@
 *.code-workspace
 node_modules/
-dist/content.js
+dist/content/
 dist/background.js

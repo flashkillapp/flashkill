@@ -306,21 +306,21 @@ function inject(playerInfo, memberCard) {
     if (playerInfo.faceitInfo != null) {
         const faceitInfo = playerInfo.faceitInfo;
 
-        const faceitDiv1 = document.createElement("div");
-        faceitDiv1.style.textAlign = "left";
-        faceitDiv1.style.float = "left";
-        faceitDiv1.style.paddingTop = "7px";
+        const eloDiv = document.createElement("div");
+        eloDiv.style.textAlign = "left";
+        eloDiv.style.float = "left";
+        eloDiv.style.paddingTop = "7px";
 
         const faceitTextA = document.createElement("a");
         faceitTextA.href = getFaceitLink(faceitInfo.nickname);
         faceitTextA.target = "_blank";
         faceitTextA.textContent = faceitInfo.games.csgo.faceit_elo;
 
-        faceitDiv1.textContent = "FACEIT: "
-        faceitDiv1.appendChild(faceitTextA);
+        eloDiv.textContent = "FACEIT: "
+        eloDiv.appendChild(faceitTextA);
 
-        const faceitDiv2 = document.createElement("div");
-        faceitDiv2.style.textAlign = "right";
+        const imageDiv = document.createElement("div");
+        imageDiv.style.textAlign = "right";
 
         const faceitImg = document.createElement("img");
         faceitImg.style.width = "28px";
@@ -333,15 +333,15 @@ function inject(playerInfo, memberCard) {
         faceitImageA.target = "_blank";
         faceitImageA.appendChild(faceitImg);
 
-        faceitDiv2.appendChild(faceitImageA);
+        imageDiv.appendChild(faceitImageA);
 
-        const eloDiv = document.createElement("div");
-        eloDiv.className = "txt-subtitle";
-        eloDiv.style.width = "17.5em";
-        eloDiv.appendChild(faceitDiv1);
-        eloDiv.appendChild(faceitDiv2);
+        const faceitDiv = document.createElement("div");
+        faceitDiv.className = "txt-subtitle";
+        faceitDiv.style.width = "17.5em";
+        faceitDiv.appendChild(eloDiv);
+        faceitDiv.appendChild(imageDiv);
 
-        memberCard.appendChild(eloDiv);
+        memberCard.appendChild(faceitDiv);
     }
 }
 

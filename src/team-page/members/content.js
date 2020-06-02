@@ -1,14 +1,24 @@
+
+const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
+const pageMatches = window.location.href.match(teamPageRegex);
+const contentScriptActive = pageMatches != undefined && pageMatches.length > 0;
+
+var seasonResultsToggled = false;//new Array(getNumberOfSeasons()).fill(false);
+
 const SEASON_START_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[2]/td[1]/a";
 const SEASON_END_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[last()]/td[1]/a";
 const SEASON_NAME_XPATH_EXPRESSION = "//div[@class='l2']";
 const MEMBER_LIST_XPATH_EXPRESSION = "//ul[@class='content-portrait-grid-l']/li";
-var seasonResultsToggled = false;//new Array(getNumberOfSeasons()).fill(false);
 
 // improveMemberTable();
 
 // improveResultsTable();
 
-improveMemberCards();
+if (contentScriptActive) {
+    // execute content script
+
+    improveMemberCards();
+}
 
 async function getSeasonStartAndEndDates(seasonUrl) {
     //TODO: fetch Logik in background.js

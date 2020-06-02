@@ -2,10 +2,6 @@
 import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
 import { insertMapStatistics } from "../maps/content";
 
-const teamPageRegex = /https:\/\/liga\.99damage\.de\/de\/leagues\/teams\/.*/
-const pageMatches = window.location.href.match(teamPageRegex);
-const contentScriptActive = pageMatches != undefined && pageMatches.length > 0;
-
 class Season {
     name: string;
     startDate: number;
@@ -40,15 +36,12 @@ const seasons = [
     new Season('Saison 1', '09 Aug 2015', '25 Oct 2015', 65),
 ];
 
-if (contentScriptActive) {
-    // execute content script
-    const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
-    const teamId = Number(window.location.href.match(teamIdRegex)[1]);
+const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
+const teamId = Number(window.location.href.match(teamIdRegex)[1]);
 
-    insertDataTablesCss();
+insertDataTablesCss();
 
-    insertMatchResults(teamId);
-}
+insertMatchResults(teamId);
 
 export interface ApiMatch {
     id: number;

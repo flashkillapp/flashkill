@@ -12,5 +12,5 @@ function addTeamsButton() {
     const teamsLi = document.createElement("li");
     teamsLi.appendChild(teamsA);
 
-    teamsLi.parentNode.insertBefore(teamsLi, nextLi);
+    nextLi.parentNode.insertBefore(teamsLi, nextLi);
 }

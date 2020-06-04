@@ -1,7 +1,8 @@
 addTeamsButton();
 
-function addTeamsButton() {
+function addTeamsButton() : void {
     const nextLi = document.querySelector("#header-nav > nav > ul > li:nth-child(3)");
+
     if (!nextLi) {
         return;
     }

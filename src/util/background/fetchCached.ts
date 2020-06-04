@@ -3,7 +3,7 @@ const ONE_DAY_IN_SECONDS = 86400;
 const ONE_WEEK_IN_SECONDS = ONE_DAY_IN_SECONDS * 7;
 const MATCH_DATE_XPATH_EXPRESSION = "/html/body/div[1]/main/section[1]/div/div[2]/div[1]/span/text()";
 
-export async function fetchCached(url, cacheValidCondition = defaultCacheValidCondition, extractor = response => response.text(), header = null) {
+export async function fetchCached(url, cacheValidCondition = defaultCacheValidCondition, extractor = response => response.text(), header = null) : Promise<string> {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(url, cachedItems => {
             if (cachedItems[url]) {

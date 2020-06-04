@@ -1,6 +1,7 @@
 
 import { byFlashkillLink } from "../seasons/content";
-import { getMapImage } from "../../util/content/util"
+import { getMapImage } from "../../util/content/util";
+import DataTable from "../../../dist/thirdParty/jquery.dataTables";
 
 var mapsTableShown = false;
 
@@ -122,7 +123,7 @@ function buildTable(mapInfos) {
         const row = body.insertRow(-1);
         const mapCell = row.insertCell(-1);
         mapCell.textContent = map;
-        mapCell.style = "background-image:url(" + getMapImage(map) + "); text-align:center; background-size:cover; color:#fff; text-shadow:0 0 4px #000, 0px 0 4px #000, 0px 0 3px #000"
+        mapCell.setAttribute("style", "background-image:url(" + getMapImage(map) + "); text-align:center; background-size:cover; color:#fff; text-shadow:0 0 4px #000, 0px 0 4px #000, 0px 0 3px #000");
         insertCell(row, percentageMapPlayed, countMapPlayed, "Das Team spielte " + map + " " + countMapPlayed + " mal.");
         insertCell(row, percentagePicked, countPicked, map + " war zum Pickzeitpunkt noch " + countPickable + " mal pickbar und " + countPicked + " mal davon pickte das Team die Map.", countPickable);
         insertCell(row, percentageFirstBan, countFirstBan, "Das Team bannte " + map + " im First Ban " + countFirstBan + " mal, von den " + countFirstBanable + " mal, als sie vorher noch nicht gebannt wurde.", countFirstBanable);
@@ -143,7 +144,7 @@ function prepareDOM() {
     const wrapperDiv = document.createElement("div");
     const mapStatisticsToggleButtonDiv = document.createElement("div");
     mapStatisticsToggleButtonDiv.id = "flashkill-map-statistics-toggle-button";
-    mapStatisticsToggleButtonDiv.style = "margin-bottom: 10px";
+    mapStatisticsToggleButtonDiv.setAttribute("style", "margin-bottom: 10px");
     const mapStatisticsTableDiv = document.createElement("div");
     mapStatisticsTableDiv.id = "flashkill-map-statistics-table";
     wrapperDiv.className = "section-content";
@@ -182,7 +183,7 @@ function insertHeading(filter) {
     const heading = document.createElement("h2");
     heading.id = "maps-table-header";
     heading.textContent = "Map Übersicht (BETA)";
-    heading.style = "margin-bottom: 10px";
+    heading.setAttribute("style", "margin-bottom: 10px");
     filter.parentNode.insertBefore(heading, filter);
 }
 
@@ -210,7 +211,7 @@ function addSeasonToFilter(select, mapInfoPerSeason) {
     select.appendChild(option);
 }
 
-function onMapsFilterOptionClicked(mapInfosPerSeason, element) {
+function onMapsFilterOptionClicked(mapInfosPerSeason, element: HTMLElement[]) {
     const selectedSeasons = Array.from(element).filter(opt => opt.selected).map(opt => opt.value);
     const mapInfosToShow = mapInfosPerSeason.filter(mapInfoPerSeason => selectedSeasons.some(selectedSeason => selectedSeason == mapInfoPerSeason.seasonName))
         .flatMap(mapInfoPerSeason => mapInfoPerSeason.mapInfos);

@@ -1,5 +1,5 @@
 
-var seasonResultsToggled = false;//new Array(getNumberOfSeasons()).fill(false);
+var seasonResultsToggled = new Array(15).fill(false);
 
 const SEASON_START_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[2]/td[1]/a";
 const SEASON_END_DATE_XPATH_EXPRESSION = "//table[@class='league_table_matches']/tbody/tr[last()]/td[1]/a";
@@ -24,10 +24,10 @@ async function getSeasonStartAndEndDates(seasonUrl) {
     }
     const startDateRawElements = seasonDocument.evaluate(SEASON_START_DATE_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
     const endDateRawElements = seasonDocument.evaluate(SEASON_END_DATE_XPATH_EXPRESSION, seasonDocument, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null); 
-    const startDateRaw = startDateRawElements.snapshotItem(0).text.trim();
-    const endDateRaw = endDateRawElements.snapshotItem(0).text.trim();
+    const startDateRaw = startDateRawElements.snapshotItem(0).textContent.trim();
+    const endDateRaw = endDateRawElements.snapshotItem(0).textContent.trim();
     var startDate = new Date(formatDateToStandard(startDateRaw));
-    startDate = startDate.setDate(startDate.getDate() - 7);
+    startDate.setDate(startDate.getDate() - 7);
     return new SeasonBounds(seasonName, new Date(startDate), new Date(formatDateToStandard(endDateRaw)));
 }
 
@@ -43,7 +43,7 @@ function improveResultsTable() {
     headerTr.appendChild(divisionTh);
     const resultsTh = document.createElement("th");
     resultsTh.textContent = "Ergebnisse";
-    resultsTh.colSpan = "2";
+    resultsTh.colSpan = 2;
     headerTr.appendChild(resultsTh);
     const konsensTh = document.createElement("th");
     konsensTh.textContent = "Konsens";
@@ -66,7 +66,7 @@ function insertMembersPerSeason() {
         for (var i = 0; i < seasonMembers.length; i++) {
             const konsensTd = document.createElement("td");
             const seasonTr = resultsTableRows[i];
-            const seasonName = seasonTr.firstChild.nextSibling.innerText;
+            const seasonName = seasonTr.firstChild.nextSibling.textContent;
             konsensTd.id = `${seasonName} Consensus`;
             konsensTd.textContent = getConsensusFromSeasonMembers(seasonMembers[i])+"%";
             konsensTd.title = seasonMembers[i].join(", ");
@@ -234,6 +234,10 @@ function getMonthNumber(monthName) {
 }
 
 class SeasonBounds {
+    seasonNumber: number;
+    startDate: Date;
+    endDate: Date;
+
     constructor(seasonNumber, startDate, endDate) {
         this.seasonNumber = seasonNumber;
         this.startDate = startDate;
@@ -381,21 +385,6 @@ function getTeamShorthand() {
     return teamShorthand.trim();
 }
 
-function insertSeasonResults(season) {
-    const seasonsTableBody = document.getElementById("content").getElementsByTagName("table")[2].getElementsByTagName("tbody")[0];
-    const seasonTr = Array.from(seasonsTableBody.getElementsByTagName("tr")).filter(tr => tr.parentNode == seasonsTableBody)[getActualTableIndexForSeason(season)];
-    const resultsDiv = document.createElement("div");
-    const resultsTr = document.createElement("tr");
-    resultsTr.className = "season-results";
-    const resultsTd = document.createElement("td");
-    resultsTd.colSpan = 5;
-    const seasonTd = seasonTr.getElementsByTagName("td")[1];
-    resultsTr.appendChild(resultsTd);
-    resultsTd.appendChild(resultsDiv);
-    seasonTr.parentNode.insertBefore(resultsTr, seasonTr.nextSibling);
-    insertResultsTable(resultsDiv, seasonTd, getTeamName(), getTeamShorthand(), season);
-}
-
 function removeSeasonResults(season) {
     const table = document.getElementById("content").getElementsByTagName("table")[2];
     const seasonsTableBody = document.getElementById("content").getElementsByTagName("table")[2].getElementsByTagName("tbody")[0];
@@ -419,7 +408,6 @@ function getSeasonResultsButton(season) {
     seasonResult.addEventListener("click", () => {
         if (seasonResultsToggled[season] == false) {
             const seasonUrl = "";
-            insertSeasonResults(season);
             seasonResult.textContent = "Ergebnisse ausblenden";
             seasonResultsToggled[season] = true;
         } else {
@@ -431,7 +419,7 @@ function getSeasonResultsButton(season) {
     seasonResult.href = "javascript:void(0);"
     const div = document.createElement("div");
     div.className = "ylinks";
-    div.style = "float: left; margin-top: -3px; margin-right: 5px;";
+    div.setAttribute("style", "float: left; margin-top: -3px; margin-right: 5px;");
     div.appendChild(seasonResult);
     return div;
 }

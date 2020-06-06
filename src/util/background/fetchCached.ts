@@ -1,9 +1,10 @@
+
 const DEFAULT_CACHE_TIME = 3600;
 const ONE_DAY_IN_SECONDS = 86400;
 const ONE_WEEK_IN_SECONDS = ONE_DAY_IN_SECONDS * 7;
 const MATCH_DATE_XPATH_EXPRESSION = "/html/body/div[1]/main/section[1]/div/div[2]/div[1]/span/text()";
 
-export async function fetchCached(url, cacheValidCondition = defaultCacheValidCondition, extractor = response => response.text(), header = null) : Promise<string> {
+export async function fetchCached<T>(url: string, cacheValidCondition = defaultCacheValidCondition, extractor: (Response) => Promise<T> = response => response.text(), header = null) : Promise<T> {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(url, cachedItems => {
             if (cachedItems[url]) {
@@ -24,14 +25,6 @@ export async function fetchCached(url, cacheValidCondition = defaultCacheValidCo
             });
         });
     });
-}
-
-export function faceitExtractor(faceitResponse) {
-    if (faceitResponse.ok) {
-        return faceitResponse.json();
-    } else {
-        return null;
-    }
 }
 
 export function cacheOnlyPastMatches(cacheResponse) {

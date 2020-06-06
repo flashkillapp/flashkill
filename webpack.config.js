@@ -29,8 +29,8 @@ const backgroundConfig = {
 
 const contentScripts = [
     'content.ts',
-    'team-page/seasons/content.ts',
-    'team-page/members/content.ts',
+    'team-page/seasons/index.ts',
+    'team-page/members/index.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {

@@ -8,7 +8,6 @@ const mapImageOverpass = "https://cdn0.gamesports.net/map_thumbs_big/295.jpg?0";
 const mapImageVertigo = "https://cdn0.gamesports.net/map_thumbs_big/417.jpg?1554321447";
 const mapImageNuke = "https://cdn0.gamesports.net/map_thumbs_big/91.jpg?1457434550";
 
-
 export function insertDataTablesCss() : void {
     const datatablescss = document.createElement("link");
     datatablescss.setAttribute("rel", "stylesheet");

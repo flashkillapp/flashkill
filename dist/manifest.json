@@ -24,8 +24,8 @@
                 "thirdParty/jquery.dataTables.js",
                 "thirdParty/tooltipster.bundle.min.js",
                 "thirdParty/jquery.multiselect.js",
-                "content/team-page/members/content.js",
-                "content/team-page/seasons/content.js"
+                "content/team-page/members/index.js",
+                "content/team-page/seasons/index.js"
             ],
             "css": [
                 "thirdParty/jquery.multiselect.css",

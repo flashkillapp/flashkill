@@ -1,66 +1,110 @@
 
-import { fetchCached, cacheForOneDay, faceitExtractor } from "../../util/background/fetchCached";
+import { fetchCached, cacheForOneDay } from "../../util/background/fetchCached";
 import UINT64 from "../../../dist/thirdParty/uint64.js";
 
 const STEAM_NAME_XPATH_EXPRESSION = "//head/title";
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = "Steam Community :: ";
 
+export enum MemberRequestTypes {
+    QueryPlayerInfos = "queryPlayerInfos",
+    QuerySteamLink = "querySteamLink",
+}
+
+export interface PlayerInfoRequest {
+    contentScriptQuery: typeof MemberRequestTypes.QueryPlayerInfos;
+    steamIds: string[];
+}
+
+export interface SteamLinkRequest {
+    contentScriptQuery: typeof MemberRequestTypes.QuerySteamLink;
+    steamId: string;
+}
+
+type MemberRequest = PlayerInfoRequest | SteamLinkRequest;
+
 chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.contentScriptQuery == "queryPlayerInfo") {
-            getPlayerInfo(request.steamIds).then(playerInfo => {
-                sendResponse(playerInfo);
-            }).catch(console.log);
-            return true;  // Will respond asynchronously.
-        }
-        if (request.contentScriptQuery == "querySteamLink") {
-            sendResponse(getSteamLink(getSteamId64(request.steamId)));
-            return true;
+    function (request: MemberRequest, sender, sendResponse) : boolean {
+        switch (request.contentScriptQuery) {
+            case MemberRequestTypes.QueryPlayerInfos: {
+                getPlayerInfo(request.steamIds).then(playerInfos => {
+                    sendResponse(playerInfos);
+                }).catch(console.log);
+                return true;  // Will respond asynchronously.
+            }
+
+            case MemberRequestTypes.QuerySteamLink: {
+                sendResponse(getSteamLink(getSteamId64(request.steamId)));
+                return true;
+            }
+
+            default:
+                return false;
         }
     }
 );
 
-async function getPlayerInfo(steamIds) {
+async function getPlayerInfo(steamIds: string[]) : Promise<PlayerInfo[]> {
     return Promise.all(steamIds.map(async steamId => {
         const steamId64 = getSteamId64(steamId);
-        const faceitInfo = await getFaceitInfo(steamId64);
+        const faceitInfo = await findOnFaceit(steamId64);
         const steamName = await getSteamName(steamId64);
         return {
             steamId,
             steamId64,
             faceitInfo,
             steamName
-        };
+        } as PlayerInfo;
     }));
 }
 
-async function getFaceitInfo(steamId64) {
-    return findOnFaceit(steamId64);
+interface FaceitGames {
+    csgo: FaceitGame;
 }
 
-async function findOnFaceit(steamId64) {
+interface FaceitGame {
+    skill_level: number;
+    faceit_elo: number;
+}
+
+export interface FaceitInfo {
+    nickname: string;
+    games: FaceitGames;
+}
+
+export interface PlayerInfo {
+    steamId: string;
+    steamId64: string;
+    faceitInfo: FaceitInfo;
+    steamName: string;
+}
+
+function faceitExtractor(faceitResponse: Response) : Promise<FaceitInfo> {
+    if (faceitResponse.ok) {
+        return faceitResponse.json();
+    } else {
+        return null;
+    }
+}
+
+async function findOnFaceit(steamId64: string) : Promise<FaceitInfo> {
     const url = `https://open.faceit.com/data/v4/players?game=csgo&game_player_id=${steamId64}`;
-    return fetchCached(url, cacheForOneDay, faceitExtractor, {
+    return fetchCached<FaceitInfo>(url, cacheForOneDay, faceitExtractor, {
         headers: {
             "Authorization": " Bearer def684c3-589e-415f-a35f-ec6f1aef79cb"
         }
     });
 }
 
-async function getSteamName(steamId64) {
+async function getSteamName(steamId64: string) : Promise<string> {
     const profileLink = getSteamLink(steamId64);
-    const html = await fetchCached(profileLink, cacheForOneDay);
+    const html = await fetchCached<string>(profileLink, cacheForOneDay);
     var profileDoc = new DOMParser().parseFromString(html, "text/html");
     var nameElements = profileDoc.evaluate(STEAM_NAME_XPATH_EXPRESSION, profileDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     const pageTitle = nameElements.snapshotItem(0).textContent;
     return pageTitle.substring(pageTitle.lastIndexOf(STEAM_PROFILE_PAGE_TITLE_PREFIX) + STEAM_PROFILE_PAGE_TITLE_PREFIX.length);
 }
 
-function getSteamLink(steamId64) {
-    return `https://steamcommunity.com/profiles/${steamId64}`;
-}
-
-function getSteamId64(steamId) {
+function getSteamId64(steamId: string) : string {
     const matches = steamId.match("steam_([0-5]):([0-1]):([0-9]+)");
     if (matches == null) {
         return "";
@@ -70,4 +114,8 @@ function getSteamId64(steamId) {
     const instance = 1;
     const accountId = (parseInt(matches[3], 10) * 2) + parseInt(matches[2], 10);
     return new UINT64(accountId, (universe << 24) | (type << 20) | (instance)).toString(10);
+}
+
+export function getSteamLink(steamId64: string) : string {
+    return `https://steamcommunity.com/profiles/${steamId64}`;
 }

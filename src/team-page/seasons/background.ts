@@ -1,11 +1,27 @@
 
+export enum SeasonRequestType {
+    QueryApiMatches = "queryApiMatches",
+}
+
+export interface ApiMatchesRequest {
+    contentScriptQuery: typeof SeasonRequestType.QueryApiMatches;
+    teamId: number;
+}
+
+type SeasonRequest = ApiMatchesRequest;
+
 chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.contentScriptQuery == "apiMatches") {
-            getApiMatches(request.teamId).then(matches => {
-                sendResponse(matches);
-            })
-            return true;
+    function (request: SeasonRequest, sender, sendResponse) : boolean {
+        switch (request.contentScriptQuery) {
+            case SeasonRequestType.QueryApiMatches: {
+                getApiMatches(request.teamId).then(matches => {
+                    sendResponse(matches);
+                })
+                return true;
+            }
+            
+            default:
+                return false;
         }
     }
 );

@@ -1,18 +1,20 @@
 
 import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
 import { insertMapStatistics } from "../maps/content";
+// import { getConsensDiv } from "../members/content";
+import { SeasonRequestType } from "./background";
 
-class Season {
+export class Season {
     name: string;
-    startDate: number;
-    endDate: number;
+    startDate: Date;
+    endDate: Date;
     id: number;
     matches: ApiMatch[];
 
     constructor(name: string, startDate: string, endDate: string, id: number) {
         this.name = name;
-        this.startDate = Date.parse(startDate);
-        this.endDate = Date.parse(endDate);
+        this.startDate = new Date(Date.parse(startDate));
+        this.endDate = new Date(Date.parse(endDate));
         this.id = id;
         this.matches = [];
     }
@@ -84,7 +86,7 @@ function swapTeams(map: ApiMap): ApiMap {
 
 function insertMatchResults(teamId: number) {
     chrome.runtime.sendMessage(
-        { contentScriptQuery: "apiMatches", teamId },
+        { contentScriptQuery: SeasonRequestType.QueryApiMatches, teamId },
         matches => {
             for (let matchEntry in matches) {
                 let match = matches[matchEntry];
@@ -139,6 +141,7 @@ function insertSeasonResults(season: Season): void {
     seasonHeader.textContent = season.name;
     seasonDiv.appendChild(byFlashkillLink());
     seasonDiv.appendChild(seasonHeader);
+    // seasonDiv.appendChild(getConsensDiv(season));
 
     const matches = season.matches;
     const table = document.createElement("table");

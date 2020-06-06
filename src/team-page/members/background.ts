@@ -1,5 +1,6 @@
 
 import { fetchCached, cacheForOneDay, faceitExtractor } from "../../util/background/fetchCached";
+import UINT64 from "../../../dist/thirdParty/uint64.js";
 
 const STEAM_NAME_XPATH_EXPRESSION = "//head/title";
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = "Steam Community :: ";
@@ -51,7 +52,7 @@ async function getSteamName(steamId64) {
     const html = await fetchCached(profileLink, cacheForOneDay);
     var profileDoc = new DOMParser().parseFromString(html, "text/html");
     var nameElements = profileDoc.evaluate(STEAM_NAME_XPATH_EXPRESSION, profileDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-    const pageTitle = nameElements.snapshotItem(0).text;
+    const pageTitle = nameElements.snapshotItem(0).textContent;
     return pageTitle.substring(pageTitle.lastIndexOf(STEAM_PROFILE_PAGE_TITLE_PREFIX) + STEAM_PROFILE_PAGE_TITLE_PREFIX.length);
 }
 
@@ -68,5 +69,5 @@ function getSteamId64(steamId) {
     const type = 1;
     const instance = 1;
     const accountId = (parseInt(matches[3], 10) * 2) + parseInt(matches[2], 10);
-    return new UINT64(accountId, (universe << 24) | (type << 20) | (instance)).toString();
+    return new UINT64(accountId, (universe << 24) | (type << 20) | (instance)).toString(10);
 }

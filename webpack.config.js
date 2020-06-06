@@ -1,10 +1,10 @@
 
 const backgroundConfig = {
     entry: [
-        './src/team-page/maps/background.js',
-        './src/team-page/members/background.js',
-        './src/team-page/seasons/background.js',
-        './src/util/background/fetchCached.js',
+        './src/team-page/maps/background.ts',
+        './src/team-page/members/background.ts',
+        './src/team-page/seasons/background.ts',
+        './src/util/background/fetchCached.ts',
     ],
     module: {
         rules: [
@@ -28,9 +28,9 @@ const backgroundConfig = {
 }
 
 const contentScripts = [
-    'content.js',
+    'content.ts',
     'team-page/seasons/content.ts',
-    'team-page/members/content.js',
+    'team-page/members/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {

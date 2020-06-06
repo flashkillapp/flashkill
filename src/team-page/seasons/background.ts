@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-async function getApiMatches(teamId) {
+async function getApiMatches(teamId: number) {
     return fetch(`https://flashkill.smatify.com/api/team/${teamId}`).then(res => {
         return res.json();
     });

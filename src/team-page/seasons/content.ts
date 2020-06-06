@@ -1,7 +1,7 @@
 
-import { formatDate, insertDataTablesCss, getMapImage } from "../../util/content/util";
+import { formatDate, getMapImage } from "../../util/content/util";
 import { insertMapStatistics } from "../maps/content";
-// import { getConsensDiv } from "../members/content";
+import { getConsensDiv } from "../members/content";
 import { SeasonRequestType } from "./background";
 
 export class Season {
@@ -37,13 +37,6 @@ const seasons = [
     new Season('Saison 2', '07 Nov 2015', '07 Feb 2016', 67),
     new Season('Saison 1', '09 Aug 2015', '25 Oct 2015', 65),
 ];
-
-const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
-const teamId = Number(window.location.href.match(teamIdRegex)[1]);
-
-insertDataTablesCss();
-
-insertMatchResults(teamId);
 
 export interface ApiMatch {
     id: number;
@@ -84,7 +77,7 @@ function swapTeams(map: ApiMap): ApiMap {
     return map;
 }
 
-function insertMatchResults(teamId: number) {
+export function insertMatchResults(teamId: number) : void {
     chrome.runtime.sendMessage(
         { contentScriptQuery: SeasonRequestType.QueryApiMatches, teamId },
         matches => {
@@ -141,7 +134,7 @@ function insertSeasonResults(season: Season): void {
     seasonHeader.textContent = season.name;
     seasonDiv.appendChild(byFlashkillLink());
     seasonDiv.appendChild(seasonHeader);
-    // seasonDiv.appendChild(getConsensDiv(season));
+    seasonDiv.appendChild(getConsensDiv(season));
 
     const matches = season.matches;
     const table = document.createElement("table");
@@ -169,7 +162,7 @@ function insertSeasonResults(season: Season): void {
         if (match.maps.length > 0) {
             match.maps.forEach(map => {
                 var row = body.insertRow(0);
-                fillMapRow(row, match.id, map, match.team1, match.team2, match.createdAt);
+                fillMapRow(row, match, map);
             });
         }
     });
@@ -213,7 +206,8 @@ function insertSeasonResults(season: Season): void {
     });
 }
 
-function fillMapRow(row, matchId, map, team1, team2, matchDate) {
+function fillMapRow(row: HTMLTableRowElement, match: ApiMatch, map: ApiMap) : void {
+    const { id: matchId, team1, team2, createdAt: matchDate } = match
     const dateC = row.insertCell(-1);
     const team1C = row.insertCell(-1);
     const score1C = row.insertCell(-1);
@@ -233,17 +227,17 @@ function fillMapRow(row, matchId, map, team1, team2, matchDate) {
     team2A.href = `https://liga.99damage.de/de/leagues/teams/${team2.id}`;
     team2A.target = "_blank";
     team2C.appendChild(team2A);
-    score1C.textContent = map.score1;
-    score2C.textContent = map.score2;
+    score1C.textContent = map.score1.toString();
+    score2C.textContent = map.score2.toString();
     mapC.textContent = map.map;
     const mapImageLink = getMapImage(map.map);
-    mapC.style = `
+    mapC.setAttribute("style", `
         background-image:url(${mapImageLink});
         text-align:center;
         background-size:cover;
         color:#fff;
         text-shadow:0 0 4px #000, 0px 0 4px #000, 0px 0 3px #000;
-    `;
+    `);
     const linkA = document.createElement("a");
     linkA.href = `https://liga.99damage.de/de/leagues/matches/${matchId}`;
     linkA.target = "_blank";

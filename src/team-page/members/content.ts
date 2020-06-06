@@ -5,8 +5,6 @@ import { MemberRequestTypes, getSteamLink, PlayerInfo } from "./background";
 const MEMBER_NAMES_XPATH_EXPRESSION = "//*[@id='container']/main/section[2]/div[3]/ul/li/a[2]/h3";
 const TEAM_LOG_ROWS_XPATH_EXPRESSION = "//*[@id='container']/main/section[4]/div/div/div[2]/table/tbody/tr";
 
-improveMemberCards();
-
 function getConsensusFromSeasonMembers(seasonMembers) {
     const teamMemberEntries = document.evaluate(MEMBER_NAMES_XPATH_EXPRESSION, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     return Math.round(100*(seasonMembers.length/teamMemberEntries.snapshotLength));
@@ -194,7 +192,7 @@ interface MemberCardWrapper {
     steamId: string;
 }
 
-function improveMemberCards() : void {
+export function improveMemberCards() : void {
     const memberCards = document.getElementsByClassName("content-portrait-grid-l")[0].getElementsByTagName("li");
     var memberCardWrappers : MemberCardWrapper[] = [];
     for (var i = 0; i < memberCards.length; i++) {

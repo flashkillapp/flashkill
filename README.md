@@ -1,9 +1,6 @@
 # flashkill Browser Extension
 
 This browser extension aims to improve the user experience on for both players and spectators of the 99Damage league websites.
-Recently 99Damage rolled out an update to their league pages which requires a major overhaul of the extension's code base.
-To get some help with this work, we decided to make the code base open source on 24.05.2020.
-Because this was an afterthought, we are unfortunately not able to provide the full commit history.
 
 # Install
 
@@ -19,7 +16,7 @@ Because this was an afterthought, we are unfortunately not able to provide the f
 - Steam Profile Name/Link on team page ✔️
 - Faceit Rank/Elo/Link on team page ✔️
 - Show pick/ban/result statistics per map ✔️
-- Compare current lineup to previous seasons ❌
+- Compare current lineup to previous seasons ✔️
 
 # Links
 

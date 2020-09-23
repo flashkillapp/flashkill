@@ -20,7 +20,7 @@ This browser extension aims to improve the user experience on for both players a
 
 # Links
 
-- [99Damage discussion thread](https://csgo.99damage.de/de/forums/577-counter-strike-global-offensive/581-wettkampfkeller/606502-flashkill-extension&page=last)
+- [99Damage discussion thread](https://csgo.99damage.de/de/forums/577-counter-strike-global-offensive/581-wettkampfkeller/634963-flashkill-updates&page=last)
 
 # Contibute
 

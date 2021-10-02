@@ -11,12 +11,12 @@ This browser extension aims to improve the user experience on for both players a
 
 # Features
 
-- Search teams by name across all divisions - now obsolete, [use this](https://liga.99damage.de/de/leagues/teams) instead
-- Show season results and match links on team page ✔️
+- Search teams by name across all divisions - now obsolete, [use this](https://liga.99damage.de/leagues/teams) instead
+- Show season results and match links on team page ❌️
 - Steam Profile Name/Link on team page ✔️
 - Faceit Rank/Elo/Link on team page ✔️
-- Show pick/ban/result statistics per map ✔️
-- Compare current lineup to previous seasons ✔️
+- Show pick/ban/result statistics per map ❌️
+- Compare current lineup to previous seasons ❌️
 
 # Links
 

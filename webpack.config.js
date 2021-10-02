@@ -1,9 +1,7 @@
 
 const backgroundConfig = {
     entry: [
-        './src/team-page/maps/background.ts',
         './src/team-page/members/background.ts',
-        './src/team-page/seasons/background.ts',
         './src/util/background/fetchCached.ts',
     ],
     module: {
@@ -29,7 +27,6 @@ const backgroundConfig = {
 
 const contentScripts = [
     'content.ts',
-    'team-page/seasons/index.ts',
     'team-page/members/index.ts',
 ];
 

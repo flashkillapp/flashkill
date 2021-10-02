@@ -1,41 +1,21 @@
-
-import { Season } from "../seasons/content";
 import { MemberRequestTypes, getSteamLink, PlayerInfo } from "./background";
 
-const MEMBER_NAMES_XPATH_EXPRESSION = "//*[@id='container']/main/section[2]/div[3]/ul/li/a[2]/h3";
 const TEAM_LOG_ROWS_XPATH_EXPRESSION = "//*[@id='container']/main/section[4]/div/div/div[2]/table/tbody/tr";
 
-function getConsensusFromSeasonMembers(seasonMembers) {
-    const teamMemberEntries = document.evaluate(MEMBER_NAMES_XPATH_EXPRESSION, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    return Math.round(100*(seasonMembers.length/teamMemberEntries.snapshotLength));
-}
-
-export function getConsensDiv(season: Season) : HTMLDivElement {
-    const seasonMembers = getMembersPerSeason(season);
-    const konsensDiv = document.createElement("div");
-
-    konsensDiv.id = `${season.name} Consensus`;
-    konsensDiv.textContent = `Konsens: ${getConsensusFromSeasonMembers(seasonMembers)}%`;
-    konsensDiv.title = seasonMembers.join(", ");
-    konsensDiv.style.verticalAlign = "top";
-
-    return konsensDiv;
-}
-
-function getDateFromTeamLogEntry(dateTd: HTMLTableDataCellElement) : Date {
+function getDateFromTeamLogEntry(dateTd: HTMLTableDataCellElement): Date {
     var dateContent = dateTd.getElementsByTagName("span")[0].getElementsByTagName("span")[0];
     var dateStringRaw = dateContent.title;
     return new Date(dateStringRaw);
 }
 
-function compareTeamLogEntries(a: MemberAction, b: MemberAction) : number {
-  if ( a.date < b.date ){
-    return -1;
-  }
-  if ( a.date > b.date ){
-    return 1;
-  }
-  return 0;
+function compareTeamLogEntries(a: MemberAction, b: MemberAction): number {
+    if (a.date < b.date) {
+        return -1;
+    }
+    if (a.date > b.date) {
+        return 1;
+    }
+    return 0;
 }
 
 interface Membership {
@@ -44,7 +24,7 @@ interface Membership {
     endDate: Date;
 }
 
-function getMemberships(members: string[]) : Membership[] {
+function getMemberships(members: string[]): Membership[] {
     const memberActions = getRelevantTeamLogRows(members);
     var memberships = new Array();
     for (var i = 0; i < memberActions.length; i++) {
@@ -52,11 +32,11 @@ function getMemberships(members: string[]) : Membership[] {
             const currentMember = memberActions[i].member;
             for (var j = i; j <= memberActions.length; j++) {
                 if (j === memberActions.length) {
-                    memberships.push({member: currentMember, startDate: memberActions[i].date, endDate: new Date(Date.now())} as Membership);
+                    memberships.push({ member: currentMember, startDate: memberActions[i].date, endDate: new Date(Date.now()) } as Membership);
                     break;
                 }
                 if (memberActions[j].member === currentMember && memberActions[j].action === Action.Leave) {
-                    memberships.push({member: currentMember, startDate: memberActions[i].date, endDate: memberActions[j].date} as Membership);
+                    memberships.push({ member: currentMember, startDate: memberActions[i].date, endDate: memberActions[j].date } as Membership);
                     break;
                 }
             }
@@ -82,7 +62,7 @@ class MemberAction {
     }
 }
 
-function getRelevantTeamLogRows(members: string[]) : MemberAction[] {
+function getRelevantTeamLogRows(members: string[]): MemberAction[] {
     const teamLogRowEntries = document.evaluate(TEAM_LOG_ROWS_XPATH_EXPRESSION, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     var relevantLogs = new Array();
     //Filter the rows for the patterns
@@ -141,40 +121,7 @@ function getRelevantTeamLogRows(members: string[]) : MemberAction[] {
     return relevantLogs.sort(compareTeamLogEntries);
 }
 
-function wasMembershipDuringSeason(membership: Membership, season: Season) : boolean {
-    if (membership.startDate < season.startDate && membership.endDate > season.startDate) {
-        return true;
-    }
-    if (membership.startDate > season.startDate && membership.startDate < season.endDate) {
-        return true;
-    }
-    return false;
-}
-
-function getMembersPerSeason(season: Season) : string[] {
-    const teamMemberEntries = document.evaluate(MEMBER_NAMES_XPATH_EXPRESSION, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    const teamMembers: string[] = [];
-    for (var i = 0; i < teamMemberEntries.snapshotLength; i++) {
-        teamMembers.push(teamMemberEntries.snapshotItem(i).textContent);
-    }
-
-    const membershipsMembers = getMemberships(teamMembers);
-
-    //Check for each season if Member had membership during timeframe update Season with Membername
-    var seasonMembers = new Array();
-    teamMembers.forEach(teamMember => {
-        Array.from(membershipsMembers).forEach(membership => {
-            if (membership.member === teamMember && wasMembershipDuringSeason(membership, season)) {
-                if (!seasonMembers.includes(teamMember)) {
-                    seasonMembers.push(teamMember);
-                }
-            }
-        });
-    });
-    return seasonMembers;
-}
-
-function insertFaceitEloMean(faceitEloMean: number) : void {
+function insertFaceitEloMean(faceitEloMean: number): void {
     const faceitEloMeanH2 = document.createElement("h2");
     faceitEloMeanH2.textContent = "FACEIT Elo: " + Math.round(faceitEloMean);
     faceitEloMeanH2.title = "Durchschnittliche FACEIT Elo";
@@ -182,7 +129,7 @@ function insertFaceitEloMean(faceitEloMean: number) : void {
     teamHeader.parentNode.appendChild(faceitEloMeanH2);
 }
 
-function calcFaceitEloMean(playerInfos: PlayerInfo[]) : number {
+function calcFaceitEloMean(playerInfos: PlayerInfo[]): number {
     const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length;
     return average(playerInfos.filter(playerInfo => playerInfo.faceitInfo != null).map(playerInfo => playerInfo.faceitInfo.games.csgo.faceit_elo));
 }
@@ -192,12 +139,12 @@ interface MemberCardWrapper {
     steamId: string;
 }
 
-export function improveMemberCards() : void {
+export const improveMemberCards = (): void => {
     const memberCards = document.getElementsByClassName("content-portrait-grid-l")[0].getElementsByTagName("li");
-    var memberCardWrappers : MemberCardWrapper[] = [];
+    var memberCardWrappers: MemberCardWrapper[] = [];
     for (var i = 0; i < memberCards.length; i++) {
         const memberCard = memberCards[i];
-        memberCardWrappers.push( { memberCard: memberCard, steamId: getSteamId(memberCard) } as MemberCardWrapper );
+        memberCardWrappers.push({ memberCard: memberCard, steamId: getSteamId(memberCard) } as MemberCardWrapper);
     }
     const steamIds = memberCardWrappers.map(memberCard => { return memberCard.steamId });
     chrome.runtime.sendMessage(
@@ -211,9 +158,9 @@ export function improveMemberCards() : void {
             insertFaceitEloMean(faceitEloMean);
         }
     );
-}
+};
 
-function inject(playerInfo: PlayerInfo, memberCard: HTMLLIElement) : void {
+function inject(playerInfo: PlayerInfo, memberCard: HTMLLIElement): void {
     const { steamId64, steamName } = playerInfo;
 
     if (steamId64 != "") {
@@ -234,7 +181,7 @@ function inject(playerInfo: PlayerInfo, memberCard: HTMLLIElement) : void {
     }
 
     if (playerInfo.faceitInfo != null) {
-        const { faceitInfo: { nickname, games: { csgo : { skill_level, faceit_elo } } } } = playerInfo;
+        const { faceitInfo: { nickname, games: { csgo: { skill_level, faceit_elo } } } } = playerInfo;
 
         const eloDiv = document.createElement("div");
         eloDiv.style.textAlign = "left";
@@ -257,7 +204,7 @@ function inject(playerInfo: PlayerInfo, memberCard: HTMLLIElement) : void {
         faceitImg.style.height = "28px";
         faceitImg.src = getFaceitLevel(skill_level);
         faceitImg.alt = skill_level.toString();
-        
+
         const faceitImageA = document.createElement("a");
         faceitImageA.href = getFaceitLink(nickname);
         faceitImageA.target = "_blank";
@@ -275,14 +222,14 @@ function inject(playerInfo: PlayerInfo, memberCard: HTMLLIElement) : void {
     }
 }
 
-function getFaceitLevel(faceitLevel: number) : string {
+function getFaceitLevel(faceitLevel: number): string {
     return `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`;
 }
 
-function getFaceitLink(name: string) : string {
+function getFaceitLink(name: string): string {
     return `https://www.faceit.com/en/players/${name}`;
 }
 
-function getSteamId(memberCard: HTMLLIElement) : string {
+function getSteamId(memberCard: HTMLLIElement): string {
     return memberCard.getElementsByTagName("span")[0].textContent;
 }

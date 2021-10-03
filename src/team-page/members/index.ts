@@ -1,4 +1,3 @@
+import { improveTeamPage } from "./content";
 
-import { improveMemberCards } from "./content";
-
-improveMemberCards();
+improveTeamPage();

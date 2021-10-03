@@ -1,6 +1,4 @@
-addTeamsButton();
-
-function addTeamsButton() : void {
+export const addTeamsButton = (): void => {
     const nextLi = document.querySelector("#header-nav > nav > ul > li:nth-child(3)");
 
     if (!nextLi) {
@@ -14,4 +12,4 @@ function addTeamsButton() : void {
     teamsLi.appendChild(teamsA);
 
     nextLi.parentNode.insertBefore(teamsLi, nextLi);
-}
+};

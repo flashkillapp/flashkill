@@ -19,8 +19,8 @@ class AdditionalPlayerInfo extends LitElement {
   @property() steamId64: string;
   @property() steamName: string;
   @property() faceitNickname: string;
-  @property() faceitElo: number;
-  @property() faceitLevel: number;
+  @property({ type: Number }) faceitElo: number;
+  @property({ type: Number }) faceitLevel: number;
 
   static styles = css`
     .root {

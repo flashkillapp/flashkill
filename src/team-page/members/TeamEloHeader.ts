@@ -6,7 +6,7 @@ const teamEloHeader = 'flashkill-team-elo-header';
 
 @customElement(teamEloHeader)
 class TeamEloHeader extends LitElement {
-  @property() avgElo: number;
+  @property({ type: Number }) avgElo: number;
 
   static styles = css`
     :host {

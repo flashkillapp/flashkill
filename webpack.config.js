@@ -2,7 +2,6 @@
 const backgroundConfig = {
     entry: [
         './src/team-page/members/background.ts',
-        './src/util/background/fetchCached.ts',
     ],
     mode: 'none',
     module: {
@@ -27,12 +26,12 @@ const backgroundConfig = {
 }
 
 const contentScripts = [
-    'index.ts',
-    'team-page/members/index.ts',
+    'content.ts',
+    'team-page/members/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {
-    const jsFilePath = contentScriptPath.replace(".ts", ".js");
+    const jsFilePath = contentScriptPath.replace('.ts', '.js');
     return {
         entry: './src/' + contentScriptPath,
         mode: 'none',
@@ -50,7 +49,7 @@ const contentScriptConfigs = contentScripts.map(contentScriptPath => {
             ]
         },
         output: {
-            filename: 'content/' + jsFilePath,
+            filename: 'content/' + jsFilePath.replace('content', 'index'),
         },
         resolve: {
             extensions: ['.ts', '.js', '.tsx'],

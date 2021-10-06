@@ -1,8 +1,8 @@
-import { ID } from "@node-steam/id";
 import { FaceitInfo } from "./FaceitInfo";
 
 export interface PlayerInfo {
-    steamId: ID;
+    steamId: string;
+    steamId64: string;
     faceitInfo: FaceitInfo;
     steamName: string;
 }

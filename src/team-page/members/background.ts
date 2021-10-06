@@ -50,7 +50,8 @@ const getPlayerInfo = async (stringSteamIds: string[]): Promise<PlayerInfo[]> =>
         const faceitInfo = await findOnFaceit(steamId);
         const steamName = await getSteamName(steamId);
         return {
-            steamId,
+            steamId: stringSteamId,
+            steamId64: steamId.get64(),
             faceitInfo,
             steamName
         };
@@ -76,7 +77,7 @@ const findOnFaceit = async (steamId: ID): Promise<FaceitInfo> => {
 };
 
 const getSteamName = async (steamId: ID): Promise<string> => {
-    const profileLink = getSteamLink(steamId);
+    const profileLink = getSteamLink(steamId.get64());
     const html = await fetchCached<string>(profileLink, cacheForOneDay, htmlExtractor);
     var profileDoc = new DOMParser().parseFromString(html, "text/html");
     var nameElements = profileDoc.evaluate(STEAM_NAME_XPATH_EXPRESSION, profileDoc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);

@@ -1,5 +1,6 @@
 import { MemberRequestTypes } from "./background";
 import { PlayerInfo } from "../../model";
+import { component } from "../../util/component";
 import './AdditionalPlayerInfo';
 import './TeamEloHeader';
 
@@ -17,8 +18,7 @@ const avgFaceitElo = (playerInfos: PlayerInfo[]): number => {
 const injectAvgFaceitElo = (playerInfos: PlayerInfo[]): void => {
   const avgElo = avgFaceitElo(playerInfos);
   const teamHeader = document.getElementsByClassName("content-portrait-head")[0];
-  const teamEloHeader = document.createElement('flashkill-team-elo-header');
-  teamEloHeader.avgElo = avgElo;
+  const teamEloHeader = component('flashkill-team-elo-header', { avgElo });
   teamHeader.parentNode.appendChild(teamEloHeader);
 }
 
@@ -30,12 +30,16 @@ interface PlayerInfoWrapper {
 const injectAdditionalPlayerInfos = (playerInfos: PlayerInfoWrapper[]): void => {
   playerInfos.forEach(({ playerInfo, sourceElement }) => {
     if (playerInfo !== null) {
-      const additionalPlayerInfo = document.createElement('flashkill-additional-player-info');
-      additionalPlayerInfo.steamId64 = playerInfo.steamId64;
-      additionalPlayerInfo.steamName = playerInfo.steamName;
-      additionalPlayerInfo.faceitNickname = playerInfo.faceitInfo.nickname;
-      additionalPlayerInfo.faceitElo = playerInfo.faceitInfo.games.csgo.faceit_elo;
-      additionalPlayerInfo.faceitLevel = playerInfo.faceitInfo.games.csgo.skill_level;
+      const additionalPlayerInfo = component(
+        'flashkill-additional-player-info',
+        {
+          steamId64: playerInfo.steamId64,
+          steamName: playerInfo.steamName,
+          faceitNickname: playerInfo.faceitInfo.nickname,
+          faceitElo: playerInfo.faceitInfo.games.csgo.faceit_elo,
+          faceitLevel: playerInfo.faceitInfo.games.csgo.skill_level,
+        },
+      );
       sourceElement.appendChild(additionalPlayerInfo);
     }
   });

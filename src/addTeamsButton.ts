@@ -11,5 +11,5 @@ export const addTeamsButton = (): void => {
   const teamsLi = document.createElement('li');
   teamsLi.appendChild(teamsA);
 
-  nextLi.parentNode.insertBefore(teamsLi, nextLi);
+  nextLi.parentNode?.insertBefore(teamsLi, nextLi);
 };

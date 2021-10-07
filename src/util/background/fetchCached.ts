@@ -2,8 +2,8 @@ const DEFAULT_CACHE_TIME = 3600;
 const ONE_DAY_IN_SECONDS = 86400;
 
 interface CacheResponse<T> {
-    response: T;
-    cacheTime: number;
+  response: T;
+  cacheTime: number;
 }
 
 export const htmlExtractor = (response: Response): Promise<string> => (
@@ -14,7 +14,7 @@ export const fetchCached = async <T>(
   url: string,
   cacheValidCondition = defaultCacheValidCondition,
   extractor: (response: Response) => Promise<T>,
-  header = null,
+  header?: RequestInit,
 ): Promise<T> => new Promise((resolve) => {
   chrome.storage.local.get(url, cachedItems => {
     if (cachedItems[url]) {

@@ -1,7 +1,9 @@
 import '@webcomponents/custom-elements';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators';
+import { FaceitInfo } from '../../model';
 import { getSteamLink } from '../../util/getSteamLink';
+import { notNull } from '../../util/notNull';
 
 const getFaceitLevelLogo = (faceitLevel: number): string => (
   `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`
@@ -16,11 +18,9 @@ const additionalPlayerInfo = 'flashkill-additional-player-info';
 
 @customElement(additionalPlayerInfo)
 class AdditionalPlayerInfo extends LitElement {
-  @property() steamId64: string;
-  @property() steamName: string;
-  @property() faceitNickname: string;
-  @property({ type: Number }) faceitElo: number;
-  @property({ type: Number }) faceitLevel: number;
+  @property() steamId64!: string;
+  @property() steamName!: string | null;
+  @property({ type: Object }) faceitInfo!: FaceitInfo | null;
 
   static styles = css`
     .root {
@@ -66,23 +66,39 @@ class AdditionalPlayerInfo extends LitElement {
   `;
 
   render() {
+    const getFaceitInfo = (): TemplateResult<1> => {
+      if (notNull(this.faceitInfo)) {
+        const {
+          nickname,
+          games: { csgo: { faceit_elo, skill_level } },
+        } = this.faceitInfo;
+
+        return html`
+        <div class="faceit-info">
+          <div class="faceit-text">
+            ${'FACEIT: '}
+            <a href=${getFaceitLink(nickname)} target="_blank">
+              ${faceit_elo}
+              <img class="faceit-logo" src=${getFaceitLevelLogo(skill_level)} alt=${`${skill_level} `} />
+            </a>
+          </div>
+        </div>
+        `;
+      }
+
+      return html``;
+    };
+
+
     return html`
       <div class="root">
         <div class="steam-info">
           ${'Steam: '}
           <a href=${getSteamLink(this.steamId64)} target="_blank">
-            ${this.steamName}
+            ${this.steamName ?? '-'}
           </a>
         </div>
-        <div class="faceit-info">
-          <div class="faceit-text">
-            ${'FACEIT: '}
-            <a href=${getFaceitLink(this.faceitNickname)} target="_blank">
-              ${this.faceitElo}
-              <img class="faceit-logo" src=${getFaceitLevelLogo(this.faceitLevel)} alt=${`${this.faceitLevel} `} />
-            </a>
-          </div>
-        </div>
+        ${this.faceitInfo !== null && getFaceitInfo()}
       </div>
     `;
   }

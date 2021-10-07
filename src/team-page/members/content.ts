@@ -1,3 +1,3 @@
-import { improveTeamPage } from "./addSteamAndFaceitInfo";
+import { improveTeamPage } from './addSteamAndFaceitInfo';
 
 improveTeamPage();

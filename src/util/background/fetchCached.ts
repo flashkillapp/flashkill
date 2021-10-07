@@ -7,43 +7,43 @@ interface CacheResponse<T> {
 }
 
 export const htmlExtractor = (response: Response): Promise<string> => (
-    response.text()
+  response.text()
 );
 
 export const fetchCached = async <T>(
-    url: string,
-    cacheValidCondition = defaultCacheValidCondition,
-    extractor: (response: Response) => Promise<T>,
-    header = null,
+  url: string,
+  cacheValidCondition = defaultCacheValidCondition,
+  extractor: (response: Response) => Promise<T>,
+  header = null,
 ): Promise<T> => new Promise((resolve) => {
-    chrome.storage.local.get(url, cachedItems => {
-        if (cachedItems[url]) {
-            if (cacheValidCondition(cachedItems[url])) {
-                resolve(cachedItems[url].response);
-                return;
-            }
-        };
-        fetch(url, header).then(extractor).then(response => {
-            chrome.storage.local.set(
-                {
-                    [url]: {
-                        response,
-                        cacheTime: Date.now()
-                    }
-                },
-                () => resolve(response));
-        });
+  chrome.storage.local.get(url, cachedItems => {
+    if (cachedItems[url]) {
+      if (cacheValidCondition(cachedItems[url])) {
+        resolve(cachedItems[url].response);
+        return;
+      }
+    }
+    fetch(url, header).then(extractor).then(response => {
+      chrome.storage.local.set(
+        {
+          [url]: {
+            response,
+            cacheTime: Date.now()
+          }
+        },
+        () => resolve(response));
     });
+  });
 });
 
 const defaultCacheValidCondition = <T>(cacheResponse: CacheResponse<T>): boolean => (
-    timeDependentCacheValidCondition(cacheResponse.cacheTime, DEFAULT_CACHE_TIME)
+  timeDependentCacheValidCondition(cacheResponse.cacheTime, DEFAULT_CACHE_TIME)
 );
 
 export const cacheForOneDay = <T>(cacheResponse: CacheResponse<T>): boolean => (
-    timeDependentCacheValidCondition(cacheResponse.cacheTime, ONE_DAY_IN_SECONDS)
+  timeDependentCacheValidCondition(cacheResponse.cacheTime, ONE_DAY_IN_SECONDS)
 );
 
 const timeDependentCacheValidCondition = (cacheTime: number, maxAgeInSeconds: number): boolean => (
-    cacheTime > Date.now() - maxAgeInSeconds * 1000
+  cacheTime > Date.now() - maxAgeInSeconds * 1000
 );

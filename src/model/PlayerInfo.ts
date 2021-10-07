@@ -1,4 +1,4 @@
-import { FaceitInfo } from "./FaceitInfo";
+import { FaceitInfo } from './FaceitInfo';
 
 export interface PlayerInfo {
     steamId: string;

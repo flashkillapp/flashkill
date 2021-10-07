@@ -1,7 +1,7 @@
 import '@webcomponents/custom-elements';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators';
-import { getSteamLink } from "../../util/getSteamLink";
+import { getSteamLink } from '../../util/getSteamLink';
 
 const getFaceitLevelLogo = (faceitLevel: number): string => (
   `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`
@@ -67,24 +67,24 @@ class AdditionalPlayerInfo extends LitElement {
 
   render() {
     return html`
-    <div class="root">
-      <div class="steam-info">
-        ${`Steam: `}
-        <a href=${getSteamLink(this.steamId64)} target="_blank">
-          ${this.steamName}
-        </a>
-      </div>
-      <div class="faceit-info">
-        <div class="faceit-text">
-          ${`FACEIT: `}
-          <a href=${getFaceitLink(this.faceitNickname)} target="_blank">
-            ${this.faceitElo}
-            <img class="faceit-logo" src=${getFaceitLevelLogo(this.faceitLevel)} alt=${`${this.faceitLevel} `} />
+      <div class="root">
+        <div class="steam-info">
+          ${'Steam: '}
+          <a href=${getSteamLink(this.steamId64)} target="_blank">
+            ${this.steamName}
           </a>
         </div>
+        <div class="faceit-info">
+          <div class="faceit-text">
+            ${'FACEIT: '}
+            <a href=${getFaceitLink(this.faceitNickname)} target="_blank">
+              ${this.faceitElo}
+              <img class="faceit-logo" src=${getFaceitLevelLogo(this.faceitLevel)} alt=${`${this.faceitLevel} `} />
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-  `;
+    `;
   }
 }
 
@@ -92,4 +92,4 @@ declare global {
   interface HTMLElementTagNameMap {
     [additionalPlayerInfo]: AdditionalPlayerInfo,
   }
-};
+}

@@ -1,4 +1,4 @@
-import { LitElement } from "lit";
+import { LitElement } from 'lit';
 
 export const component = <K extends keyof HTMLElementTagNameMap>(
   tagName: K,

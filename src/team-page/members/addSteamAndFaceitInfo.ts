@@ -1,6 +1,6 @@
-import { MemberRequestTypes } from "./background";
-import { PlayerInfo } from "../../model";
-import { component } from "../../util/component";
+import { MemberRequestTypes } from './background';
+import { PlayerInfo } from '../../model';
+import { component } from '../../util/component';
 import './AdditionalPlayerInfo';
 import './TeamEloHeader';
 
@@ -17,10 +17,10 @@ const avgFaceitElo = (playerInfos: PlayerInfo[]): number => {
 
 const injectAvgFaceitElo = (playerInfos: PlayerInfo[]): void => {
   const avgElo = avgFaceitElo(playerInfos);
-  const teamHeader = document.getElementsByClassName("content-portrait-head")[0];
+  const teamHeader = document.getElementsByClassName('content-portrait-head')[0];
   const teamEloHeader = component('flashkill-team-elo-header', { avgElo });
   teamHeader.parentNode.appendChild(teamEloHeader);
-}
+};
 
 interface PlayerInfoWrapper {
   playerInfo: PlayerInfo;
@@ -46,13 +46,13 @@ const injectAdditionalPlayerInfos = (playerInfos: PlayerInfoWrapper[]): void => 
 };
 
 const parseSteamId2 = (memberCard: HTMLLIElement): string | null => (
-  memberCard.getElementsByTagName("span")[0]?.textContent.toUpperCase() ?? null
+  memberCard.getElementsByTagName('span')[0]?.textContent.toUpperCase() ?? null
 );
 
 export const improveTeamPage = (): void => {
-  const memberCards = document.getElementsByClassName("content-portrait-grid-l")[0].getElementsByTagName("li");
+  const memberCards = document.getElementsByClassName('content-portrait-grid-l')[0].getElementsByTagName('li');
 
-  var memberCardsBySteamId2 = Array.from(memberCards)
+  const memberCardsBySteamId2 = Array.from(memberCards)
     .reduce((acc, memberCard) => {
       const steamId2String = parseSteamId2(memberCard);
 

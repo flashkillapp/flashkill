@@ -26,20 +26,20 @@ type MemberRequest = PlayerInfoRequest;// | SteamLinkRequest;
 chrome.runtime.onMessage.addListener(
   function (request: MemberRequest, _, sendResponse): boolean {
     switch (request.contentScriptQuery) {
-      case MemberRequestTypes.QueryPlayerInfos: {
-        getPlayerInfo(request.steamIds).then(playerInfos => {
-          sendResponse(playerInfos);
-        }).catch(console.log);
-        return true;  // Will respond asynchronously.
-      }
+    case MemberRequestTypes.QueryPlayerInfos: {
+      getPlayerInfo(request.steamIds).then(playerInfos => {
+        sendResponse(playerInfos);
+      }).catch(console.log);
+      return true;  // Will respond asynchronously.
+    }
 
-      // case MemberRequestTypes.QuerySteamLink: {
-      //     sendResponse(getSteamLink(request.steamId));
-      //     return true;
-      // }
+    // case MemberRequestTypes.QuerySteamLink: {
+    //     sendResponse(getSteamLink(request.steamId));
+    //     return true;
+    // }
 
-      default:
-        return false;
+    default:
+      return false;
     }
   }
 );

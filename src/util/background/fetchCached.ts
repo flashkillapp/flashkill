@@ -28,8 +28,8 @@ export const fetchCached = async <T>(
         {
           [url]: {
             response,
-            cacheTime: Date.now()
-          }
+            cacheTime: Date.now(),
+          },
         },
         () => resolve(response));
     });

@@ -24,24 +24,24 @@ export interface PlayerInfoRequest {
 type MemberRequest = PlayerInfoRequest;// | SteamLinkRequest;
 
 chrome.runtime.onMessage.addListener(
-  function (request: MemberRequest, _, sendResponse): boolean {
+  (request: MemberRequest, _, sendResponse): boolean => {
     switch (request.contentScriptQuery) {
-    case MemberRequestTypes.QueryPlayerInfos: {
-      getPlayerInfo(request.steamIds).then(playerInfos => {
-        sendResponse(playerInfos);
-      }).catch(console.log);
-      return true;  // Will respond asynchronously.
-    }
+      case MemberRequestTypes.QueryPlayerInfos: {
+        getPlayerInfo(request.steamIds).then(playerInfos => {
+          sendResponse(playerInfos);
+        }).catch(console.log);
+        return true;  // Will respond asynchronously.
+      }
 
-    // case MemberRequestTypes.QuerySteamLink: {
-    //     sendResponse(getSteamLink(request.steamId));
-    //     return true;
-    // }
+      // case MemberRequestTypes.QuerySteamLink: {
+      //     sendResponse(getSteamLink(request.steamId));
+      //     return true;
+      // }
 
-    default:
-      return false;
+      default:
+        return false;
     }
-  }
+  },
 );
 
 const getPlayerInfo = async (stringSteamIds: string[]): Promise<Array<PlayerInfo | null>> => {
@@ -53,7 +53,7 @@ const getPlayerInfo = async (stringSteamIds: string[]): Promise<Array<PlayerInfo
       steamId: stringSteamId,
       steamId64: steamId.get64(),
       faceitInfo,
-      steamName
+      steamName,
     };
   }));
 };
@@ -71,8 +71,8 @@ const findOnFaceit = async (steamId: ID): Promise<FaceitInfo | null> => {
   const url = `https://open.faceit.com/data/v4/players?game=csgo&game_player_id=${steamId.get64()}`;
   return fetchCached<FaceitInfo | null>(url, cacheForOneDay, faceitExtractor, {
     headers: {
-      'Authorization': ' Bearer def684c3-589e-415f-a35f-ec6f1aef79cb'
-    }
+      'Authorization': ' Bearer def684c3-589e-415f-a35f-ec6f1aef79cb',
+    },
   });
 };
 

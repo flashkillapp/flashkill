@@ -1,38 +1,44 @@
 module.exports = {
-	'env': {
-		'browser': true,
-		'es2021': true
+	env: {
+		browser: true,
+		es2021: true,
 	},
-	'extends': [
+	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:wc/recommended',
-		'plugin:lit/recommended'
+		'plugin:lit/recommended',
 	],
-	'parser': '@typescript-eslint/parser',
-	'parserOptions': {
-		'ecmaVersion': 12,
-		'sourceType': 'module'
+	parser: '@typescript-eslint/parser',
+	parserOptions: {
+		ecmaVersion: 12,
+		project: './tsconfig.json',
+		sourceType: 'module',
 	},
-	'plugins': [
-		'@typescript-eslint'
+	plugins: [
+		'@typescript-eslint',
 	],
-	'rules': {
-		'indent': [
+	rules: {
+		indent: [
 			'error',
-			2
+			2,
+			{ SwitchCase: 1 },
 		],
 		'linebreak-style': [
 			'error',
-			'unix'
+			'unix',
 		],
-		'quotes': [
+		quotes: [
 			'error',
-			'single'
+			'single',
 		],
-		'semi': [
+		semi: [
 			'error',
-			'always'
-		]
+			'always',
+		],
+		'comma-dangle': [
+			'error',
+			'always-multiline',
+		],
 	}
 };

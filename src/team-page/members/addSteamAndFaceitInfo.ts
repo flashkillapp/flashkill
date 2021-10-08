@@ -12,7 +12,7 @@ const arrayAvg = (arr: number[]): number => (
 const avgFaceitElo = (playerInfos: PlayerInfo[]): number => {
   const faceitInfos = playerInfos.map(({ faceitInfo }) => faceitInfo).filter(notNull);
   return arrayAvg(
-    faceitInfos.map(({ games }) => games.csgo.faceit_elo)
+    faceitInfos.map(({ games }) => games.csgo.faceit_elo),
   );
 };
 
@@ -66,7 +66,7 @@ export const improveTeamPage = (): void => {
   chrome.runtime.sendMessage(
     {
       contentScriptQuery: MemberRequestTypes.QueryPlayerInfos,
-      steamIds: Object.keys(memberCardsBySteamId2)
+      steamIds: Object.keys(memberCardsBySteamId2),
     },
     (playerInfos: PlayerInfo[]) => {
       const playerInfoWrappers = playerInfos.map((playerInfo) => ({
@@ -75,6 +75,6 @@ export const improveTeamPage = (): void => {
       }));
       injectAdditionalPlayerInfos(playerInfoWrappers);
       injectAvgFaceitElo(playerInfos);
-    }
+    },
   );
 };

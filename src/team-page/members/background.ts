@@ -16,12 +16,7 @@ export interface PlayerInfoRequest {
   steamIds: string[];
 }
 
-// export interface SteamLinkRequest {
-//     contentScriptQuery: typeof MemberRequestTypes.QuerySteamLink;
-//     steamId: string;
-// }
-
-type MemberRequest = PlayerInfoRequest;// | SteamLinkRequest;
+type MemberRequest = PlayerInfoRequest;
 
 chrome.runtime.onMessage.addListener(
   (request: MemberRequest, _, sendResponse): boolean => {
@@ -32,11 +27,6 @@ chrome.runtime.onMessage.addListener(
         }).catch(console.log);
         return true;  // Will respond asynchronously.
       }
-
-      // case MemberRequestTypes.QuerySteamLink: {
-      //     sendResponse(getSteamLink(request.steamId));
-      //     return true;
-      // }
 
       default:
         return false;

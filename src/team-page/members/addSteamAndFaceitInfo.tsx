@@ -1,3 +1,4 @@
+import React from 'dom-chef';
 import { MemberRequestTypes } from './background';
 import { PlayerInfo } from '../../model';
 import { component } from '../../util/component';
@@ -31,15 +32,13 @@ interface PlayerInfoWrapper {
 const injectAdditionalPlayerInfos = (playerInfos: PlayerInfoWrapper[]): void => {
   playerInfos.forEach(({ playerInfo, sourceElement }) => {
     if (playerInfo !== null) {
-      const additionalPlayerInfo = component(
-        'flashkill-additional-player-info',
-        {
-          steamId64: playerInfo.steamId64,
-          steamName: playerInfo.steamName,
-          faceitInfo: playerInfo.faceitInfo,
-        },
+      sourceElement.appendChild(
+        <flashkill-additional-player-info
+          steamid64={playerInfo.steamId64}
+          steamname={playerInfo.steamName}
+          faceitinfo={JSON.stringify(playerInfo.faceitInfo)}
+        />,
       );
-      sourceElement.appendChild(additionalPlayerInfo);
     }
   });
 };

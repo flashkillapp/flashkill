@@ -3,7 +3,13 @@ module.exports = (api) => {
   return {
     presets: [
       '@babel/preset-typescript',
-      'babel-preset-expo',
+      [
+        'babel-preset-expo',
+        {
+          'pragma': 'h',
+          'pragmaFrag': 'DocumentFragment',
+        },
+      ],
     ],
   };
 };

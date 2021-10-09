@@ -18,9 +18,9 @@ const additionalPlayerInfo = 'flashkill-additional-player-info';
 
 @customElement(additionalPlayerInfo)
 class AdditionalPlayerInfo extends LitElement {
-  @property() steamId64!: string;
-  @property() steamName!: string | null;
-  @property({ type: Object }) faceitInfo!: FaceitInfo | null;
+  @property() steamid64!: string;
+  @property() steamname!: string | null;
+  @property({ type: Object }) faceitinfo!: unknown;
 
   static styles = css`
     .root {
@@ -67,11 +67,11 @@ class AdditionalPlayerInfo extends LitElement {
 
   render() {
     const getFaceitInfo = (): TemplateResult<1> => {
-      if (notNull(this.faceitInfo)) {
+      if (notNull(this.faceitinfo)) {
         const {
           nickname,
           games: { csgo: { faceit_elo, skill_level } },
-        } = this.faceitInfo;
+        } = this.faceitinfo as FaceitInfo;
 
         return html`
         <div class="faceit-info">
@@ -89,16 +89,15 @@ class AdditionalPlayerInfo extends LitElement {
       return html``;
     };
 
-
     return html`
       <div class="root">
         <div class="steam-info">
           ${'Steam: '}
-          <a href=${getSteamLink(this.steamId64)} target="_blank">
-            ${this.steamName ?? '-'}
+          <a href=${getSteamLink(this.steamid64)} target="_blank">
+            ${this.steamname ?? '-'}
           </a>
         </div>
-        ${this.faceitInfo !== null && getFaceitInfo()}
+        ${getFaceitInfo()}
       </div>
     `;
   }
@@ -107,5 +106,14 @@ class AdditionalPlayerInfo extends LitElement {
 declare global {
   interface HTMLElementTagNameMap {
     [additionalPlayerInfo]: AdditionalPlayerInfo,
+  }
+}
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      [additionalPlayerInfo]: Omit<AdditionalPlayerInfo, keyof LitElement | 'render'>;
+    }
   }
 }

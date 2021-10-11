@@ -1,7 +1,7 @@
 
 const backgroundConfig = {
   entry: [
-    './src/team-page/members/background.ts',
+    './src/team-page/background.ts',
   ],
   mode: 'none',
   module: {
@@ -27,7 +27,7 @@ const backgroundConfig = {
 
 const contentScripts = [
   'content.ts',
-  'team-page/members/content.ts',
+  'team-page/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {
@@ -52,7 +52,7 @@ const contentScriptConfigs = contentScripts.map(contentScriptPath => {
       filename: 'content/' + jsFilePath.replace('content', 'index'),
     },
     resolve: {
-      extensions: ['.ts', '.js', '.tsx'],
+      extensions: ['.ts', '.js'],
     },
   };
 });

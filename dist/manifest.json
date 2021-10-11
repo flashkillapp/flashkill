@@ -22,7 +22,7 @@
                 "https://liga.99damage.de/leagues/teams/*-*"
             ],
             "js": [
-                "content/team-page/members/index.js"
+                "content/team-page/index.js"
             ]
         }
     ],

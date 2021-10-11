@@ -1,7 +1,7 @@
 import { PlayerInfo } from '../model';
 import { component } from '../util/component';
+import '../components/AdditionalPlayerInfo';
 
-import './AdditionalPlayerInfo';
 import { getMemberCards, getSteamId64 } from './selectors';
 import { TeamPageRequestTypes } from './background';
 

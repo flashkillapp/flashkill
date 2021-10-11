@@ -1,10 +1,10 @@
 import { notNull } from '../util/notNull';
 import { FaceitInfo } from '../model';
 import { component } from '../util/component';
+import '../components/TeamEloHeader';
 
 import { TeamPageRequestTypes } from './background';
 import { getMemberCards, getSteamId64 } from './selectors';
-import './TeamEloHeader';
 
 const arrayAvg = (arr: number[]): number => (
   arr.reduce((p, c) => p + c, 0) / arr.length

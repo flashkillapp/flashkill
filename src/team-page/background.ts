@@ -1,4 +1,4 @@
-import { fetchCached, cacheForOneDay, htmlExtractor } from '../util/background/fetchCached';
+import { fetchCached, cacheForOneDay, htmlExtractor } from '../util/fetchCached';
 import { PlayerInfo, FaceitInfo } from '../model';
 import { getSteamLink } from '../util/getSteamLink';
 

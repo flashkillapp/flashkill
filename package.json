@@ -43,6 +43,7 @@
   "dependencies": {
     "@babel/core": "^7.13.2",
     "@node-steam/id": "^1.2.0",
+    "@vaadin/vaadin-grid": "^21.0.3",
     "@webcomponents/custom-elements": "^1.5.0",
     "babel-loader": "^8.1.0",
     "babel-preset-expo": "^8.4.1",

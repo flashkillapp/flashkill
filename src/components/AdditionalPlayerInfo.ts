@@ -3,7 +3,7 @@ import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators';
 
 import { FaceitInfo } from '../model';
-import { getSteamLink } from '../util/getSteamLink';
+import { getSteamLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
 
 const getFaceitLevelLogo = (faceitLevel: number): string => (

@@ -28,7 +28,7 @@ export enum AjaxMap {
   DeVertigo = 417,
 }
 
-interface DraftMap {
+export interface DraftMap {
     id: AjaxMap;
     title: string;
     picture: string;
@@ -84,4 +84,22 @@ export interface AjaxMatch {
     overview: string[];
     show: string[];
     db_stats: DbStats;
+}
+
+export interface MapScores {
+  score_1: number;
+  score_2: number;
+}
+
+export interface Match {
+  match_id: number;
+  time: number;
+  score_1: number;
+  score_2: number;
+  scores: MapScores[];
+  draft_mapvoting_bans: AjaxMap[];
+  draft_mapvoting_picks: AjaxMap[];
+  draft_maps: DraftMap[];
+  draft_opp1: string;
+  draft_opp2: string;
 }

@@ -3,29 +3,36 @@ import {
   getTeamId, getTeamUrlName, getCurrentDivision, getPreviousDivisions,
 } from './selectors';
 import { notNull } from '../util/notNull';
-import { Division, AjaxMatch } from '../model';
+import '../components/MatchesTable';
+import { component } from '../util/component';
+import { DivisionMatches } from '../model';
 
-type DivisionMatchDetails = Array<[Division, Array<[string, AjaxMatch | null]>]>;
+const printMatchDetails = (divisionMatches: DivisionMatches[]): void => {
+  const header = document.querySelector('.content-portrait-head');
+  const matchesTable = component('flashkill-matches-table', {
+    matchItems: divisionMatches.flatMap(({ division, matches }) => (
+      matches.flatMap((match, index) => {
+        if (match.scores[index] === undefined) {
+          return {
+            division,
+            ...match,
+          };
+        }
 
-const printMatchDetails = (divisionMatchDetails: DivisionMatchDetails): void => (
-  divisionMatchDetails.forEach(([division, matchTuples]) => {
-    console.log(division.name);
-    console.log(matchTuples.map(([, ajax]) => ajax));
-  })
-);
-
-const requestMatchDetails = (divisionTuples: [Division, string[]][]): void => (
-  chrome.runtime.sendMessage(
-    {
-      contentScriptQuery: TeamPageRequestTypes.QueryMatchesDetails,
-      divisionTuples,
-    },
-    printMatchDetails,
-  )
-);
+        return match.scores.map((score) => ({
+          match_id: match.match_id,
+          time: match.time,
+          division,
+          score_1: score.score_1,
+          score_2: score.score_2,
+        }));
+      })
+    )),
+  });
+  header?.parentNode?.appendChild(matchesTable);
+};
 
 export const addMatchTable = (): void => {
-  // get team id
   const teamId = getTeamId();
   const teamUrlName = getTeamUrlName();
 
@@ -34,7 +41,6 @@ export const addMatchTable = (): void => {
     return;
   }
 
-  // get all division links
   const divisions = [
     getCurrentDivision(),
     ...getPreviousDivisions(),
@@ -42,22 +48,12 @@ export const addMatchTable = (): void => {
     .filter(notNull)
     .filter(({ name }) => !name.includes('Relegation'));
 
-  // for each division get all match links
   chrome.runtime.sendMessage(
     {
-      contentScriptQuery: TeamPageRequestTypes.QueryDivisionMatches,
+      contentScriptQuery: TeamPageRequestTypes.QueryDivisionsMatches,
       divisions,
+      teamUrlName,
     },
-    (divisionTuples: [Division, string[]][]) => (
-      requestMatchDetails(
-        divisionTuples.map(([division, links]) => ([
-          division,
-          links.filter((link) => link.includes(teamUrlName)),
-        ])),
-      )
-    ),
+    printMatchDetails,
   );
-
-  // for each match, get details
-  // display team matches
 };

@@ -1,4 +1,4 @@
 export * from './FaceitInfo';
 export * from './PlayerInfo';
 export * from './Division';
-export * from './AjaxMatch';
+export * from './Match';

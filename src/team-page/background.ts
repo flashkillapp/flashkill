@@ -1,8 +1,8 @@
 import { fetchCached, cacheForOneDay, htmlExtractor } from '../util/fetchCached';
 import { PlayerInfo, FaceitInfo, Division } from '../model';
-import { getSteamLink } from '../util/getSteamLink';
+import { getSteamLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
-import { AjaxMatch } from '../model';
+import { AjaxMatch, MapScores, DivisionMatches } from '../model';
 import { getMatchId } from './selectors';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
@@ -10,8 +10,7 @@ const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
 export enum TeamPageRequestTypes {
   QueryPlayerInfo = 'queryPlayerInfo',
   QueryFaceitInfos = 'queryFaceitInfos',
-  QueryDivisionMatches = 'queryDivisionmatches',
-  QueryMatchesDetails = 'queryMatchesDetails',
+  QueryDivisionsMatches = 'queryDivisionsMatches',
 }
 
 export interface PlayerInfoRequest {
@@ -25,19 +24,14 @@ export interface FaceitInfosRequest {
 }
 
 export interface DivisionMatchesRequest {
-  contentScriptQuery: typeof TeamPageRequestTypes.QueryDivisionMatches;
+  contentScriptQuery: typeof TeamPageRequestTypes.QueryDivisionsMatches;
   divisions: Division[];
-}
-
-export interface MatchesDetailsRequest {
-  contentScriptQuery: typeof TeamPageRequestTypes.QueryMatchesDetails;
-  divisionTuples: [Division, string[]][];
+  teamUrlName: string;
 }
 
 type MemberRequest = PlayerInfoRequest
   | FaceitInfosRequest
-  | DivisionMatchesRequest
-  | MatchesDetailsRequest;
+  | DivisionMatchesRequest;
 
 chrome.runtime.onMessage.addListener(
   (request: MemberRequest, _, sendResponse): boolean => {
@@ -56,23 +50,10 @@ chrome.runtime.onMessage.addListener(
         return true;
       }
 
-      case TeamPageRequestTypes.QueryDivisionMatches: {
-        Promise.all(request.divisions.map(fetchDivisionMatches))
-          .then(sendResponse)
-          .catch(console.log);
-        return true;
-      }
-
-      case TeamPageRequestTypes.QueryMatchesDetails: {
-        Promise.all(request.divisionTuples.map(async ([division, links]) => {
-          const ajaxMatches = await Promise.all(links.map(async (link) => ([
-            link, await fetchAjaxMatch(link),
-          ])));
-          return [
-            division,
-            ajaxMatches,
-          ];
-        }))
+      case TeamPageRequestTypes.QueryDivisionsMatches: {
+        Promise.all(request.divisions.map((division) =>
+          fetchDivisionMatches(division, request.teamUrlName),
+        ))
           .then(sendResponse)
           .catch(console.log);
         return true;
@@ -84,7 +65,7 @@ chrome.runtime.onMessage.addListener(
   },
 );
 
-const fetchDivisionMatches = async (division: Division): Promise<[Division, string[]]> => {
+const fetchDivisionMatches = async (division: Division, teamUrlName: string): Promise<DivisionMatches> => {
   const html = await fetchCached<string>(division.url, cacheForOneDay, htmlExtractor);
   const divisionDoc = new DOMParser().parseFromString(html, 'text/html');
   const matchLinkElements = Array.from(
@@ -97,12 +78,53 @@ const fetchDivisionMatches = async (division: Division): Promise<[Division, stri
     .map((matchLinkElement) => (
       matchLinkElement.getAttribute('href')
     ))
-    .filter(notNull);
+    .filter(notNull)
+    .filter((matchLink) => matchLink.includes(teamUrlName));
 
-  return [
+  const matches = await Promise.all(matchLinks.map(async (matchLink) => {
+    const ajaxMatch = await fetchAjaxMatch(matchLink);
+    const mapScores = await fetchMatchMapScores(matchLink);
+
+    if (ajaxMatch === null) return null;
+
+    return {
+      match_id: ajaxMatch.match_id,
+      time: ajaxMatch.time,
+      score_1: ajaxMatch.score_1,
+      score_2: ajaxMatch.score_2,
+      scores: mapScores,
+      draft_mapvoting_bans: ajaxMatch.draft_mapvoting_bans,
+      draft_mapvoting_picks: ajaxMatch.draft_mapvoting_picks,
+      draft_maps: ajaxMatch.draft_maps,
+      draft_opp1: ajaxMatch.draft_opp1,
+      draft_opp2: ajaxMatch.draft_opp2,
+    };
+  }));
+
+  return {
     division,
-    matchLinks,
-  ];
+    matches: matches.filter(notNull),
+  };
+};
+
+const fetchMatchMapScores = async (matchLink: string): Promise<MapScores[]> => {
+  const html = await fetchCached<string>(matchLink, cacheForOneDay, htmlExtractor);
+  const matchDoc = new DOMParser().parseFromString(html, 'text/html');
+  const resultString = matchDoc.querySelector('.content-match-head-score div.txt-info');
+  const mapScores = resultString?.textContent?.split('/') ?? null;
+
+  if (mapScores === null) return [];
+
+  return mapScores.map((mapScore) => {
+    const scores = mapScore.split(':');
+
+    if (scores.length !== 2) return null;
+
+    return {
+      score_1: Number.parseInt(scores[0], 10),
+      score_2: Number.parseInt(scores[1], 10),
+    };
+  }).filter(notNull);
 };
 
 const ajaxMatchExtractor = (ajaxMatchResponse: Response): Promise<AjaxMatch | null> => {

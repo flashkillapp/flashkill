@@ -1,12 +1,17 @@
 import { fetchCached, cacheForOneDay, htmlExtractor } from '../util/fetchCached';
-import { PlayerInfo, FaceitInfo } from '../model';
+import { PlayerInfo, FaceitInfo, Division } from '../model';
 import { getSteamLink } from '../util/getSteamLink';
+import { notNull } from '../util/notNull';
+import { AjaxMatch } from '../model';
+import { getMatchId } from './selectors';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
 
 export enum TeamPageRequestTypes {
   QueryPlayerInfo = 'queryPlayerInfo',
   QueryFaceitInfos = 'queryFaceitInfos',
+  QueryDivisionMatches = 'queryDivisionmatches',
+  QueryMatchesDetails = 'queryMatchesDetails',
 }
 
 export interface PlayerInfoRequest {
@@ -19,7 +24,20 @@ export interface FaceitInfosRequest {
   steamIds64: string[];
 }
 
-type MemberRequest = PlayerInfoRequest | FaceitInfosRequest;
+export interface DivisionMatchesRequest {
+  contentScriptQuery: typeof TeamPageRequestTypes.QueryDivisionMatches;
+  divisions: Division[];
+}
+
+export interface MatchesDetailsRequest {
+  contentScriptQuery: typeof TeamPageRequestTypes.QueryMatchesDetails;
+  divisionTuples: [Division, string[]][];
+}
+
+type MemberRequest = PlayerInfoRequest
+  | FaceitInfosRequest
+  | DivisionMatchesRequest
+  | MatchesDetailsRequest;
 
 chrome.runtime.onMessage.addListener(
   (request: MemberRequest, _, sendResponse): boolean => {
@@ -38,11 +56,67 @@ chrome.runtime.onMessage.addListener(
         return true;
       }
 
+      case TeamPageRequestTypes.QueryDivisionMatches: {
+        Promise.all(request.divisions.map(fetchDivisionMatches))
+          .then(sendResponse)
+          .catch(console.log);
+        return true;
+      }
+
+      case TeamPageRequestTypes.QueryMatchesDetails: {
+        Promise.all(request.divisionTuples.map(async ([division, links]) => {
+          const ajaxMatches = await Promise.all(links.map(async (link) => ([
+            link, await fetchAjaxMatch(link),
+          ])));
+          return [
+            division,
+            ajaxMatches,
+          ];
+        }))
+          .then(sendResponse)
+          .catch(console.log);
+        return true;
+      }
+
       default:
         return false;
     }
   },
 );
+
+const fetchDivisionMatches = async (division: Division): Promise<[Division, string[]]> => {
+  const html = await fetchCached<string>(division.url, cacheForOneDay, htmlExtractor);
+  const divisionDoc = new DOMParser().parseFromString(html, 'text/html');
+  const matchLinkElements = Array.from(
+    divisionDoc.querySelectorAll<HTMLLinkElement>(
+      'section.league-group-matches td.col-2 a',
+    ),
+  );
+
+  const matchLinks = matchLinkElements
+    .map((matchLinkElement) => (
+      matchLinkElement.getAttribute('href')
+    ))
+    .filter(notNull);
+
+  return [
+    division,
+    matchLinks,
+  ];
+};
+
+const ajaxMatchExtractor = (ajaxMatchResponse: Response): Promise<AjaxMatch | null> => {
+  if (ajaxMatchResponse.ok) {
+    return ajaxMatchResponse.json();
+  } else {
+    return Promise.resolve(null);
+  }
+};
+
+const fetchAjaxMatch = async (matchLink: string): Promise<AjaxMatch | null> => {
+  const url = `https://liga.99damage.de/ajax/leagues_match?id=${getMatchId(matchLink)}&action=init`;
+  return fetchCached<AjaxMatch | null>(url, cacheForOneDay, ajaxMatchExtractor);
+};
 
 const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo | null> => {
   const faceitInfo = await fetchFaceitInfo(steamId64);

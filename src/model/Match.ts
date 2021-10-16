@@ -86,9 +86,21 @@ export interface AjaxMatch {
     db_stats: DbStats;
 }
 
-export interface MapScores {
+export interface Team {
+  id: number;
+  name: string;
+  shortName: string;
+}
+
+export interface MapScore {
   score_1: number;
   score_2: number;
+}
+
+export interface MapScores {
+  team_1: Team;
+  team_2: Team;
+  scores: MapScore[];
 }
 
 export interface Match {

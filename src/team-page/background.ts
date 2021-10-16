@@ -3,7 +3,7 @@ import { PlayerInfo, FaceitInfo, Division } from '../model';
 import { getSteamLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
 import { AjaxMatch, MapScores, DivisionMatches } from '../model';
-import { getMatchId } from './selectors';
+import { getMatchId, getTeam } from './selectors';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
 
@@ -26,7 +26,7 @@ export interface FaceitInfosRequest {
 export interface DivisionMatchesRequest {
   contentScriptQuery: typeof TeamPageRequestTypes.QueryDivisionsMatches;
   divisions: Division[];
-  teamUrlName: string;
+  teamShortName: string;
 }
 
 type MemberRequest = PlayerInfoRequest
@@ -52,7 +52,7 @@ chrome.runtime.onMessage.addListener(
 
       case TeamPageRequestTypes.QueryDivisionsMatches: {
         Promise.all(request.divisions.map((division) =>
-          fetchDivisionMatches(division, request.teamUrlName),
+          fetchDivisionMatches(division, request.teamShortName),
         ))
           .then(sendResponse)
           .catch(console.log);
@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener(
   },
 );
 
-const fetchDivisionMatches = async (division: Division, teamUrlName: string): Promise<DivisionMatches> => {
+const fetchDivisionMatches = async (division: Division, teamShortName: string): Promise<DivisionMatches> => {
   const html = await fetchCached<string>(division.url, cacheForOneDay, htmlExtractor);
   const divisionDoc = new DOMParser().parseFromString(html, 'text/html');
   const matchLinkElements = Array.from(
@@ -79,7 +79,7 @@ const fetchDivisionMatches = async (division: Division, teamUrlName: string): Pr
       matchLinkElement.getAttribute('href')
     ))
     .filter(notNull)
-    .filter((matchLink) => matchLink.includes(teamUrlName));
+    .filter((matchLink) => matchLink.includes(teamShortName));
 
   const matches = await Promise.all(matchLinks.map(async (matchLink) => {
     const ajaxMatch = await fetchAjaxMatch(matchLink);
@@ -92,7 +92,9 @@ const fetchDivisionMatches = async (division: Division, teamUrlName: string): Pr
       time: ajaxMatch.time,
       score_1: ajaxMatch.score_1,
       score_2: ajaxMatch.score_2,
-      scores: mapScores,
+      team_1: mapScores.team_1,
+      team_2: mapScores.team_2,
+      scores: mapScores.scores,
       draft_mapvoting_bans: ajaxMatch.draft_mapvoting_bans,
       draft_mapvoting_picks: ajaxMatch.draft_mapvoting_picks,
       draft_maps: ajaxMatch.draft_maps,
@@ -107,24 +109,26 @@ const fetchDivisionMatches = async (division: Division, teamUrlName: string): Pr
   };
 };
 
-const fetchMatchMapScores = async (matchLink: string): Promise<MapScores[]> => {
+const fetchMatchMapScores = async (matchLink: string): Promise<MapScores> => {
   const html = await fetchCached<string>(matchLink, cacheForOneDay, htmlExtractor);
   const matchDoc = new DOMParser().parseFromString(html, 'text/html');
   const resultString = matchDoc.querySelector('.content-match-head-score div.txt-info');
   const mapScores = resultString?.textContent?.split('/') ?? null;
 
-  if (mapScores === null) return [];
+  return {
+    team_1: getTeam(matchDoc, 1),
+    team_2: getTeam(matchDoc, 2),
+    scores: mapScores?.map((mapScore) => {
+      const scores = mapScore.split(':');
 
-  return mapScores.map((mapScore) => {
-    const scores = mapScore.split(':');
+      if (scores.length !== 2) return null;
 
-    if (scores.length !== 2) return null;
-
-    return {
-      score_1: Number.parseInt(scores[0], 10),
-      score_2: Number.parseInt(scores[1], 10),
-    };
-  }).filter(notNull);
+      return {
+        score_1: Number.parseInt(scores[0], 10),
+        score_2: Number.parseInt(scores[1], 10),
+      };
+    }).filter(notNull) ?? [],
+  };
 };
 
 const ajaxMatchExtractor = (ajaxMatchResponse: Response): Promise<AjaxMatch | null> => {

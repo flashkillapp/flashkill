@@ -1,6 +1,6 @@
 import { TeamPageRequestTypes } from './background';
 import {
-  getTeamId, getTeamUrlName, getCurrentDivision, getPreviousDivisions,
+  getTabTeamId, getTabTeamShortName, getCurrentDivision, getPreviousDivisions,
 } from './selectors';
 import { notNull } from '../util/notNull';
 import '../components/MatchesTable';
@@ -18,44 +18,53 @@ const getSeason = (divisionUrl: string): Season | null => {
   return { id: Number.parseInt(idString, 10), name: `Saison ${seasonNumber}` };
 };
 
-const printMatchDetails = (divisionMatches: DivisionMatches[]): void => {
+const printMatchDetails = (divisionMatches: DivisionMatches[], teamId: number): void => {
   const header = document.querySelector('.content-portrait-head');
-  const matchesTable = component('flashkill-matches-table', {
-    matchItems: divisionMatches.flatMap(({ division, matches }) => {
-      const season = getSeason(division.url);
+  const matchItems = divisionMatches.flatMap(({ division, matches }) => {
+    const season = getSeason(division.url);
 
-      return matches.flatMap((match) => {
-        if (match.scores.length === 0) {
-          return {
-            division,
-            season,
-            map: null,
-            ...match,
-          };
-        }
-
-        return match.scores.map((score, index) => ({
-          match_id: match.match_id,
-          time: match.time,
+    return matches.flatMap((match) => {
+      if (match.scores.length === 0) {
+        return {
+          ...match,
           division,
           season,
-          score_1: score.score_1,
-          score_2: score.score_2,
-          map: match.draft_maps.find(
-            (draft_map) => draft_map.id === match.draft_mapvoting_picks[index],
-          ) ?? null,
-        }));
-      });
-    }),
+          map: null,
+        };
+      }
+
+      return match.scores.map((score, index) => ({
+        ...match,
+        division,
+        season,
+        score_1: score.score_1,
+        score_2: score.score_2,
+        map: match.draft_maps.find(
+          (draft_map) => draft_map.id === match.draft_mapvoting_picks[index],
+        ) ?? null,
+      }));
+    });
   });
+  const switchedMatchItems = matchItems.map((matchItem) => {
+    if (matchItem.team_1.id === teamId) return matchItem;
+
+    return {
+      ...matchItem,
+      team_1: matchItem.team_2,
+      team_2: matchItem.team_1,
+      score_1: matchItem.score_2,
+      score_2: matchItem.score_1,
+    };
+  });
+  const matchesTable = component('flashkill-matches-table', { matchItems: switchedMatchItems });
   header?.parentNode?.appendChild(matchesTable);
 };
 
 export const addMatchTable = (): void => {
-  const teamId = getTeamId();
-  const teamUrlName = getTeamUrlName();
+  const teamId = getTabTeamId();
+  const teamShortName = getTabTeamShortName();
 
-  if (teamId === null || teamUrlName === null) {
+  if (teamId === null || teamShortName === null) {
     console.log('Could not read team id or name');
     return;
   }
@@ -71,8 +80,8 @@ export const addMatchTable = (): void => {
     {
       contentScriptQuery: TeamPageRequestTypes.QueryDivisionsMatches,
       divisions,
-      teamUrlName,
+      teamShortName,
     },
-    printMatchDetails,
+    (divisionMatches: DivisionMatches[]) => printMatchDetails(divisionMatches, teamId),
   );
 };

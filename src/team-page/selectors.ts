@@ -1,6 +1,6 @@
 import { ID } from '@node-steam/id';
 
-import { Division } from '../model/Division';
+import { Division, Team } from '../model';
 
 export const getMemberCards = (): HTMLLIElement[] => (
   Array.from(document.querySelectorAll('.content-portrait-grid-l > li'))
@@ -21,15 +21,26 @@ export const getMatchId = (matchLink: string): number | null => {
   return matchId !== null ? Number.parseInt(matchId, 10) : null;
 };
 
-export const getTeamId = (): number | null => {
-  const teamIdRegex = /leagues\/teams\/([0-9]+)-/;
-  const teamId = window.location.href.match(teamIdRegex)?.[1] || null;
+const getTeamIdFromUrl = (url: string): number | null => {
+  const teamIdRegex = /\/teams\/([0-9]+)-/;
+  const teamId = url.match(teamIdRegex)?.[1] || null;
   return teamId !== null ? Number.parseInt(teamId, 10) : null;
 };
 
-export const getTeamUrlName = (): string | null => {
-  const teamUrlNameRegex = /leagues\/teams\/[0-9]+-(.+)/;
-  return window.location.href.match(teamUrlNameRegex)?.[1] || null;
+export const getTabTeamId = (): number | null => {
+  const url = window.location.href;
+  console.log(url);
+  return getTeamIdFromUrl(url);
+};
+
+const getTeamShortNameFromUrl = (url: string): string | null => {
+  const teamUrlNameRegex = /\/teams\/[0-9]+-(.+)/;
+  return url.match(teamUrlNameRegex)?.[1] || null;
+};
+
+export const getTabTeamShortName = (): string | null => {
+  const url = window.location.href;
+  return getTeamShortNameFromUrl(url);
 };
 
 const extractDivision = (linkElement: HTMLLinkElement | null): Division | null => {
@@ -55,4 +66,16 @@ export const getPreviousDivisions = (): Array<Division | null> => {
     ),
   );
   return linkElements.map(extractDivision);
+};
+
+export const getTeam = (matchDoc: HTMLDocument, teamNumber: number): Team => {
+  const teamHeader = matchDoc.querySelector(`.content-match-head-team${teamNumber} > .content-match-head-team-top`);
+  const url = teamHeader.querySelector('a').href;
+  const name = teamHeader.querySelector('img').getAttribute('alt');
+
+  return {
+    id: getTeamIdFromUrl(url),
+    name,
+    shortName: getTeamShortNameFromUrl(url),
+  };
 };

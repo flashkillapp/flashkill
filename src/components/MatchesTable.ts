@@ -1,6 +1,7 @@
 import '@webcomponents/custom-elements';
 import '@vaadin/vaadin-material-styles';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
 import '@vaadin/vaadin-button/theme/material/vaadin-button';
 import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox';
 import '@vaadin/vaadin-dialog/theme/material/vaadin-dialog';
@@ -12,9 +13,9 @@ import { customElement, property } from 'lit/decorators';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import { customTheme } from '../util/theme';
-import { Division, Season } from '../model';
+import { Division, Season, Team, DraftMap } from '../model';
 import { getDay } from '../util/dateHelpers';
-import { get99DamageMatchLink } from '../util/getLink';
+import { get99MatchLink, get99TeamLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
 
 registerStyles('vaadin-grid', css`
@@ -30,6 +31,8 @@ export interface MatchTableItem {
   division: Division;
   season: Season | null;
   time: number;
+  team_1: Team;
+  team_2: Team;
   score_1: number;
   score_2: number;
   map: DraftMap | null;
@@ -82,12 +85,16 @@ class MatchesTable extends LitElement {
         </vaadin-checkbox-group>
       </div>
       <vaadin-grid theme="compact" .items="${this.matchItems}" .cellClassNameGenerator="${this.cellClassNameGenerator}">
-        <vaadin-grid-column .renderer="${this.dateRenderer}" header="Datum" text-align="end"></vaadin-grid-column>
-        <vaadin-grid-column .renderer="${this.divisionRenderer}" header="Division"></vaadin-grid-column>
-        <vaadin-grid-column path="score_1" header="Score 1" text-align="end"></vaadin-grid-column>
-        <vaadin-grid-column path="score_2" header="Score 2" text-align="start"></vaadin-grid-column>
-        <vaadin-grid-column .renderer="${this.mapRenderer}" header="Map" text-align="center"></vaadin-grid-column>
-        <vaadin-grid-column .renderer="${this.moreRenderer}" header="Matchroom"></vaadin-grid-column>
+        <vaadin-grid-column .renderer="${this.dateRenderer}" header="Datum"></vaadin-grid-column>
+        <vaadin-grid-column auto-width .renderer="${this.divisionRenderer}" header="Division"></vaadin-grid-column>
+        <vaadin-grid-column path="team_1" .renderer="${this.teamRenderer}" header="Team 1" text-align="end"></vaadin-grid-column>
+        <vaadin-grid-column-group header="Scores" text-align="center">
+          <vaadin-grid-column path="score_1" header="" text-align="center" width="45px"></vaadin-grid-column>
+          <vaadin-grid-column path="score_2" header="" text-align="center" width="45px"></vaadin-grid-column>
+        </vaadin-grid-column-group>
+        <vaadin-grid-column path="team_2" .renderer="${this.teamRenderer}" header="Team 2"></vaadin-grid-column>
+        <vaadin-grid-column .renderer="${this.mapRenderer}" header="Map"></vaadin-grid-column>
+        <vaadin-grid-column auto-width .renderer="${this.moreRenderer}" header="Link"></vaadin-grid-column>
       </vaadin-grid>
     `;
   }
@@ -138,7 +145,9 @@ class MatchesTable extends LitElement {
   ) {
     render(
       html`
-        <a href="${rowData.item.division.url}">${rowData.item.division.name}</a>
+        <a href="${rowData.item.division.url}">
+          ${rowData.item.division.name.replace('Division', 'Div')}
+        </a>
       `,
       root,
     );
@@ -174,7 +183,7 @@ class MatchesTable extends LitElement {
   ) {
     render(
       html`
-        <a href="${get99DamageMatchLink(rowData.item.match_id)}">mehr</a>
+        <a href="${get99MatchLink(rowData.item.match_id)}">mehr</a>
       `,
       root,
     );
@@ -188,6 +197,20 @@ class MatchesTable extends LitElement {
     if (roundDiff === 0) return 'draw';
     if (roundDiff > 0) return 'win';
     if (roundDiff < 0) return 'loss';
+  }
+
+  private teamRenderer(
+    root: HTMLElement,
+    column: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    const team = rowData.item[column.path];
+    render(
+      html`
+        <a href="${get99TeamLink(team.id)}">${team.name}</a>
+      `,
+      root,
+    );
   }
 }
 

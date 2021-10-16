@@ -6,6 +6,6 @@ export interface Division {
 }
 
 export interface DivisionMatches {
-  division: Division,
-  matches: Match[],
+  division: Division;
+  matches: Match[];
 }

@@ -15,7 +15,7 @@ const getSeason = (divisionUrl: string): Season | null => {
 
   if (idString === null || seasonNumber === null) return null;
 
-  return { id: Number.parseInt(idString, 10), name: `Season ${seasonNumber}` };
+  return { id: Number.parseInt(idString, 10), name: `Saison ${seasonNumber}` };
 };
 
 const printMatchDetails = (divisionMatches: DivisionMatches[]): void => {
@@ -24,22 +24,26 @@ const printMatchDetails = (divisionMatches: DivisionMatches[]): void => {
     matchItems: divisionMatches.flatMap(({ division, matches }) => {
       const season = getSeason(division.url);
 
-      return matches.flatMap((match, index) => {
-        if (match.scores[index] === undefined) {
+      return matches.flatMap((match) => {
+        if (match.scores.length === 0) {
           return {
             division,
             season,
+            map: null,
             ...match,
           };
         }
 
-        return match.scores.map((score) => ({
+        return match.scores.map((score, index) => ({
           match_id: match.match_id,
           time: match.time,
           division,
           season,
           score_1: score.score_1,
           score_2: score.score_2,
+          map: match.draft_maps.find(
+            (draft_map) => draft_map.id === match.draft_mapvoting_picks[index],
+          ) ?? null,
         }));
       });
     }),

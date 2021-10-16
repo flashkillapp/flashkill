@@ -6,6 +6,7 @@ import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox';
 import '@vaadin/vaadin-dialog/theme/material/vaadin-dialog';
 import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox-group';
 import type { CheckboxGroupElement } from '@vaadin/vaadin-checkbox/vaadin-checkbox-group';
+import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';
 import { LitElement, html, css, render } from 'lit';
 import { customElement, property } from 'lit/decorators';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
@@ -16,6 +17,12 @@ import { getDay } from '../util/dateHelpers';
 import { get99DamageMatchLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
 
+registerStyles('vaadin-grid', css`
+  .win { background-color: #374c37 !important; }
+  .loss { background-color: #422315 !important; }
+  .draw { background-color: #283d42 !important; }
+`);
+
 const matchesTable = 'flashkill-matches-table';
 
 export interface MatchTableItem {
@@ -25,6 +32,7 @@ export interface MatchTableItem {
   time: number;
   score_1: number;
   score_2: number;
+  map: DraftMap | null;
 }
 
 @customElement(matchesTable)
@@ -35,6 +43,8 @@ class MatchesTable extends LitElement {
     ${customTheme}
 
     .button-wrapper {
+      display: flex;
+      justify-content: space-between;
       width: 100%;
     }
 
@@ -45,6 +55,10 @@ class MatchesTable extends LitElement {
     
     .hidden {
       display: none;
+    }
+
+    .map-image {
+      width: 100px;
     }
   `;
 
@@ -57,20 +71,22 @@ class MatchesTable extends LitElement {
   render() {
     return html`
       <div class="button-wrapper">
-        <vaadin-button @click=${this.openSeasonSelection}>Select seasons</vaadin-button>
+        <h1>Ergebnisse</h1>
+        <vaadin-button @click=${this.openSeasonSelection}>Saisons auswählen</vaadin-button>
       </div>
       <div class="season-selection hidden">
-        <vaadin-checkbox-group @change=${this.updateSeasonSelection} label="Department" theme="vertical">
+        <vaadin-checkbox-group @change=${this.updateSeasonSelection} theme="vertical">
           ${this.getSeasons().map((season) => html`
             <vaadin-checkbox value="${season.id}">${season.name}</vaadin-checkbox>
           `)}
         </vaadin-checkbox-group>
       </div>
-      <vaadin-grid .items="${this.matchItems}">
+      <vaadin-grid theme="compact" .items="${this.matchItems}" .cellClassNameGenerator="${this.cellClassNameGenerator}">
         <vaadin-grid-column .renderer="${this.dateRenderer}" header="Datum" text-align="end"></vaadin-grid-column>
         <vaadin-grid-column .renderer="${this.divisionRenderer}" header="Division"></vaadin-grid-column>
         <vaadin-grid-column path="score_1" header="Score 1" text-align="end"></vaadin-grid-column>
         <vaadin-grid-column path="score_2" header="Score 2" text-align="start"></vaadin-grid-column>
+        <vaadin-grid-column .renderer="${this.mapRenderer}" header="Map" text-align="center"></vaadin-grid-column>
         <vaadin-grid-column .renderer="${this.moreRenderer}" header="Matchroom"></vaadin-grid-column>
       </vaadin-grid>
     `;
@@ -128,6 +144,29 @@ class MatchesTable extends LitElement {
     );
   }
 
+  private mapRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    if (rowData.item.map === null) {
+      render(html``, root);
+
+      return;
+    }
+
+    render(
+      html`
+        <img
+          class="map-image"
+          src="${rowData.item.map.picture}"
+          alt="${rowData.item.map.name}"
+        />
+      `,
+      root,
+    );
+  }
+
   private moreRenderer(
     root: HTMLElement,
     _: GridColumnElement<MatchTableItem>,
@@ -139,6 +178,16 @@ class MatchesTable extends LitElement {
       `,
       root,
     );
+  }
+
+  private cellClassNameGenerator(column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>) {
+    if (column.path !== 'score_1' && column.path !== 'score_2') return '';
+
+    const roundDiff = model.item.score_1 - model.item.score_2;
+
+    if (roundDiff === 0) return 'draw';
+    if (roundDiff > 0) return 'win';
+    if (roundDiff < 0) return 'loss';
   }
 }
 

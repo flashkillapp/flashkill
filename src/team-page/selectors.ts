@@ -1,6 +1,7 @@
 import { ID } from '@node-steam/id';
 
-import { Division, Team } from '../model';
+import { Division, Team, MapScore } from '../model';
+import { notNull } from '../util/notNull';
 
 export const getMemberCards = (): HTMLLIElement[] => (
   Array.from(document.querySelectorAll('.content-portrait-grid-l > li'))
@@ -68,14 +69,37 @@ export const getPreviousDivisions = (): Array<Division | null> => {
   return linkElements.map(extractDivision);
 };
 
-export const getTeam = (matchDoc: HTMLDocument, teamNumber: number): Team => {
+export const getTeam = (matchDoc: Document, teamNumber: number): Team | null => {
   const teamHeader = matchDoc.querySelector(`.content-match-head-team${teamNumber} > .content-match-head-team-top`);
-  const url = teamHeader.querySelector('a').href;
-  const name = teamHeader.querySelector('img').getAttribute('alt');
+  const url = teamHeader?.querySelector('a')?.href ?? null;
+  const name = teamHeader?.querySelector('img')?.getAttribute('alt') ?? null;
 
-  return {
-    id: getTeamIdFromUrl(url),
-    name,
-    shortName: getTeamShortNameFromUrl(url),
-  };
+  if (url === null || name === null) return null;
+
+  const id = getTeamIdFromUrl(url);
+  const shortName = getTeamShortNameFromUrl(url);
+
+  if (id === null || shortName === null) return null;
+
+  return { id, name, shortName };
+};
+
+export const getTeams = (matchDoc: Document): [Team | null, Team | null] => (
+  [getTeam(matchDoc, 1), getTeam(matchDoc, 2)]
+);
+
+export const getMapScores = (matchDoc: Document): MapScore[] => {
+  const resultString = matchDoc.querySelector('.content-match-head-score div.txt-info');
+  const mapScores = resultString?.textContent?.split('/') ?? null;
+
+  return mapScores?.map((mapScore) => {
+    const scores = mapScore.split(':');
+
+    if (scores.length !== 2) return null;
+
+    return {
+      score_1: Number.parseInt(scores[0], 10),
+      score_2: Number.parseInt(scores[1], 10),
+    };
+  }).filter(notNull) ?? [];
 };

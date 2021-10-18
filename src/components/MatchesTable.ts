@@ -169,7 +169,7 @@ class MatchesTable extends LitElement {
         <img
           class="map-image"
           src="${rowData.item.map.picture}"
-          alt="${rowData.item.map.name}"
+          alt="${rowData.item.map.title}"
         />
       `,
       root,
@@ -197,11 +197,13 @@ class MatchesTable extends LitElement {
     if (roundDiff === 0) return 'draw';
     if (roundDiff > 0) return 'win';
     if (roundDiff < 0) return 'loss';
+
+    return '';
   }
 
   private teamRenderer(
     root: HTMLElement,
-    column: GridColumnElement<MatchTableItem>,
+    column: GridColumnElement<MatchTableItem> & { path: 'team_1' | 'team_2' },
     rowData: GridItemModel<MatchTableItem>,
   ) {
     const team = rowData.item[column.path];

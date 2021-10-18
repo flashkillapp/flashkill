@@ -6,6 +6,6 @@ export const get99MatchLink = (matchId: number): string => (
   `https://liga.99damage.de/leagues/matches/${matchId}`
 );
 
-export const get99TeamLink = (teamId: numer): string => (
+export const get99TeamLink = (teamId: number): string => (
   `https://liga.99damage.de/leagues/teams/${teamId}`
 );

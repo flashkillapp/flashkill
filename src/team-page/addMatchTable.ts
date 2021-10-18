@@ -46,7 +46,7 @@ const printMatchDetails = (divisionMatches: DivisionMatches[], teamId: number): 
     });
   });
   const switchedMatchItems = matchItems.map((matchItem) => {
-    if (matchItem.team_1.id === teamId) return matchItem;
+    if (matchItem.team_1?.id === teamId) return matchItem;
 
     return {
       ...matchItem,

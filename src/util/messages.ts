@@ -5,6 +5,7 @@ export enum MessageNames {
   GetPlayerInfo = 'getPlayerInfo',
   GetFaceitInfos = 'getFaceitInfos',
   GetDivisionMatches = 'getDivisionMatches',
+  GetPlayerInfos = 'getPlayerInfos',
 }
 
 interface Message {
@@ -32,6 +33,12 @@ interface Messages extends Partial<Record<MessageNames, Message>> {
       steamId64: string;
     };
     response: PlayerInfo | null;
+  };
+  [MessageNames.GetPlayerInfos]: {
+    payload: {
+      steamIds64: string[];
+    };
+    response: Array<PlayerInfo | null>;
   };
 }
 

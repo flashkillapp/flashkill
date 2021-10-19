@@ -17,6 +17,13 @@ receiveMessage(
 );
 
 receiveMessage(
+  MessageNames.GetPlayerInfos,
+  async (payload) => Promise.all(
+    payload.steamIds64.map((steamId64) => fetchPlayerInfo(steamId64)),
+  ),
+);
+
+receiveMessage(
   MessageNames.GetFaceitInfos,
   async (payload) => (
     Promise.all(payload.steamIds64.map(fetchFaceitInfo))

@@ -17,16 +17,6 @@ receiveMessage(
   ),
 );
 
-export interface PlayerInfoRequest {
-  contentScriptQuery: typeof MessageNames.QueryPlayerInfo;
-  steamId64: string;
-}
-
-export interface FaceitInfosRequest {
-  contentScriptQuery: typeof MessageNames.QueryFaceitInfos;
-  steamIds64: string[];
-}
-
 receiveMessage(
   MessageNames.QueryPlayerInfo,
   async (payload) => fetchPlayerInfo(payload.steamId64),

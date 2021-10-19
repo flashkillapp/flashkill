@@ -51,11 +51,6 @@ class MatchesTable extends LitElement {
       width: 100%;
     }
 
-    .season-selection {
-      height: 150px;
-      overflow-y: scroll;
-    }
-    
     .hidden {
       display: none;
     }
@@ -78,7 +73,7 @@ class MatchesTable extends LitElement {
         <vaadin-button @click=${this.openSeasonSelection}>Saisons auswählen</vaadin-button>
       </div>
       <div class="season-selection hidden">
-        <vaadin-checkbox-group @change=${this.updateSeasonSelection} theme="vertical">
+        <vaadin-checkbox-group @change=${this.updateSeasonSelection} .value="${this.getSeasons().map((season) => `${season.id}`)}">
           ${this.getSeasons().map((season) => html`
             <vaadin-checkbox value="${season.id}">${season.name}</vaadin-checkbox>
           `)}
@@ -110,14 +105,10 @@ class MatchesTable extends LitElement {
 
     if (grid === null || grid === undefined) return;
 
-    if (seasonIds.length === 0) {
-      grid.items = this.matchItems;
-    } else {
-      grid.items = this.matchItems.filter((matchItem) => (
-        matchItem.season !== null
-        && seasonIds.includes(matchItem.season.id)
-      ));
-    }
+    grid.items = this.matchItems.filter((matchItem) => (
+      matchItem.season !== null
+      && seasonIds.includes(matchItem.season.id)
+    ));
   }
 
   private openSeasonSelection() {

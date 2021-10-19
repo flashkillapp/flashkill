@@ -1,22 +1,11 @@
 import { sendMessage, MessageNames } from '../util/communication';
 import {
-  getTabTeamId, getTabTeamShortName, getCurrentDivision, getPreviousDivisions,
+  getTabTeamId, getTabTeamShortName, getCurrentDivision, getPreviousDivisions, getSeason,
 } from './selectors';
 import { notNull } from '../util/notNull';
 import '../components/MatchesTable';
 import { component } from '../util/component';
-import { DivisionMatches, Season } from '../model';
-
-const getSeason = (divisionUrl: string): Season | null => {
-  const seasonRegex = /99dmg\/([0-9]+)-.*?([0-9]+)\/group/;
-  const regexResult = divisionUrl.match(seasonRegex);
-  const idString = regexResult?.[1] ?? null;
-  const seasonNumber = regexResult?.[2] ?? null;
-
-  if (idString === null || seasonNumber === null) return null;
-
-  return { id: Number.parseInt(idString, 10), name: `Saison ${seasonNumber}` };
-};
+import { Division, DivisionMatches } from '../model';
 
 const printMatchDetails = (divisionMatches: DivisionMatches[], teamId: number): void => {
   const header = document.querySelector('.content-portrait-head');
@@ -74,8 +63,18 @@ export const addMatchTable = (): void => {
     ...getPreviousDivisions(),
   ]
     .filter(notNull)
-    .filter(({ name }) => !name.includes('Relegation'));
+    .filter(({ name }) => !name.includes('Relegation'))
+    .sort((a: Division, b: Division) => {
+      const seasonA = getSeason(a.url);
+      const seasonB = getSeason(b.url);
 
+      console.log(seasonA, seasonB);
+
+      if (seasonA === null || seasonB === null) return 0;
+      
+      return seasonB.order - seasonA.order;
+    })
+    .slice(0, 3);
 
   sendMessage(
     MessageNames.QueryDivisionsMatches,

@@ -1,6 +1,6 @@
 import { ID } from '@node-steam/id';
 
-import { Division, Team, MapScore } from '../model';
+import { Division, Team, MapScore, Season } from '../model';
 import { notNull } from '../util/notNull';
 
 export const getMemberCards = (): HTMLLIElement[] => (
@@ -44,13 +44,24 @@ export const getTabTeamShortName = (): string | null => {
   return getTeamShortNameFromUrl(url);
 };
 
+const getDivisionId = (url: string): number | null => {
+  const divisionIdRegex = /group\/.*\/([0-9]+)-/;
+  const divisionIdString = url.match(divisionIdRegex)?.[1] || null;
+  if (divisionIdString === null) return null;
+  return Number.parseInt(divisionIdString, 10);
+};
+
 const extractDivision = (linkElement: HTMLLinkElement | null): Division | null => {
   const name = linkElement?.textContent;
   const url = linkElement?.getAttribute('href');
 
   if (!name || !url) return null;
 
-  return { name, url };
+  const id = getDivisionId(url);
+
+  if (id === null) return null;
+
+  return { id, name, url };
 };
 
 export const getCurrentDivision = (): Division | null => {
@@ -102,4 +113,19 @@ export const getMapScores = (matchDoc: Document): MapScore[] => {
       score_2: Number.parseInt(scores[1], 10),
     };
   }).filter(notNull) ?? [];
+};
+
+export const getSeason = (divisionUrl: string): Season | null => {
+  const seasonRegex = /99dmg\/([0-9]+)-.*?([0-9]+)\/group/;
+  const regexResult = divisionUrl.match(seasonRegex);
+  const idString = regexResult?.[1] ?? null;
+  const seasonNumber = regexResult?.[2] ?? null;
+
+  if (idString === null || seasonNumber === null) return null;
+
+  return {
+    id: Number.parseInt(idString, 10),
+    order: Number.parseInt(seasonNumber, 10),
+    name: `Saison ${seasonNumber}`,
+  };
 };

@@ -4,65 +4,39 @@ import { getSteamLink } from '../util/getLink';
 import { notNull } from '../util/notNull';
 import { AjaxMatch, DivisionMatches } from '../model';
 import { getMatchId, getTeams, getMapScores } from './selectors';
+import { MessageNames, receiveMessage } from '../util/communication';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
 
-export enum TeamPageRequestTypes {
-  QueryPlayerInfo = 'queryPlayerInfo',
-  QueryFaceitInfos = 'queryFaceitInfos',
-  QueryDivisionsMatches = 'queryDivisionsMatches',
-}
+receiveMessage(
+  MessageNames.QueryDivisionsMatches,
+  async (payload) => (
+    Promise.all(payload.divisions.map((division) =>
+      fetchDivisionMatches(division, payload.teamShortName),
+    ))
+  ),
+);
 
 export interface PlayerInfoRequest {
-  contentScriptQuery: typeof TeamPageRequestTypes.QueryPlayerInfo;
+  contentScriptQuery: typeof MessageNames.QueryPlayerInfo;
   steamId64: string;
 }
 
 export interface FaceitInfosRequest {
-  contentScriptQuery: typeof TeamPageRequestTypes.QueryFaceitInfos;
+  contentScriptQuery: typeof MessageNames.QueryFaceitInfos;
   steamIds64: string[];
 }
 
-export interface DivisionMatchesRequest {
-  contentScriptQuery: typeof TeamPageRequestTypes.QueryDivisionsMatches;
-  divisions: Division[];
-  teamShortName: string;
-}
+receiveMessage(
+  MessageNames.QueryPlayerInfo,
+  async (payload) => fetchPlayerInfo(payload.steamId64),
+);
 
-type MemberRequest = PlayerInfoRequest
-  | FaceitInfosRequest
-  | DivisionMatchesRequest;
-
-chrome.runtime.onMessage.addListener(
-  (request: MemberRequest, _, sendResponse): boolean => {
-    switch (request.contentScriptQuery) {
-      case TeamPageRequestTypes.QueryPlayerInfo: {
-        fetchPlayerInfo(request.steamId64)
-          .then(sendResponse)
-          .catch(console.log);
-        return true;
-      }
-
-      case TeamPageRequestTypes.QueryFaceitInfos: {
-        Promise.all(request.steamIds64.map(fetchFaceitInfo))
-          .then(sendResponse)
-          .catch(console.log);
-        return true;
-      }
-
-      case TeamPageRequestTypes.QueryDivisionsMatches: {
-        Promise.all(request.divisions.map((division) =>
-          fetchDivisionMatches(division, request.teamShortName),
-        ))
-          .then(sendResponse)
-          .catch(console.log);
-        return true;
-      }
-
-      default:
-        return false;
-    }
-  },
+receiveMessage(
+  MessageNames.QueryFaceitInfos,
+  async (payload) => (
+    Promise.all(payload.steamIds64.map(fetchFaceitInfo))
+  ),
 );
 
 const fetchDivisionMatches = async (division: Division, teamShortName: string): Promise<DivisionMatches> => {

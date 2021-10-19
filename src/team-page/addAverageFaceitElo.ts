@@ -3,7 +3,7 @@ import { FaceitInfo } from '../model';
 import { component } from '../util/component';
 import '../components/TeamEloHeader';
 
-import { TeamPageRequestTypes } from './background';
+import { MessageNames, sendMessage } from '../util/communication';
 import { getMemberCards, getSteamId64 } from './selectors';
 
 const arrayAvg = (arr: number[]): number => (
@@ -30,12 +30,10 @@ export const addAverageFaceitElo = (): void => {
     .map(getSteamId64)
     .filter(notNull);
 
-  chrome.runtime.sendMessage(
-    {
-      contentScriptQuery: TeamPageRequestTypes.QueryFaceitInfos,
-      steamIds64,
-    },
-    (faceitInfos: FaceitInfo[]) => {
+  sendMessage(
+    MessageNames.QueryFaceitInfos,
+    { steamIds64 },
+    (faceitInfos: Array<FaceitInfo | null>) => {
       injectAvgFaceitElo(faceitInfos);
     },
   );

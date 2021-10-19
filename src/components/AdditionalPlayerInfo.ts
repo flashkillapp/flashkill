@@ -90,7 +90,6 @@ class AdditionalPlayerInfo extends LitElement {
       return html``;
     };
 
-
     return html`
       <div class="root">
         <div class="steam-info">

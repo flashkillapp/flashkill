@@ -1,4 +1,4 @@
-import { TeamPageRequestTypes } from './background';
+import { sendMessage, MessageNames } from '../util/communication';
 import {
   getTabTeamId, getTabTeamShortName, getCurrentDivision, getPreviousDivisions,
 } from './selectors';
@@ -76,12 +76,10 @@ export const addMatchTable = (): void => {
     .filter(notNull)
     .filter(({ name }) => !name.includes('Relegation'));
 
-  chrome.runtime.sendMessage(
-    {
-      contentScriptQuery: TeamPageRequestTypes.QueryDivisionsMatches,
-      divisions,
-      teamShortName,
-    },
+
+  sendMessage(
+    MessageNames.QueryDivisionsMatches,
+    { divisions, teamShortName },
     (divisionMatches: DivisionMatches[]) => printMatchDetails(divisionMatches, teamId),
   );
 };

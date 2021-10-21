@@ -32,9 +32,16 @@ const playerTable = 'flashkill-player-table';
 @customElement(playerTable)
 class PlayerTable extends LitElement {
   @property({ type: Array }) playerItems!: PlayerTableItem[];
+  @property() remainingSubstitutions!: string;
 
   static styles = css`
     ${customTheme}
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
 
     .profiles {
       display: flex;
@@ -58,6 +65,10 @@ class PlayerTable extends LitElement {
 
   render() {
     return html`
+      <div class="header">
+        <h1>Spieler</h1>
+        <h3>${this.remainingSubstitutions}</h3>
+      </div>
       <vaadin-grid .items="${this.playerItems}">
         <vaadin-grid-column
           header="Name"
@@ -80,7 +91,7 @@ class PlayerTable extends LitElement {
           text-align="end"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          header="Profile"
+          header="Profiles"
           .renderer="${this.profilesRenderer}"
         ></vaadin-grid-column>
       </vaadin-grid>

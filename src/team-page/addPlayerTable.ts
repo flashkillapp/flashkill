@@ -7,8 +7,12 @@ import '../components/PlayerTable';
 import { getMemberCards, getPlayer } from './selectors';
 
 const injectMemberTable = (playerItems: PlayerTableItem[]): void => {
+  const remainingSubstitutions = document.querySelector('.league-team-members .section-content .txt-content');
+  const remainingSubstitutionsText = remainingSubstitutions?.textContent ?? '';
   const header = document.querySelector('.content-portrait-head');
-  const playerTable = component('flashkill-player-table', { playerItems });
+  const playerTable = component(
+    'flashkill-player-table', { playerItems, remainingSubstitutions: remainingSubstitutionsText },
+  );
   header?.parentNode?.appendChild(playerTable);
 };
 

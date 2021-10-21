@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators';
 
 import { FaceitInfo } from '../model';
 import { getSteamLink } from '../util/getLink';
-import { notNull } from '../util/notNull';
+import { notNull } from '../util';
 
 const getFaceitLevelLogo = (faceitLevel: number): string => (
   `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`

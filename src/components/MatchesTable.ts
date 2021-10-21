@@ -16,7 +16,7 @@ import { customTheme } from '../util/theme';
 import { Division, Season, Team, DraftMap } from '../model';
 import { getDay } from '../util/dateHelpers';
 import { get99MatchLink, get99TeamLink } from '../util/getLink';
-import { notNull } from '../util/notNull';
+import { notNull, notUndefined } from '../util';
 
 registerStyles('vaadin-grid', css`
   .win { background-color: #374c37 !important; }
@@ -61,9 +61,17 @@ class MatchesTable extends LitElement {
   `;
 
   private getSeasons() {
-    return Array.from(
-      new Set(this.matchItems?.map((matchItem) => matchItem.season).filter(notNull)),
-    ).sort((a: Season, b: Season) => b.id - a.id);
+    const allSeasons = this.matchItems
+      .map((matchItem) => matchItem.season)
+      .filter(notNull);
+
+    const uniqueSeasonIds = Array.from(
+      new Set(allSeasons.map(({ id }) => id)),
+    );
+
+    return uniqueSeasonIds.map((id) => (
+      allSeasons.find((season) => season.id === id)
+    )).filter(notUndefined).sort((a: Season, b: Season) => b.order - a.order);
   }
 
   render() {

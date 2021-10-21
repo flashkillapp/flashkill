@@ -1,8 +1,9 @@
 import { sendMessage, MessageNames } from '../util/messages';
-import { notNull } from '../util/notNull';
+import { notNull } from '../util';
 import '../components/MatchesTable';
 import { component } from '../util/component';
 import { Division } from '../model';
+import { MatchTableItem } from '../components/MatchesTable';
 
 import {
   getTabTeamId,
@@ -11,7 +12,6 @@ import {
   getPreviousDivisions,
   getSeason,
 } from './selectors';
-import { MatchTableItem } from '../components/MatchesTable';
 
 const printMatchDetails = (matchItems: MatchTableItem[]): void => {
   const header = document.querySelector('.content-portrait-head');

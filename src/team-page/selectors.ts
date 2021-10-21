@@ -1,7 +1,7 @@
 import { ID } from '@node-steam/id';
 
 import { Division, Team, MapScore, Season } from '../model';
-import { notNull } from '../util/notNull';
+import { notNull } from '../util';
 
 export const getMemberCards = (): HTMLLIElement[] => (
   Array.from(document.querySelectorAll('.content-portrait-grid-l > li'))

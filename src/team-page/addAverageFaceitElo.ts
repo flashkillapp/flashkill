@@ -1,4 +1,4 @@
-import { notNull } from '../util/notNull';
+import { notNull } from '../util';
 import { FaceitInfo } from '../model';
 import { component } from '../util/component';
 import '../components/TeamEloHeader';

@@ -1,8 +1,8 @@
 import { MessageNames, receiveMessage } from '../util/messages';
 
 import { fetchFaceitInfo } from './fetchFaceitInfo';
-import { fetchPlayerInfo } from './fetchPlayerInfo';
 import { fetchDivisionsMatches } from './fetchDivisionMatches';
+import { fetchPlayerInfo } from './fetchPlayerInfo';
 
 receiveMessage(
   MessageNames.GetDivisionMatches,
@@ -12,14 +12,9 @@ receiveMessage(
 );
 
 receiveMessage(
-  MessageNames.GetPlayerInfo,
-  async (payload) => fetchPlayerInfo(payload.steamId64),
-);
-
-receiveMessage(
   MessageNames.GetPlayerInfos,
   async (payload) => Promise.all(
-    payload.steamIds64.map((steamId64) => fetchPlayerInfo(steamId64)),
+    payload.players.map((player) => fetchPlayerInfo(player)),
   ),
 );
 

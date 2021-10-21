@@ -1,8 +1,8 @@
 import { MatchTableItem } from '../components/MatchesTable';
-import { Division, FaceitInfo, PlayerInfo } from '../model';
+import { PlayerTableItem } from '../components/PlayerTable';
+import { Division, FaceitInfo, Player } from '../model';
 
 export enum MessageNames {
-  GetPlayerInfo = 'getPlayerInfo',
   GetFaceitInfos = 'getFaceitInfos',
   GetDivisionMatches = 'getDivisionMatches',
   GetPlayerInfos = 'getPlayerInfos',
@@ -28,17 +28,11 @@ interface Messages extends Partial<Record<MessageNames, Message>> {
     };
     response: Array<FaceitInfo | null>;
   };
-  [MessageNames.GetPlayerInfo]: {
-    payload: {
-      steamId64: string;
-    };
-    response: PlayerInfo | null;
-  };
   [MessageNames.GetPlayerInfos]: {
     payload: {
-      steamIds64: string[];
+      players: Player[];
     };
-    response: Array<PlayerInfo | null>;
+    response: PlayerTableItem[];
   };
 }
 

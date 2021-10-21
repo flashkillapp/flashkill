@@ -9,3 +9,7 @@ export const get99MatchLink = (matchId: number): string => (
 export const get99TeamLink = (teamId: number): string => (
   `https://liga.99damage.de/leagues/teams/${teamId}`
 );
+
+export const get99PlayerLink = (playerId: number): string => (
+  `https://liga.99damage.de/users/${playerId}`
+);

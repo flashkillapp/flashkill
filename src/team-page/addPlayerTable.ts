@@ -1,27 +1,25 @@
-import { PlayerInfo } from '../model';
 import { component } from '../util/component';
 import { sendMessage, MessageNames } from '../util/messages';
 import { notNull } from '../util/index';
+import { PlayerTableItem } from '../components/PlayerTable';
 import '../components/PlayerTable';
 
-import { getMemberCards, getSteamId64 } from './selectors';
+import { getMemberCards, getPlayer } from './selectors';
 
-const injectMemberTable = (playerInfos: Array<PlayerInfo | null>): void => {
+const injectMemberTable = (playerItems: PlayerTableItem[]): void => {
   const header = document.querySelector('.content-portrait-head');
-  const playerTable = component('flashkill-player-table', { playerItems: playerInfos.filter(notNull) });
+  const playerTable = component('flashkill-player-table', { playerItems });
   header?.parentNode?.appendChild(playerTable);
 };
 
 export const addPlayerTable = (): void => {
   const memberCards = getMemberCards();
 
-  const steamIds64 = memberCards.map((memberCard) => getSteamId64(memberCard)).filter(notNull);
+  const players = memberCards.map((memberCard) => getPlayer(memberCard)).filter(notNull);
 
   sendMessage(
     MessageNames.GetPlayerInfos,
-    { steamIds64 },
-    (playerInfos: Array<PlayerInfo | null>) => {
-      injectMemberTable(playerInfos);
-    },
+    { players },
+    injectMemberTable,
   );
 };

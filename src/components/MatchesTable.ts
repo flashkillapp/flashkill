@@ -8,7 +8,7 @@ import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox-group';
 import type { CheckboxGroupElement } from '@vaadin/vaadin-checkbox/vaadin-checkbox-group';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';
 import { LitElement, html, css, render } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import { customTheme } from '../util/theme';

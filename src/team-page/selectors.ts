@@ -140,7 +140,7 @@ const getPlayerId = (url: string): number | null => {
 };
 
 export const getPlayer = (memberCard: HTMLLIElement): Player | null => {
-  const url = memberCard.querySelector('a')?.href ?? null;
+  const url = memberCard.querySelector<HTMLLinkElement>('a.image-present')?.href ?? null;
   const name = memberCard.querySelector('h3')?.textContent ?? null;
   const role = memberCard.querySelector('.txt-subtitle')?.textContent ?? null;
 

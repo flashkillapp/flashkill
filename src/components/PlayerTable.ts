@@ -3,7 +3,7 @@ import '@vaadin/vaadin-material-styles';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
 import { LitElement, css, html, render, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import { FaceitInfo, Player } from '../model';

@@ -1,5 +1,6 @@
+const CopyPlugin = require('copy-webpack-plugin');
 
-const backgroundConfig = {
+const backgroundAndCssConfig = {
   entry: [
     './src/team-page/background.ts',
   ],
@@ -23,6 +24,13 @@ const backgroundConfig = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/team-page/styles.css', to: 'content/team-page/styles.css' },
+      ],
+    }),
+  ],
 };
 
 const contentScripts = [
@@ -52,12 +60,12 @@ const contentScriptConfigs = contentScripts.map(contentScriptPath => {
       filename: 'content/' + jsFilePath.replace('content', 'index'),
     },
     resolve: {
-      extensions: ['.ts', '.js'],
+      extensions: ['.ts', '.js', '.css'],
     },
   };
 });
 
-const allConfigs = contentScriptConfigs;
-allConfigs.push(backgroundConfig);
-
-module.exports = allConfigs;
+module.exports = [
+  backgroundAndCssConfig,
+  ...contentScriptConfigs,
+];

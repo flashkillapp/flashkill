@@ -6,7 +6,7 @@ import { LitElement, css, html, render, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
-import { notNull } from '../util/notNull';
+import { notNull } from '../util/index';
 import { FaceitInfo } from '../model';
 import { customTheme } from '../util/theme';
 import { getSteamLink } from '../util/getLink';
@@ -79,23 +79,10 @@ class PlayerTable extends LitElement {
           path="faceitInfo.games.csgo.faceit_elo"
           header="Faceit Elo"
           text-align="end"
-          .footerRenderer="${this.avgEloRenderer}"
         ></vaadin-grid-column>
         <vaadin-grid-column header="Profile" .renderer="${this.profilesRenderer}"></vaadin-grid-column>
       </vaadin-grid>
     `;
-  }
-
-  private avgEloRenderer(
-    root: HTMLElement,
-  ) {
-    console.log(this.playerItems);
-    render(
-      html`
-        <span>${avgFaceitElo(this.playerItems?.map(({ faceitInfo }) => faceitInfo) ?? [])}</span>
-      `,
-      root,
-    );
   }
 
   private profilesRenderer(

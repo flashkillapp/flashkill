@@ -1,7 +1,7 @@
 import { PlayerInfo } from '../model';
 import { component } from '../util/component';
-import { sendMessage, MessageNames } from '../util/communication';
-import { notNull } from '../util/notNull';
+import { sendMessage, MessageNames } from '../util/messages';
+import { notNull } from '../util/index';
 import '../components/PlayerTable';
 
 import { getMemberCards, getSteamId64 } from './selectors';
@@ -18,7 +18,7 @@ export const addPlayerTable = (): void => {
   const steamIds64 = memberCards.map((memberCard) => getSteamId64(memberCard)).filter(notNull);
 
   sendMessage(
-    MessageNames.QueryPlayerInfos,
+    MessageNames.GetPlayerInfos,
     { steamIds64 },
     (playerInfos: Array<PlayerInfo | null>) => {
       injectMemberTable(playerInfos);

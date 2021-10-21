@@ -4,7 +4,6 @@ import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
 import '@vaadin/vaadin-button/theme/material/vaadin-button';
 import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox';
-import '@vaadin/vaadin-dialog/theme/material/vaadin-dialog';
 import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox-group';
 import type { CheckboxGroupElement } from '@vaadin/vaadin-checkbox/vaadin-checkbox-group';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';
@@ -78,7 +77,7 @@ class MatchesTable extends LitElement {
     const header = html`
       <div class="button-wrapper">
         <h1>Ergebnisse</h1>
-        <vaadin-button @click=${this.openSeasonSelection}>Saisons auswählen</vaadin-button>
+        <vaadin-button @click=${this.toggleSeasonSelection}>Saisons auswählen</vaadin-button>
       </div>
     `;
 
@@ -170,7 +169,7 @@ class MatchesTable extends LitElement {
     ));
   }
 
-  private openSeasonSelection() {
+  private toggleSeasonSelection() {
     const seasonSelection = this.shadowRoot?.querySelector('.season-selection');
     seasonSelection?.classList.toggle('hidden');
   }

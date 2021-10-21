@@ -30,7 +30,7 @@
       "\tinterface HTMLElementTagNameMap {",
       "\t\t[${TM_FILENAME_BASE/([A-Z])(.*)/${1:/downcase}${2}/}]: ${TM_FILENAME_BASE},",
       "\t}",
-      "};",
+      "}",
       "",
     ],
     "description": "WebComponent based on LitElement"

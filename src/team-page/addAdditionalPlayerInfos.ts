@@ -3,7 +3,7 @@ import { component } from '../util/component';
 import '../components/AdditionalPlayerInfo';
 
 import { getMemberCards, getSteamId64 } from './selectors';
-import { sendMessage, MessageNames } from '../util/communication';
+import { sendMessage, MessageNames } from '../util/messages';
 
 const injectAdditionalPlayerInfo = (playerInfo: PlayerInfo, memberCard: HTMLLIElement): void => {
   const additionalPlayerInfo = component('flashkill-additional-player-info', { ...playerInfo });
@@ -18,9 +18,8 @@ export const addAdditionalPlayerInfos = (): void => {
 
     if (steamId64 === null) return;
 
-
     sendMessage(
-      MessageNames.QueryPlayerInfo,
+      MessageNames.GetPlayerInfo,
       { steamId64 },
       (playerInfo: PlayerInfo | null) => {
         if (playerInfo === null) return;

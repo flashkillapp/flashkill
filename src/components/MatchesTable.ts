@@ -24,8 +24,6 @@ registerStyles('vaadin-grid', css`
   .draw { background-color: #283d42 !important; }
 `);
 
-const matchesTable = 'flashkill-matches-table';
-
 export interface MatchTableItem {
   match_id: number;
   division: Division;
@@ -37,6 +35,8 @@ export interface MatchTableItem {
   score_2: number;
   map: DraftMap | null;
 }
+
+const matchesTable = 'flashkill-matches-table';
 
 @customElement(matchesTable)
 class MatchesTable extends LitElement {
@@ -67,30 +67,81 @@ class MatchesTable extends LitElement {
   }
 
   render() {
-    return html`
+    const header = html`
       <div class="button-wrapper">
         <h1>Ergebnisse</h1>
         <vaadin-button @click=${this.openSeasonSelection}>Saisons auswählen</vaadin-button>
       </div>
+    `;
+
+    const seasonSelection = html`
       <div class="season-selection hidden">
-        <vaadin-checkbox-group @change=${this.updateSeasonSelection} .value="${this.getSeasons().map((season) => `${season.id}`)}">
+        <vaadin-checkbox-group
+          @change=${this.updateSeasonSelection}
+          .value="${this.getSeasons().map((season) => `${season.id}`)}"
+        >
           ${this.getSeasons().map((season) => html`
             <vaadin-checkbox value="${season.id}">${season.name}</vaadin-checkbox>
           `)}
         </vaadin-checkbox-group>
       </div>
-      <vaadin-grid theme="compact" .items="${this.matchItems}" .cellClassNameGenerator="${this.cellClassNameGenerator}">
-        <vaadin-grid-column .renderer="${this.dateRenderer}" header="Datum"></vaadin-grid-column>
-        <vaadin-grid-column auto-width .renderer="${this.divisionRenderer}" header="Division"></vaadin-grid-column>
-        <vaadin-grid-column path="team_1" .renderer="${this.teamRenderer}" header="Team 1" text-align="end"></vaadin-grid-column>
+    `;
+
+    const grid = html`
+      <vaadin-grid
+        .items="${this.matchItems}"
+        .cellClassNameGenerator="${this.cellClassNameGenerator}"
+      >
+        <vaadin-grid-column
+          header="Datum"
+          text-align="center"
+          auto-width
+          .renderer="${this.dateRenderer}"
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          header="Division"
+          auto-width
+          .renderer="${this.divisionRenderer}"
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          header="Team 1"
+          path="team_1"
+          text-align="end"
+          .renderer="${this.teamRenderer}"
+        ></vaadin-grid-column>
         <vaadin-grid-column-group header="Scores" text-align="center">
-          <vaadin-grid-column path="score_1" header="" text-align="center" width="45px"></vaadin-grid-column>
-          <vaadin-grid-column path="score_2" header="" text-align="center" width="45px"></vaadin-grid-column>
+          ${[1, 2].map((teamNumber) => html`
+            <vaadin-grid-column
+              header=""
+              path="score_${teamNumber}"
+              text-align="center"
+              width="45px"
+            ></vaadin-grid-column>
+          `)}
         </vaadin-grid-column-group>
-        <vaadin-grid-column path="team_2" .renderer="${this.teamRenderer}" header="Team 2"></vaadin-grid-column>
-        <vaadin-grid-column .renderer="${this.mapRenderer}" header="Map"></vaadin-grid-column>
-        <vaadin-grid-column auto-width .renderer="${this.moreRenderer}" header="Link"></vaadin-grid-column>
+        <vaadin-grid-column
+          header="Team 2"
+          path="team_2"
+          .renderer="${this.teamRenderer}"
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          header="Map"
+          text-align="center"
+          .renderer="${this.mapRenderer}"
+        ></vaadin-grid-column>
+        <vaadin-grid-column
+          header="Link"
+          text-align="center"
+          auto-width
+          .renderer="${this.matchRoomRenderer}"
+        ></vaadin-grid-column>
       </vaadin-grid>
+    `;
+
+    return html`
+      ${header}
+      ${seasonSelection}
+      ${grid}
     `;
   }
 
@@ -167,7 +218,7 @@ class MatchesTable extends LitElement {
     );
   }
 
-  private moreRenderer(
+  private matchRoomRenderer(
     root: HTMLElement,
     _: GridColumnElement<MatchTableItem>,
     rowData: GridItemModel<MatchTableItem>,
@@ -180,7 +231,9 @@ class MatchesTable extends LitElement {
     );
   }
 
-  private cellClassNameGenerator(column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>) {
+  private cellClassNameGenerator(
+    column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>,
+  ) {
     if (column.path !== 'score_1' && column.path !== 'score_2') return '';
 
     const roundDiff = model.item.score_1 - model.item.score_2;

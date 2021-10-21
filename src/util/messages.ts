@@ -1,10 +1,10 @@
-import { Division, DivisionMatches, FaceitInfo, PlayerInfo } from '../model';
+import { MatchTableItem } from '../components/MatchesTable';
+import { Division, FaceitInfo, PlayerInfo } from '../model';
 
 export enum MessageNames {
-  QueryPlayerInfo = 'queryPlayerInfo',
-  QueryFaceitInfos = 'queryFaceitInfos',
-  QueryDivisionsMatches = 'queryDivisionsMatches',
-  QueryOther = 'queryOther',
+  GetPlayerInfo = 'getPlayerInfo',
+  GetFaceitInfos = 'getFaceitInfos',
+  GetDivisionMatches = 'getDivisionMatches',
 }
 
 interface Message {
@@ -12,21 +12,22 @@ interface Message {
   response: unknown;
 }
 
-interface Messages extends Record<MessageNames, Message> {
-  [MessageNames.QueryDivisionsMatches]: {
+interface Messages extends Partial<Record<MessageNames, Message>> {
+  [MessageNames.GetDivisionMatches]: {
     payload: {
       teamShortName: string;
       divisions: Division[];
+      teamId: number;
     };
-    response: DivisionMatches[];
+    response: MatchTableItem[];
   };
-  [MessageNames.QueryFaceitInfos]: {
+  [MessageNames.GetFaceitInfos]: {
     payload: {
       steamIds64: string[];
     };
     response: Array<FaceitInfo | null>;
   };
-  [MessageNames.QueryPlayerInfo]: {
+  [MessageNames.GetPlayerInfo]: {
     payload: {
       steamId64: string;
     };
@@ -37,12 +38,12 @@ interface Messages extends Record<MessageNames, Message> {
 type MessageTypes = keyof Messages;
 type MessagePayload<T extends MessageTypes> = Messages[T]['payload']
 type MessageResponse<T extends MessageTypes> = Messages[T]['response']
-
+type MessageCallback<T extends MessageTypes> = (response: MessageResponse<T>) => void;
 
 export const sendMessage = <T extends MessageTypes>(
   name: T,
   payload: MessagePayload<T>,
-  callback: (response: MessageResponse<T>) => void,
+  callback: MessageCallback<T>,
 ): void => {
   chrome.runtime.sendMessage(
     { name, payload },
@@ -55,7 +56,7 @@ export const receiveMessage = <T extends MessageTypes>(
   responder: (payload: MessagePayload<T>) => Promise<MessageResponse<T>>,
 ): void => {
   chrome.runtime.onMessage.addListener(
-    (request: { name: T, payload: MessageResponse<T> }, _, callback): boolean => {
+    (request: { name: T, payload: MessagePayload<T> }, _, callback: MessageCallback<T>): boolean => {
       if (request.name !== name) return false;
 
       responder(request.payload)

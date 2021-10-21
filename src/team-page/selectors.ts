@@ -30,7 +30,6 @@ const getTeamIdFromUrl = (url: string): number | null => {
 
 export const getTabTeamId = (): number | null => {
   const url = window.location.href;
-  console.log(url);
   return getTeamIdFromUrl(url);
 };
 

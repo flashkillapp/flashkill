@@ -17,8 +17,8 @@ class TeamEloHeader extends LitElement {
 
   render() {
     return html`
-      <h2 title="Durchschnittliche FACEIT Elo">
-        FACEIT Elo: ${Math.round(this.avgElo)}
+      <h2 title="Durchschnittliche FACEIT-Elo">
+        FACEIT-Elo: ${Math.round(this.avgElo)}
       </h2>
     `;
   }

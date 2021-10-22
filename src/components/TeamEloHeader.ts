@@ -1,6 +1,6 @@
 import '@webcomponents/custom-elements';
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from 'lit/decorators.js';
 
 const teamEloHeader = 'flashkill-team-elo-header';
 

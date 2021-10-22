@@ -1,6 +1,6 @@
 import '@webcomponents/custom-elements';
 import { LitElement, css, html, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from 'lit/decorators.js';
 
 import { FaceitInfo } from '../model';
 import { getSteamLink } from '../util/getSteamLink';
@@ -66,31 +66,30 @@ class AdditionalPlayerInfo extends LitElement {
     }
   `;
 
-  render() {
-    const getFaceitInfo = (): TemplateResult<1> => {
-      if (notNull(this.faceitInfo)) {
-        const {
-          nickname,
-          games: { csgo: { faceit_elo, skill_level } },
-        } = this.faceitInfo;
+  private renderFaceitInfo(): TemplateResult<1> {
+    if (notNull(this.faceitInfo)) {
+      const {
+        nickname,
+        games: { csgo: { faceit_elo, skill_level } },
+      } = this.faceitInfo;
 
-        return html`
-        <div class="faceit-info">
-          <div class="faceit-text">
-            ${'FACEIT: '}
-            <a href=${getFaceitLink(nickname)} target="_blank">
-              ${faceit_elo}
-              <img class="faceit-logo" src=${getFaceitLevelLogo(skill_level)} alt=${skill_level} />
-            </a>
-          </div>
+      return html`
+      <div class="faceit-info">
+        <div class="faceit-text">
+          ${'FACEIT: '}
+          <a href=${getFaceitLink(nickname)} target="_blank">
+            ${faceit_elo}
+            <img class="faceit-logo" src=${getFaceitLevelLogo(skill_level)} alt=${skill_level} />
+          </a>
         </div>
-        `;
-      }
+      </div>
+      `;
+    }
 
-      return html``;
-    };
+    return html``;
+  }
 
-
+  render() {
     return html`
       <div class="root">
         <div class="steam-info">
@@ -99,7 +98,7 @@ class AdditionalPlayerInfo extends LitElement {
             ${this.steamName ?? '-'}
           </a>
         </div>
-        ${getFaceitInfo()}
+        ${this.renderFaceitInfo()}
       </div>
     `;
   }

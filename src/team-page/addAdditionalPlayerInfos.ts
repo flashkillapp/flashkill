@@ -23,8 +23,7 @@ export const addAdditionalPlayerInfos = (): void => {
         contentScriptQuery: TeamPageRequestTypes.QueryPlayerInfo,
         steamId64,
       },
-      (playerInfo: PlayerInfo | null) => {
-        if (playerInfo === null) return;
+      (playerInfo: PlayerInfo) => {
         injectAdditionalPlayerInfo(playerInfo, memberCard);
       },
     );

@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener(
   },
 );
 
-const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo | null> => {
+const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo> => {
   const faceitInfo = await fetchFaceitInfo(steamId64);
   const steamName = await fetchSteamName(steamId64);
   return {

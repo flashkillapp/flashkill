@@ -80,7 +80,7 @@ class AdditionalPlayerInfo extends LitElement {
             ${'FACEIT: '}
             <a href=${getFaceitLink(nickname)} target="_blank">
               ${faceit_elo}
-              <img class="faceit-logo" src=${getFaceitLevelLogo(skill_level)} alt=${`${skill_level} `} />
+              <img class="faceit-logo" src=${getFaceitLevelLogo(skill_level)} alt=${skill_level} />
             </a>
           </div>
         </div>
@@ -99,7 +99,7 @@ class AdditionalPlayerInfo extends LitElement {
             ${this.steamName ?? '-'}
           </a>
         </div>
-        ${this.faceitInfo !== null && getFaceitInfo()}
+        ${getFaceitInfo()}
       </div>
     `;
   }

@@ -1,5 +1,5 @@
 import '@webcomponents/custom-elements';
-import { LitElement, css, html, TemplateResult } from 'lit';
+import { LitElement, css, html, HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { FaceitInfo } from '../model';
@@ -66,7 +66,7 @@ class AdditionalPlayerInfo extends LitElement {
     }
   `;
 
-  private renderFaceitInfo(): TemplateResult<1> {
+  private renderFaceitInfo(): HTMLTemplateResult {
     if (notNull(this.faceitInfo)) {
       const {
         nickname,

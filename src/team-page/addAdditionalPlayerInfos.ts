@@ -1,5 +1,6 @@
 import { PlayerInfo } from '../model';
 import { component } from '../util/component';
+import { isNull } from '../util';
 import '../components/AdditionalPlayerInfo';
 
 import { getMemberCards, getSteamId64 } from './selectors';
@@ -16,7 +17,7 @@ export const addAdditionalPlayerInfos = (): void => {
   memberCards.forEach((memberCard) => {
     const steamId64 = getSteamId64(memberCard);
 
-    if (steamId64 === null) return;
+    if (isNull(steamId64)) return;
 
     chrome.runtime.sendMessage(
       {

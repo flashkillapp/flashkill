@@ -54,7 +54,7 @@ const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo> => {
   };
 };
 
-const faceitExtractor = (faceitResponse: Response): Promise<FaceitInfo | null> => {
+const faceitInfoExtractor = (faceitResponse: Response): Promise<FaceitInfo | null> => {
   if (faceitResponse.ok) {
     return faceitResponse.json();
   } else {
@@ -64,7 +64,7 @@ const faceitExtractor = (faceitResponse: Response): Promise<FaceitInfo | null> =
 
 const fetchFaceitInfo = async (steamId64: string): Promise<FaceitInfo | null> => {
   const url = `https://open.faceit.com/data/v4/players?game=csgo&game_player_id=${steamId64}`;
-  return fetchCached<FaceitInfo | null>(url, cacheForOneDay, faceitExtractor, {
+  return fetchCached<FaceitInfo | null>(url, cacheForOneDay, faceitInfoExtractor, {
     headers: {
       'Authorization': ' Bearer def684c3-589e-415f-a35f-ec6f1aef79cb',
     },

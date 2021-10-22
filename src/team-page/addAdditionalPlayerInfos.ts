@@ -6,7 +6,7 @@ import { getMemberCards, getSteamId64 } from './selectors';
 import { TeamPageRequestTypes } from './background';
 
 const injectAdditionalPlayerInfo = (playerInfo: PlayerInfo, memberCard: HTMLLIElement): void => {
-  const additionalPlayerInfo = component( 'flashkill-additional-player-info', { ...playerInfo });
+  const additionalPlayerInfo = component('flashkill-additional-player-info', { ...playerInfo });
   memberCard.appendChild(additionalPlayerInfo);
 };
 

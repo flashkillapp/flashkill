@@ -47,11 +47,7 @@ const fetchDivisionMatches = async (
 
     const [team_1, team_2] = getTeams(matchDoc);
 
-    if (
-      ajaxMatch === null
-      || team_1 === null
-      || team_2 === null
-    ) return null;
+    if (!ajaxMatch || !team_1 || !team_2) return null;
 
     const mapScores = getMapScores(matchDoc);
 
@@ -99,20 +95,19 @@ const getMatchTableItems = (
     return [{
       ...match,
       division,
-      season,
-      map: null,
+      ...season && { season },
     }];
   }
 
   return match.scores.map((score, index) => ({
     ...match,
     division,
-    season,
     score_1: score.score_1,
     score_2: score.score_2,
+    ...season && { season },
     map: match.draft_maps.find(
       (draft_map) => draft_map.id === match.draft_mapvoting_picks[index],
-    ) ?? null,
+    ),
   }));
 };
 

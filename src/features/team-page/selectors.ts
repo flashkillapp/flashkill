@@ -18,14 +18,14 @@ export const getSteamId64 = (memberCard: HTMLLIElement): string | null => {
 
 export const getMatchId = (matchLink: string): number | null => {
   const matchIdRegex = /leagues\/matches\/([0-9]+)-/;
-  const matchId = matchLink.match(matchIdRegex)?.[1] || null;
-  return matchId !== null ? Number.parseInt(matchId, 10) : null;
+  const matchId = matchLink.match(matchIdRegex)?.[1];
+  return matchId ? Number.parseInt(matchId, 10) : null;
 };
 
 const getTeamIdFromUrl = (url: string): number | null => {
   const teamIdRegex = /\/teams\/([0-9]+)-/;
-  const teamId = url.match(teamIdRegex)?.[1] || null;
-  return teamId !== null ? Number.parseInt(teamId, 10) : null;
+  const teamId = url.match(teamIdRegex)?.[1];
+  return teamId ? Number.parseInt(teamId, 10) : null;
 };
 
 export const getTabTeamId = (): number | null => {
@@ -45,8 +45,10 @@ export const getTabTeamShortName = (): string | null => {
 
 const getDivisionId = (url: string): number | null => {
   const divisionIdRegex = /group\/.*\/([0-9]+)-/;
-  const divisionIdString = url.match(divisionIdRegex)?.[1] || null;
-  if (divisionIdString === null) return null;
+  const divisionIdString = url.match(divisionIdRegex)?.[1];
+
+  if (!divisionIdString) return null;
+
   return Number.parseInt(divisionIdString, 10);
 };
 
@@ -58,7 +60,7 @@ const extractDivision = (linkElement: HTMLLinkElement | null): Division | null =
 
   const id = getDivisionId(url);
 
-  if (id === null) return null;
+  if (!id) return null;
 
   return { id, name, url };
 };
@@ -81,15 +83,15 @@ export const getPreviousDivisions = (): Array<Division | null> => {
 
 export const getTeam = (matchDoc: Document, teamNumber: number): Team | null => {
   const teamHeader = matchDoc.querySelector(`.content-match-head-team${teamNumber} > .content-match-head-team-top`);
-  const url = teamHeader?.querySelector('a')?.href ?? null;
-  const name = teamHeader?.querySelector('img')?.getAttribute('alt') ?? null;
+  const url = teamHeader?.querySelector('a')?.href;
+  const name = teamHeader?.querySelector('img')?.getAttribute('alt');
 
-  if (url === null || name === null) return null;
+  if (!url || !name) return null;
 
   const id = getTeamIdFromUrl(url);
   const shortName = getTeamShortNameFromUrl(url);
 
-  if (id === null || shortName === null) return null;
+  if (!id || !shortName ) return null;
 
   return { id, name, shortName };
 };
@@ -117,10 +119,10 @@ export const getMapScores = (matchDoc: Document): MapScore[] => {
 export const getSeason = (divisionUrl: string): Season | null => {
   const seasonRegex = /99dmg\/([0-9]+)-.*?([0-9]+)\/group/;
   const regexResult = divisionUrl.match(seasonRegex);
-  const idString = regexResult?.[1] ?? null;
-  const seasonNumber = regexResult?.[2] ?? null;
+  const idString = regexResult?.[1];
+  const seasonNumber = regexResult?.[2];
 
-  if (idString === null || seasonNumber === null) return null;
+  if (!idString || !seasonNumber ) return null;
 
   return {
     id: Number.parseInt(idString, 10),

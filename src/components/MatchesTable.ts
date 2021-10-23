@@ -7,7 +7,7 @@ import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox';
 import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox-group';
 import type { CheckboxGroupElement } from '@vaadin/vaadin-checkbox/vaadin-checkbox-group';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';
-import { LitElement, html, css, render } from 'lit';
+import { LitElement, html, css, render, HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
@@ -15,7 +15,7 @@ import { customTheme } from '../util/theme';
 import { Division, Season, Team, DraftMap } from '../model';
 import { getDay } from '../util/dateHelpers';
 import { get99MatchLink, get99TeamLink } from '../util/getLink';
-import { notNull, notUndefined } from '../util';
+import { isNull, isUndefined, notUndefined } from '../util';
 
 registerStyles('vaadin-grid', css`
   .win { background-color: #374c37 !important; }
@@ -26,13 +26,13 @@ registerStyles('vaadin-grid', css`
 export interface MatchTableItem {
   match_id: number;
   division: Division;
-  season: Season | null;
   time: number;
   team_1: Team;
   team_2: Team;
   score_1: number;
   score_2: number;
-  map: DraftMap | null;
+  season?: Season;
+  map?: DraftMap;
 }
 
 const matchesTable = 'flashkill-matches-table';
@@ -62,7 +62,7 @@ class MatchesTable extends LitElement {
   private getSeasons() {
     const allSeasons = this.matchItems
       .map((matchItem) => matchItem.season)
-      .filter(notNull);
+      .filter(notUndefined);
 
     const uniqueSeasonIds = Array.from(
       new Set(allSeasons.map(({ id }) => id)),
@@ -73,15 +73,122 @@ class MatchesTable extends LitElement {
     )).filter(notUndefined).sort((a: Season, b: Season) => b.order - a.order);
   }
 
-  render() {
-    const header = html`
+  private updateSeasonSelection() {
+    const checkboxGroup = this.shadowRoot?.querySelector('vaadin-checkbox-group') as CheckboxGroupElement;
+    if (checkboxGroup === null || checkboxGroup === undefined) return;
+    const seasonIds = checkboxGroup.value.map(
+      (stringId: string) => Number.parseInt(stringId, 10),
+    );
+
+    const grid = this.shadowRoot?.querySelector('vaadin-grid');
+
+    if (isNull(grid) || isUndefined(grid)) return;
+
+    grid.items = this.matchItems.filter((matchItem) => (
+      notUndefined(matchItem.season) && seasonIds.includes(matchItem.season.id)
+    ));
+  }
+
+  private toggleSeasonSelection() {
+    const seasonSelection = this.shadowRoot?.querySelector('.season-selection');
+    seasonSelection?.classList.toggle('hidden');
+  }
+
+  private dateRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    render(
+      html`<span>${getDay(rowData.item.time)}</span>`,
+      root,
+    );
+  }
+
+  private divisionRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    render(
+      html`
+        <a href="${rowData.item.division.url}">
+          ${rowData.item.division.name.replace('Division', 'Div')}
+        </a>
+      `,
+      root,
+    );
+  }
+
+  private mapRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    if (isUndefined(rowData.item.map)) return;
+
+    render(
+      html`
+        <img
+          class="map-image"
+          src="${rowData.item.map.picture}"
+          alt="${rowData.item.map.title}"
+        />
+      `,
+      root,
+    );
+  }
+
+  private matchRoomRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<MatchTableItem>,
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    render(
+      html`<a href="${get99MatchLink(rowData.item.match_id)}">mehr</a>`,
+      root,
+    );
+  }
+
+  private cellClassNameGenerator(
+    column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>,
+  ) {
+    if (column.path !== 'score_1' && column.path !== 'score_2') return '';
+
+    const roundDiff = model.item.score_1 - model.item.score_2;
+
+    if (roundDiff === 0) return 'draw';
+    if (roundDiff > 0) return 'win';
+    if (roundDiff < 0) return 'loss';
+
+    return '';
+  }
+
+  private teamRenderer(
+    root: HTMLElement,
+    column: GridColumnElement<MatchTableItem> & { path: 'team_1' | 'team_2' },
+    rowData: GridItemModel<MatchTableItem>,
+  ) {
+    const team = rowData.item[column.path];
+    render(
+      html`
+        <a href="${get99TeamLink(team.id)}">${team.name}</a>
+      `,
+      root,
+    );
+  }
+
+  private renderHeader(): HTMLTemplateResult {
+    return html`
       <div class="button-wrapper">
         <h1>Ergebnisse</h1>
         <vaadin-button @click=${this.toggleSeasonSelection}>Saisons auswählen</vaadin-button>
       </div>
     `;
+  }
 
-    const seasonSelection = html`
+  private renderSeasonSelection(): HTMLTemplateResult {
+    return html`
       <div class="season-selection hidden">
         <vaadin-checkbox-group
           @change=${this.updateSeasonSelection}
@@ -93,8 +200,10 @@ class MatchesTable extends LitElement {
         </vaadin-checkbox-group>
       </div>
     `;
+  }
 
-    const grid = html`
+  private renderGrid(): HTMLTemplateResult {
+    return html`
       <vaadin-grid
         .items="${this.matchItems}"
         .cellClassNameGenerator="${this.cellClassNameGenerator}"
@@ -144,126 +253,14 @@ class MatchesTable extends LitElement {
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
+  }
 
+  render() {
     return html`
-      ${header}
-      ${seasonSelection}
-      ${grid}
+      ${this.renderHeader()}
+      ${this.renderSeasonSelection()}
+      ${this.renderGrid()}
     `;
-  }
-
-  private updateSeasonSelection() {
-    const checkboxGroup = this.shadowRoot?.querySelector('vaadin-checkbox-group') as CheckboxGroupElement;
-    if (checkboxGroup === null || checkboxGroup === undefined) return;
-    const seasonIds = checkboxGroup.value.map(
-      (stringId: string) => Number.parseInt(stringId, 10),
-    );
-
-    const grid = this.shadowRoot?.querySelector('vaadin-grid');
-
-    if (grid === null || grid === undefined) return;
-
-    grid.items = this.matchItems.filter((matchItem) => (
-      matchItem.season !== null
-      && seasonIds.includes(matchItem.season.id)
-    ));
-  }
-
-  private toggleSeasonSelection() {
-    const seasonSelection = this.shadowRoot?.querySelector('.season-selection');
-    seasonSelection?.classList.toggle('hidden');
-  }
-
-  private dateRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<MatchTableItem>,
-    rowData: GridItemModel<MatchTableItem>,
-  ) {
-    render(
-      html`
-        <span>${getDay(rowData.item.time)}</span>
-      `,
-      root,
-    );
-  }
-
-  private divisionRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<MatchTableItem>,
-    rowData: GridItemModel<MatchTableItem>,
-  ) {
-    render(
-      html`
-        <a href="${rowData.item.division.url}">
-          ${rowData.item.division.name.replace('Division', 'Div')}
-        </a>
-      `,
-      root,
-    );
-  }
-
-  private mapRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<MatchTableItem>,
-    rowData: GridItemModel<MatchTableItem>,
-  ) {
-    if (rowData.item.map === null) {
-      render(html``, root);
-
-      return;
-    }
-
-    render(
-      html`
-        <img
-          class="map-image"
-          src="${rowData.item.map.picture}"
-          alt="${rowData.item.map.title}"
-        />
-      `,
-      root,
-    );
-  }
-
-  private matchRoomRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<MatchTableItem>,
-    rowData: GridItemModel<MatchTableItem>,
-  ) {
-    render(
-      html`
-        <a href="${get99MatchLink(rowData.item.match_id)}">mehr</a>
-      `,
-      root,
-    );
-  }
-
-  private cellClassNameGenerator(
-    column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>,
-  ) {
-    if (column.path !== 'score_1' && column.path !== 'score_2') return '';
-
-    const roundDiff = model.item.score_1 - model.item.score_2;
-
-    if (roundDiff === 0) return 'draw';
-    if (roundDiff > 0) return 'win';
-    if (roundDiff < 0) return 'loss';
-
-    return '';
-  }
-
-  private teamRenderer(
-    root: HTMLElement,
-    column: GridColumnElement<MatchTableItem> & { path: 'team_1' | 'team_2' },
-    rowData: GridItemModel<MatchTableItem>,
-  ) {
-    const team = rowData.item[column.path];
-    render(
-      html`
-        <a href="${get99TeamLink(team.id)}">${team.name}</a>
-      `,
-      root,
-    );
   }
 }
 

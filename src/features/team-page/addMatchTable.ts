@@ -1,9 +1,9 @@
-import { sendMessage, MessageNames } from '../util/messages';
-import { notNull } from '../util';
-import '../components/MatchesTable';
-import { component } from '../util/component';
-import { Division } from '../model';
-import { MatchTableItem } from '../components/MatchesTable';
+import { sendMessage, MessageNames } from '../../util/messages';
+import { notNull } from '../../util';
+import '../../components/MatchesTable';
+import { component } from '../../util/component';
+import { Division } from '../../model';
+import { MatchTableItem } from '../../components/MatchesTable';
 
 import {
   getTabTeamId,

@@ -1,4 +1,4 @@
-import { MessageNames, receiveMessage } from '../util/messages';
+import { MessageNames, receiveMessage } from '../../util/messages';
 
 import { fetchFaceitInfo } from './fetchFaceitInfo';
 import { fetchPlayerInfo } from './fetchPlayerInfo';

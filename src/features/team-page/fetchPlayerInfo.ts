@@ -1,6 +1,6 @@
-import { PlayerInfo } from '../model';
-import { cacheForOneDay, fetchCached, htmlExtractor } from '../util/fetchCached';
-import { getSteamLink } from '../util/getLink';
+import { PlayerInfo } from '../../model';
+import { cacheForOneDay, fetchCached, htmlExtractor } from '../../util/fetchCached';
+import { getSteamLink } from '../../util/getLink';
 import { fetchFaceitInfo } from './fetchFaceitInfo';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
@@ -15,12 +15,12 @@ const fetchSteamName = async (steamId64: string): Promise<string | null> => {
   ) ?? null;
 };
 
-export const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo | null> => {
+export const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo> => {
   const faceitInfo = await fetchFaceitInfo(steamId64);
   const steamName = await fetchSteamName(steamId64);
   return {
     steamId64,
-    faceitInfo,
-    steamName,
+    ...faceitInfo && { faceitInfo },
+    ...steamName && { steamName },
   };
 };

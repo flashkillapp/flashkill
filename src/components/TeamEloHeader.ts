@@ -1,6 +1,6 @@
 import '@webcomponents/custom-elements';
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property } from 'lit/decorators.js';
 
 const teamEloHeader = 'flashkill-team-elo-header';
 
@@ -16,9 +16,11 @@ class TeamEloHeader extends LitElement {
   `;
 
   render() {
+    const roundedElo = Math.round(this.avgElo);
+
     return html`
-      <h2 title="Durchschnittliche FACEIT Elo">
-        FACEIT Elo: ${Math.round(this.avgElo)}
+      <h2 title="Durchschnittliche FACEIT-Elo">
+        FACEIT-Elo: ${Number.isFinite(roundedElo) ? roundedElo : '-'}
       </h2>
     `;
   }

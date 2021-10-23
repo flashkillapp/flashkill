@@ -1,7 +1,7 @@
-import { MatchTableItem } from '../components/MatchesTable';
-import { AjaxMatch, Division, Match } from '../model';
-import { cacheForOneDay, fetchCached, htmlExtractor } from '../util/fetchCached';
-import { notNull } from '../util';
+import { MatchTableItem } from '../../components/MatchesTable';
+import { AjaxMatch, Division, Match } from '../../model';
+import { cacheForOneDay, fetchCached, htmlExtractor } from '../../util/fetchCached';
+import { notNull } from '../../util';
 
 import { getMapScores, getMatchId, getSeason, getTeams } from './selectors';
 

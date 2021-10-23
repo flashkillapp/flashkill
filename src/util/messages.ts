@@ -31,7 +31,7 @@ interface Messages extends Partial<Record<MessageNames, Message>> {
     payload: {
       steamId64: string;
     };
-    response: PlayerInfo | null;
+    response: PlayerInfo;
   };
 }
 

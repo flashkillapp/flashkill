@@ -2,3 +2,4 @@
 node_modules/
 dist/content/
 dist/background.js
+dist/LICENSE-DETAILS.md

@@ -1,7 +1,0 @@
-License details for open-source software used in this project:
-jQuery v3.4.0 | (c) JS Foundation and other contributors | jquery.org/license
-DataTables 1.10.19 | ©2008-2018 SpryMedia Ltd | datatables.net/license
-C-like unsigned 64 bits integers in Javascript (js-cuint) | Copyright (C) 2013, Pierre Curto | github.com/pierrec/js-cuint/blob/master/LICENSE
-node-steamid | Copyright (c) 2015 Alexander Corn | github.com/DoctorMcKay/node-steamid/blob/master/LICENSE
-jQuery MultiSelect | Copyright (c) 2014 Patrick Springstubbe | github.com/nobleclem/jQuery-MultiSelect/blob/master/LICENSE
-tooltipster | Copyright (c) 2012,2016 Caleb Jacob and Louis Ameline | github.com/iamceege/tooltipster/blob/master/LICENSE

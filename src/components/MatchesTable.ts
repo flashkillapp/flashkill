@@ -8,14 +8,15 @@ import '@vaadin/vaadin-checkbox/theme/material/vaadin-checkbox-group';
 import type { CheckboxGroupElement } from '@vaadin/vaadin-checkbox/vaadin-checkbox-group';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles';
 import { LitElement, html, css, render, HTMLTemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators';
+import { customElement, property, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import { customTheme } from '../util/theme';
 import { Division, Season, Team, DraftMap } from '../model';
 import { getDay } from '../util/dateHelpers';
 import { get99MatchLink, get99TeamLink } from '../util/getLink';
-import { isNull, isUndefined, notUndefined } from '../util';
+import { isUndefined, notUndefined } from '../util';
 
 registerStyles('vaadin-grid', css`
   .win { background-color: #374c37 !important; }
@@ -41,6 +42,14 @@ const matchesTable = 'flashkill-matches-table';
 class MatchesTable extends LitElement {
   @property({ type: Array }) matchItems!: MatchTableItem[];
 
+  @state() private seasonSelectMenuOpen = false;
+  @state() private selectedSeasons: number[] = [];
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.selectedSeasons = this.getSeasons().map((season) => season.id);
+  }
+
   static styles = css`
     ${customTheme}
 
@@ -59,7 +68,7 @@ class MatchesTable extends LitElement {
     }
   `;
 
-  private getSeasons() {
+  private getSeasons()  {
     const allSeasons = this.matchItems
       .map((matchItem) => matchItem.season)
       .filter(notUndefined);
@@ -75,23 +84,21 @@ class MatchesTable extends LitElement {
 
   private updateSeasonSelection() {
     const checkboxGroup = this.shadowRoot?.querySelector('vaadin-checkbox-group') as CheckboxGroupElement;
-    if (checkboxGroup === null || checkboxGroup === undefined) return;
-    const seasonIds = checkboxGroup.value.map(
+    this.selectedSeasons = checkboxGroup?.value.map(
       (stringId: string) => Number.parseInt(stringId, 10),
-    );
+    ) ?? [];
+    this.requestUpdate();
+  }
 
-    const grid = this.shadowRoot?.querySelector('vaadin-grid');
-
-    if (isNull(grid) || isUndefined(grid)) return;
-
-    grid.items = this.matchItems.filter((matchItem) => (
-      notUndefined(matchItem.season) && seasonIds.includes(matchItem.season.id)
+  private getSelectedMatches() {
+    return this.matchItems.filter((matchItem) => (
+      matchItem.season && this.selectedSeasons.includes(matchItem.season.id)
     ));
   }
 
   private toggleSeasonSelection() {
-    const seasonSelection = this.shadowRoot?.querySelector('.season-selection');
-    seasonSelection?.classList.toggle('hidden');
+    this.seasonSelectMenuOpen = !this.seasonSelectMenuOpen;
+    this.requestUpdate();
   }
 
   private dateRenderer(
@@ -112,7 +119,7 @@ class MatchesTable extends LitElement {
   ) {
     render(
       html`
-        <a href="${rowData.item.division.url}">
+        <a href=${rowData.item.division.url}>
           ${rowData.item.division.name.replace('Division', 'Div')}
         </a>
       `,
@@ -131,8 +138,8 @@ class MatchesTable extends LitElement {
       html`
         <img
           class="map-image"
-          src="${rowData.item.map.picture}"
-          alt="${rowData.item.map.title}"
+          src=${rowData.item.map.picture}
+          alt=${rowData.item.map.title}
         />
       `,
       root,
@@ -145,7 +152,7 @@ class MatchesTable extends LitElement {
     rowData: GridItemModel<MatchTableItem>,
   ) {
     render(
-      html`<a href="${get99MatchLink(rowData.item.match_id)}">mehr</a>`,
+      html`<a href=${get99MatchLink(rowData.item.match_id)}>mehr</a>`,
       root,
     );
   }
@@ -172,7 +179,7 @@ class MatchesTable extends LitElement {
     const team = rowData.item[column.path];
     render(
       html`
-        <a href="${get99TeamLink(team.id)}">${team.name}</a>
+        <a href=${get99TeamLink(team.id)}>${team.name}</a>
       `,
       root,
     );
@@ -189,10 +196,10 @@ class MatchesTable extends LitElement {
 
   private renderSeasonSelection(): HTMLTemplateResult {
     return html`
-      <div class="season-selection hidden">
+      <div class=${classMap({ hidden: !this.seasonSelectMenuOpen })}>
         <vaadin-checkbox-group
           @change=${this.updateSeasonSelection}
-          .value="${this.getSeasons().map((season) => `${season.id}`)}"
+          .value="${this.selectedSeasons.map((id) => `${id}`)}"
         >
           ${this.getSeasons().map((season) => html`
             <vaadin-checkbox value="${season.id}">${season.name}</vaadin-checkbox>
@@ -205,7 +212,7 @@ class MatchesTable extends LitElement {
   private renderGrid(): HTMLTemplateResult {
     return html`
       <vaadin-grid
-        .items="${this.matchItems}"
+        .items="${this.getSelectedMatches()}"
         .cellClassNameGenerator="${this.cellClassNameGenerator}"
       >
         <vaadin-grid-column

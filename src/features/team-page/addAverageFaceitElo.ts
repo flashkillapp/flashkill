@@ -1,7 +1,7 @@
-import { notNull } from '../util';
-import { FaceitInfo } from '../model';
-import { component } from '../util/component';
-import '../components/TeamEloHeader';
+import { notNull } from '../../util';
+import { FaceitInfo } from '../../model';
+import { component } from '../../util/component';
+import '../../components/TeamEloHeader';
 
 
 import { TeamPageRequestTypes } from './background';

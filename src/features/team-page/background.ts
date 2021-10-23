@@ -1,6 +1,6 @@
-import { fetchCached, cacheForOneDay, htmlExtractor } from '../util/fetchCached';
-import { PlayerInfo, FaceitInfo } from '../model';
-import { getSteamLink } from '../util/getSteamLink';
+import { fetchCached, cacheForOneDay, htmlExtractor } from '../../util/fetchCached';
+import { PlayerInfo, FaceitInfo } from '../../model';
+import { getSteamLink } from '../../util/getSteamLink';
 
 const STEAM_PROFILE_PAGE_TITLE_PREFIX = 'Steam Community :: ';
 

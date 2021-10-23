@@ -16,9 +16,11 @@ class TeamEloHeader extends LitElement {
   `;
 
   render() {
+    const roundedElo = Math.round(this.avgElo);
+
     return html`
       <h2 title="Durchschnittliche FACEIT-Elo">
-        FACEIT-Elo: ${Math.round(this.avgElo)}
+        FACEIT-Elo: ${Number.isFinite(roundedElo) ? roundedElo : '-'}
       </h2>
     `;
   }

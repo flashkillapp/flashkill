@@ -44,6 +44,7 @@
     "@babel/core": "^7.13.2",
     "@node-steam/id": "^1.2.0",
     "@webcomponents/custom-elements": "^1.5.0",
+    "@webcomponents/webcomponentsjs": "^2.6.0",
     "babel-loader": "^8.1.0",
     "babel-preset-expo": "^8.4.1",
     "lit": "^2.0.0",

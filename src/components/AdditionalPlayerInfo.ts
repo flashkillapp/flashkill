@@ -2,14 +2,13 @@ import '@webcomponents/custom-elements';
 import { LitElement, css, html, HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { FaceitInfo } from '../model';
+import { PlayerInfo } from '../model';
 import { getSteamLink } from '../util/getSteamLink';
-import { notNull } from '../util';
+import { isUndefined } from '../util';
 
 const getFaceitLevelLogo = (faceitLevel: number): string => (
   `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`
 );
-
 
 const getFaceitLink = (name: string): string => (
   `https://www.faceit.com/en/players/${name}`
@@ -19,9 +18,7 @@ const additionalPlayerInfo = 'flashkill-additional-player-info';
 
 @customElement(additionalPlayerInfo)
 class AdditionalPlayerInfo extends LitElement {
-  @property() steamId64!: string;
-  @property() steamName!: string | null;
-  @property({ type: Object }) faceitInfo!: FaceitInfo | null;
+  @property({ type: Object }) playerInfo!: PlayerInfo;
 
   static styles = css`
     .root {
@@ -66,14 +63,15 @@ class AdditionalPlayerInfo extends LitElement {
     }
   `;
 
-  private renderFaceitInfo(): HTMLTemplateResult {
-    if (notNull(this.faceitInfo)) {
-      const {
-        nickname,
-        games: { csgo: { faceit_elo, skill_level } },
-      } = this.faceitInfo;
+  private renderFaceitInfo(): HTMLTemplateResult | null {
+    if (isUndefined(this.playerInfo.faceitInfo)) return null;
 
-      return html`
+    const {
+      nickname,
+      games: { csgo: { faceit_elo, skill_level } },
+    } = this.playerInfo.faceitInfo;
+
+    return html`
       <div class="faceit-info">
         <div class="faceit-text">
           ${'FACEIT: '}
@@ -83,10 +81,7 @@ class AdditionalPlayerInfo extends LitElement {
           </a>
         </div>
       </div>
-      `;
-    }
-
-    return html``;
+    `;
   }
 
   render() {
@@ -94,8 +89,8 @@ class AdditionalPlayerInfo extends LitElement {
       <div class="root">
         <div class="steam-info">
           ${'Steam: '}
-          <a href=${getSteamLink(this.steamId64)} target="_blank">
-            ${this.steamName ?? '-'}
+          <a href=${getSteamLink(this.playerInfo.steamId64)} target="_blank">
+            ${this.playerInfo.steamName ?? '-'}
           </a>
         </div>
         ${this.renderFaceitInfo()}

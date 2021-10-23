@@ -49,8 +49,8 @@ const fetchPlayerInfo = async (steamId64: string): Promise<PlayerInfo> => {
   const steamName = await fetchSteamName(steamId64);
   return {
     steamId64,
-    faceitInfo,
-    steamName,
+    faceitInfo: faceitInfo ?? undefined,
+    steamName: steamName ?? undefined,
   };
 };
 

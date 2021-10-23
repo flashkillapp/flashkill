@@ -3,6 +3,7 @@ import { FaceitInfo } from '../model';
 import { component } from '../util/component';
 import '../components/TeamEloHeader';
 
+
 import { TeamPageRequestTypes } from './background';
 import { getMemberCards, getSteamId64 } from './selectors';
 

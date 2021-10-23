@@ -1,3 +1,20 @@
+html {
+  height: 580px;
+  overflow-y: hidden;
+}
+
+body {
+  padding-top: 16px;
+  padding-inline: 8px;
+  width: 450px;
+  background-color: #222;
+  color: white;
+}
+
+a {
+  color: white;
+}
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -59,4 +76,15 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+#flashkill-logo {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 50px;
+}
+
+#donation-button {
+  width: 150px;
 }

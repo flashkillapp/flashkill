@@ -1,11 +1,11 @@
-html {
-  height: 580px;
-  overflow-y: hidden;
+* {
+  box-sizing: border-box;
 }
 
 body {
   padding-top: 16px;
   padding-inline: 8px;
+  height: 580px;
   width: 450px;
   background-color: #222;
   color: white;

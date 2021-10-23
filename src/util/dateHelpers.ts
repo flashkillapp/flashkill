@@ -28,17 +28,3 @@ export const getDay = (time: number): string => {
 
   return `${day}.${month}.${year.slice(2)}`;
 };
-
-export const getTimeOfDay = (time: number): string => {
-  const { hours, minutes } = getUnits(time);
-
-  return `${hours}:${minutes}`;
-};
-
-export const getDate = (time: number): string => {
-  const {
-    day, month, year, hours, minutes,
-  } = getUnits(time);
-
-  return `${day}.${month}.${year} - ${hours}:${minutes}`;
-};

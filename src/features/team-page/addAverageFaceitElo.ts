@@ -2,7 +2,7 @@ import { notNull } from '../../util';
 import { FaceitInfo } from '../../model';
 import { component } from '../../util/component';
 import '../../components/TeamEloHeader';
-import { MessageNames, sendMessage } from '../../util/messages';
+import { MessageName, sendMessage } from '../../util/messages';
 
 import { getMemberCards, getSteamId64 } from './selectors';
 
@@ -31,7 +31,7 @@ export const addAverageFaceitElo = (): void => {
     .filter(notNull);
 
   sendMessage(
-    MessageNames.GetFaceitInfos,
+    MessageName.GetFaceitInfos,
     { steamIds64 },
     (faceitInfos: Array<FaceitInfo | null>) => {
       injectAvgFaceitElo(faceitInfos);

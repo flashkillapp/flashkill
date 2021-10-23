@@ -1,4 +1,4 @@
-import { sendMessage, MessageNames } from '../../util/messages';
+import { sendMessage, MessageName } from '../../util/messages';
 import { notNull } from '../../util';
 import '../../components/MatchesTable';
 import { component } from '../../util/component';
@@ -38,14 +38,14 @@ export const addMatchTable = (): void => {
       const seasonA = getSeason(a.url);
       const seasonB = getSeason(b.url);
 
-      if (seasonA === null || seasonB === null) return 0;
+      if (!seasonA || !seasonB) return 0;
       
       return seasonB.order - seasonA.order;
     })
     .slice(0, 3);
 
   sendMessage(
-    MessageNames.GetDivisionMatches,
+    MessageName.GetDivisionMatches,
     { divisions, teamShortName, teamId },
     printMatchDetails,
   );

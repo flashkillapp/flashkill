@@ -84,9 +84,7 @@ class MatchesTable extends LitElement {
 
   private updateSeasonSelection() {
     const checkboxGroup = this.shadowRoot?.querySelector('vaadin-checkbox-group') as CheckboxGroupElement;
-    this.selectedSeasons = checkboxGroup?.value.map(
-      (stringId: string) => Number.parseInt(stringId, 10),
-    ) ?? [];
+    this.selectedSeasons = checkboxGroup?.value.map(Number.parseInt) ?? [];
     this.requestUpdate();
   }
 

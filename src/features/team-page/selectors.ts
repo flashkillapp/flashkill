@@ -25,7 +25,7 @@ export const getMatchId = (matchLink: string): number | null => {
 const getTeamIdFromUrl = (url: string): number | null => {
   const teamIdRegex = /\/teams\/([0-9]+)-/;
   const teamId = url.match(teamIdRegex)?.[1];
-  return teamId ? Number.parseInt(teamId, 10) : null;
+  return teamId ? Number.parseInt(teamId) : null;
 };
 
 export const getTabTeamId = (): number | null => {
@@ -49,7 +49,7 @@ const getDivisionId = (url: string): number | null => {
 
   if (!divisionIdString) return null;
 
-  return Number.parseInt(divisionIdString, 10);
+  return Number.parseInt(divisionIdString);
 };
 
 const extractDivision = (linkElement: HTMLLinkElement | null): Division | null => {
@@ -110,8 +110,8 @@ export const getMapScores = (matchDoc: Document): MapScore[] => {
     if (scores.length !== 2) return null;
 
     return {
-      score_1: Number.parseInt(scores[0], 10),
-      score_2: Number.parseInt(scores[1], 10),
+      score_1: Number.parseInt(scores[0]),
+      score_2: Number.parseInt(scores[1]),
     };
   }).filter(notNull) ?? [];
 };
@@ -125,8 +125,8 @@ export const getSeason = (divisionUrl: string): Season | null => {
   if (!idString || !seasonNumber ) return null;
 
   return {
-    id: Number.parseInt(idString, 10),
-    order: Number.parseInt(seasonNumber, 10),
+    id: Number.parseInt(idString),
+    order: Number.parseInt(seasonNumber),
     name: `Saison ${seasonNumber}`,
   };
 };

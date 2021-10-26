@@ -13,7 +13,7 @@ import {
   getSeason,
 } from './selectors';
 
-const printMatchDetails = (matchItems: MatchTableItem[]): void => {
+const injectMatchTable = (matchItems: MatchTableItem[]): void => {
   const header = document.querySelector('.content-portrait-head');
   const matchesTable = component('flashkill-matches-table', { matchItems });
   header?.parentNode?.appendChild(matchesTable);
@@ -47,6 +47,6 @@ export const addMatchTable = (): void => {
   sendMessage(
     MessageName.GetDivisionMatches,
     { divisions, teamShortName, teamId },
-    printMatchDetails,
+    injectMatchTable,
   );
 };

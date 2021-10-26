@@ -69,17 +69,15 @@ class MatchesTable extends LitElement {
   `;
 
   private getSeasons()  {
-    const allSeasons = this.matchItems
-      .map((matchItem) => matchItem.season)
-      .filter(notUndefined);
-
-    const uniqueSeasonIds = Array.from(
-      new Set(allSeasons.map(({ id }) => id)),
+    const distinct = (season: Season, index: number, allSeasons: Season[]): boolean => (
+      allSeasons.slice(0, index).every(({ id }) => id !== season.id)
     );
 
-    return uniqueSeasonIds.map((id) => (
-      allSeasons.find((season) => season.id === id)
-    )).filter(notUndefined).sort((a: Season, b: Season) => b.order - a.order);
+    return this.matchItems
+      .map((matchItem) => matchItem.season)
+      .filter(notUndefined)
+      .filter(distinct)
+      .sort((a: Season, b: Season) => b.order - a.order);
   }
 
   private updateSeasonSelection() {

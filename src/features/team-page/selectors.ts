@@ -19,7 +19,7 @@ export const getSteamId64 = (memberCard: HTMLLIElement): string | null => {
 export const getMatchId = (matchLink: string): number | null => {
   const matchIdRegex = /leagues\/matches\/([0-9]+)-/;
   const matchId = matchLink.match(matchIdRegex)?.[1];
-  return matchId ? Number.parseInt(matchId, 10) : null;
+  return matchId ? Number.parseInt(matchId) : null;
 };
 
 const getTeamIdFromUrl = (url: string): number | null => {

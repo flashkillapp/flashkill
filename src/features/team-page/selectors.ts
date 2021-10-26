@@ -110,8 +110,8 @@ export const getMapScores = (matchDoc: Document): MapScore[] => {
     if (scores.length !== 2) return null;
 
     return {
-      score_1: Number.parseInt(scores[0]),
-      score_2: Number.parseInt(scores[1]),
+      score1: Number.parseInt(scores[0]),
+      score2: Number.parseInt(scores[1]),
     };
   }).filter(notNull) ?? [];
 };

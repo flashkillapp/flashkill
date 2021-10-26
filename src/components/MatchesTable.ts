@@ -25,13 +25,13 @@ registerStyles('vaadin-grid', css`
 `);
 
 export interface MatchTableItem {
-  match_id: number;
+  matchId: number;
   division: Division;
   time: number;
-  team_1: Team;
-  team_2: Team;
-  score_1: number;
-  score_2: number;
+  team1: Team;
+  team2: Team;
+  score1: number;
+  score2: number;
   season?: Season;
   map?: DraftMap;
 }
@@ -150,7 +150,7 @@ class MatchesTable extends LitElement {
     rowData: GridItemModel<MatchTableItem>,
   ) {
     render(
-      html`<a href=${get99MatchLink(rowData.item.match_id)}>mehr</a>`,
+      html`<a href=${get99MatchLink(rowData.item.matchId)}>mehr</a>`,
       root,
     );
   }
@@ -158,9 +158,9 @@ class MatchesTable extends LitElement {
   private cellClassNameGenerator(
     column: GridColumnElement<MatchTableItem>, model: GridItemModel<MatchTableItem>,
   ) {
-    if (column.path !== 'score_1' && column.path !== 'score_2') return '';
+    if (column.path !== 'score1' && column.path !== 'score2') return '';
 
-    const roundDiff = model.item.score_1 - model.item.score_2;
+    const roundDiff = model.item.score1 - model.item.score2;
 
     if (roundDiff === 0) return 'draw';
     if (roundDiff > 0) return 'win';
@@ -171,7 +171,7 @@ class MatchesTable extends LitElement {
 
   private teamRenderer(
     root: HTMLElement,
-    column: GridColumnElement<MatchTableItem> & { path: 'team_1' | 'team_2' },
+    column: GridColumnElement<MatchTableItem> & { path: 'team1' | 'team2' },
     rowData: GridItemModel<MatchTableItem>,
   ) {
     const team = rowData.item[column.path];
@@ -226,7 +226,7 @@ class MatchesTable extends LitElement {
         ></vaadin-grid-column>
         <vaadin-grid-column
           header="Team 1"
-          path="team_1"
+          path="team1"
           text-align="end"
           .renderer="${this.teamRenderer}"
         ></vaadin-grid-column>
@@ -234,7 +234,7 @@ class MatchesTable extends LitElement {
           ${[1, 2].map((teamNumber) => html`
             <vaadin-grid-column
               header=""
-              path="score_${teamNumber}"
+              path="score${teamNumber}"
               text-align="center"
               width="45px"
             ></vaadin-grid-column>
@@ -242,7 +242,7 @@ class MatchesTable extends LitElement {
         </vaadin-grid-column-group>
         <vaadin-grid-column
           header="Team 2"
-          path="team_2"
+          path="team2"
           .renderer="${this.teamRenderer}"
         ></vaadin-grid-column>
         <vaadin-grid-column

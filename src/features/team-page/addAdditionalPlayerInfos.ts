@@ -4,7 +4,7 @@ import { isNull } from '../../util';
 import '../../components/AdditionalPlayerInfo';
 
 import { getMemberCards, getSteamId64 } from './selectors';
-import { TeamPageRequestTypes } from './background';
+import { sendMessage, MessageName } from '../../util/messages';
 
 const injectAdditionalPlayerInfo = (playerInfo: PlayerInfo, memberCard: HTMLLIElement): void => {
   const additionalPlayerInfo = component('flashkill-additional-player-info', { playerInfo });
@@ -19,11 +19,9 @@ export const addAdditionalPlayerInfos = (): void => {
 
     if (isNull(steamId64)) return;
 
-    chrome.runtime.sendMessage(
-      {
-        contentScriptQuery: TeamPageRequestTypes.QueryPlayerInfo,
-        steamId64,
-      },
+    sendMessage(
+      MessageName.GetPlayerInfo,
+      { steamId64 },
       (playerInfo: PlayerInfo) => {
         injectAdditionalPlayerInfo(playerInfo, memberCard);
       },

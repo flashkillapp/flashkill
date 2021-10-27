@@ -18,7 +18,6 @@ receiveMessage(
   ),
 );
 
-
 receiveMessage(
   MessageName.GetFaceitInfos,
   async (payload) => (

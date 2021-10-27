@@ -93,21 +93,21 @@ export interface Team {
 }
 
 export interface MapScore {
-  score_1: number;
-  score_2: number;
+  score1: number;
+  score2: number;
 }
 
 export interface Match {
-  match_id: number;
+  matchId: number;
   time: number;
-  team_1: Team;
-  team_2: Team;
-  score_1: number;
-  score_2: number;
+  team1: Team;
+  team2: Team;
+  score1: number;
+  score2: number;
   scores: MapScore[];
-  draft_mapvoting_bans: AjaxMap[];
-  draft_mapvoting_picks: AjaxMap[];
-  draft_maps: DraftMap[];
-  draft_opp1: string;
-  draft_opp2: string;
+  draftMapvotingBans: AjaxMap[];
+  draftMapvotingPicks: AjaxMap[];
+  draftMaps: DraftMap[];
+  draftOpp1: string;
+  draftOpp2: string;
 }

@@ -1,9 +1,9 @@
-import { sendMessage, MessageNames } from '../util/messages';
-import { notNull } from '../util';
-import '../components/MatchesTable';
-import { component } from '../util/component';
-import { Division } from '../model';
-import { MatchTableItem } from '../components/MatchesTable';
+import { sendMessage, MessageName } from '../../util/messages';
+import { notNull } from '../../util';
+import '../../components/MatchesTable';
+import { component } from '../../util/component';
+import { Division } from '../../model';
+import { MatchTableItem } from '../../components/MatchesTable';
 
 import {
   getTabTeamId,
@@ -13,7 +13,7 @@ import {
   getSeason,
 } from './selectors';
 
-const printMatchDetails = (matchItems: MatchTableItem[]): void => {
+const injectMatchTable = (matchItems: MatchTableItem[]): void => {
   const header = document.querySelector('.content-portrait-head');
   const matchesTable = component('flashkill-matches-table', { matchItems });
   header?.parentNode?.appendChild(matchesTable);
@@ -38,15 +38,15 @@ export const addMatchTable = (): void => {
       const seasonA = getSeason(a.url);
       const seasonB = getSeason(b.url);
 
-      if (seasonA === null || seasonB === null) return 0;
+      if (!seasonA || !seasonB) return 0;
       
       return seasonB.order - seasonA.order;
     })
     .slice(0, 3);
 
   sendMessage(
-    MessageNames.GetDivisionMatches,
+    MessageName.GetDivisionMatches,
     { divisions, teamShortName, teamId },
-    printMatchDetails,
+    injectMatchTable,
   );
 };

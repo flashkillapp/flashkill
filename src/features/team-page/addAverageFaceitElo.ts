@@ -1,17 +1,17 @@
-import { notNull } from '../util';
-import { FaceitInfo } from '../model';
-import { component } from '../util/component';
-import '../components/TeamEloHeader';
-import { MessageNames, sendMessage } from '../util/messages';
+import { notNull } from '../../util';
+import { FaceitInfo } from '../../model';
+import { component } from '../../util/component';
+import '../../components/TeamEloHeader';
+import { MessageName, sendMessage } from '../../util/messages';
 
 import { getMemberCards, getSteamId64 } from './selectors';
 
-const arrayAvg = (arr: number[]): number => (
+const average = (arr: number[]): number => (
   arr.reduce((p, c) => p + c, 0) / arr.length
 );
 
 const avgFaceitElo = (faceitInfos: Array<FaceitInfo | null>): number => {
-  return arrayAvg(
+  return average(
     faceitInfos
       .filter(notNull)
       .map(({ games }) => games.csgo.faceit_elo),
@@ -31,7 +31,7 @@ export const addAverageFaceitElo = (): void => {
     .filter(notNull);
 
   sendMessage(
-    MessageNames.GetFaceitInfos,
+    MessageName.GetFaceitInfos,
     { steamIds64 },
     (faceitInfos: Array<FaceitInfo | null>) => {
       injectAvgFaceitElo(faceitInfos);

@@ -2,7 +2,7 @@ import { MatchTableItem } from '../components/MatchesTable';
 import { PlayerTableItem } from '../components/PlayerTable';
 import { Division, FaceitInfo, Player } from '../model';
 
-export enum MessageNames {
+export enum MessageName {
   GetFaceitInfos = 'getFaceitInfos',
   GetDivisionMatches = 'getDivisionMatches',
   GetPlayerInfos = 'getPlayerInfos',
@@ -13,8 +13,8 @@ interface Message {
   response: unknown;
 }
 
-interface Messages extends Partial<Record<MessageNames, Message>> {
-  [MessageNames.GetDivisionMatches]: {
+interface Messages extends Partial<Record<MessageName, Message>> {
+  [MessageName.GetDivisionMatches]: {
     payload: {
       teamShortName: string;
       divisions: Division[];
@@ -22,13 +22,13 @@ interface Messages extends Partial<Record<MessageNames, Message>> {
     };
     response: MatchTableItem[];
   };
-  [MessageNames.GetFaceitInfos]: {
+  [MessageName.GetFaceitInfos]: {
     payload: {
       steamIds64: string[];
     };
     response: Array<FaceitInfo | null>;
   };
-  [MessageNames.GetPlayerInfos]: {
+  [MessageName.GetPlayerInfos]: {
     payload: {
       players: Player[];
     };

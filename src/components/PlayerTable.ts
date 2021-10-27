@@ -2,29 +2,45 @@ import '@webcomponents/custom-elements';
 import '@vaadin/vaadin-material-styles';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
-import { LitElement, css, html, render, TemplateResult } from 'lit';
+import { LitElement, css, html, render, HTMLTemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import { FaceitInfo, Player } from '../model';
 import { customTheme } from '../util/theme';
-import { get99PlayerLink, getSteamLink } from '../util/getLink';
+import {
+  get99PlayerLink,
+  getFaceitLevelLogoLink,
+  getFaceitLink,
+  getSteamLink,
+  getSteamLogoLink,
+} from '../util/getLink';
 
-const getSteamLogo = (): string => (
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/28px-Steam_icon_logo.svg.png'
-);
+function faceitRenderer(faceitInfo: FaceitInfo): HTMLTemplateResult {
+  const faceitLevel = faceitInfo.games.csgo.skill_level;
 
-const getFaceitLevelLogo = (faceitLevel: number): string => (
-  `https://cdn-frontend.faceit.com/web/960/src/app/assets/images-compress/skill-icons/skill_level_${faceitLevel}_svg.svg`
-);
+  return html`
+    <a href=${getFaceitLink(faceitInfo.nickname)} target="_blank">
+      <img
+        class="faceit-logo"
+        src=${getFaceitLevelLogoLink(faceitLevel)}
+        alt=${faceitLevel}
+      />
+    </a>
+  `;
+}
 
-const getFaceitLink = (name: string): string => (
-  `https://www.faceit.com/en/players/${name}`
-);
+function steamRenderer(steamId64: string): HTMLTemplateResult {
+  return html`
+    <a href=${getSteamLink(steamId64)} target="_blank">
+      <img class="steam-logo" src=${getSteamLogoLink()} />
+    </a>
+  `;
+}
 
 export interface PlayerTableItem {
   player: Player;
-  faceitInfo: FaceitInfo | null;
+  faceitInfo?: FaceitInfo;
 }
 
 const playerTable = 'flashkill-player-table';
@@ -32,7 +48,7 @@ const playerTable = 'flashkill-player-table';
 @customElement(playerTable)
 class PlayerTable extends LitElement {
   @property({ type: Array }) playerItems!: PlayerTableItem[];
-  @property() remainingSubstitutions!: string;
+  @property() remainingSubstitutions?: string;
 
   static styles = css`
     ${customTheme}
@@ -63,11 +79,46 @@ class PlayerTable extends LitElement {
     }
   `;
 
+  private nameRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<PlayerTableItem>,
+    rowData: GridItemModel<PlayerTableItem>,
+  ) {
+    render(
+      html`
+        <a href="${get99PlayerLink(rowData.item.player.id)}" target="_blank">
+          ${rowData.item.player.name}
+        </a>
+      `,
+      root,
+    );
+  }
+
+  private profilesRenderer(
+    root: HTMLElement,
+    _: GridColumnElement<PlayerTableItem>,
+    rowData: GridItemModel<PlayerTableItem>,
+  ) {
+    const { faceitInfo, player: {steamId64} } = rowData.item;
+
+    render(
+      html`
+        <div class="profiles">
+          ${faceitInfo && faceitRenderer(faceitInfo)}
+          ${steamId64 && steamRenderer(steamId64)}
+        </div>
+      `,
+      root,
+    );
+  }
+
   render() {
     return html`
       <div class="header">
         <h1>Spieler</h1>
-        <h3>${this.remainingSubstitutions}</h3>
+        ${this.remainingSubstitutions && html`
+          <h3>${this.remainingSubstitutions}</h3>
+        `}
       </div>
       <vaadin-grid .items="${this.playerItems}">
         <vaadin-grid-column
@@ -96,67 +147,6 @@ class PlayerTable extends LitElement {
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
-  }
-
-  private nameRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<PlayerTableItem>,
-    rowData: GridItemModel<PlayerTableItem>,
-  ) {
-    render(
-      html`
-        <a href="${get99PlayerLink(rowData.item.player.id)}" target="_blank">
-          ${rowData.item.player.name}
-        </a>
-      `,
-      root,
-    );
-  }
-
-  private profilesRenderer(
-    root: HTMLElement,
-    _: GridColumnElement<PlayerTableItem>,
-    rowData: GridItemModel<PlayerTableItem>,
-  ) {
-    const faceitRenderer = (faceitInfo: FaceitInfo | null): TemplateResult<1> => {
-      if (faceitInfo === null) {
-        return html``;
-      }
-
-      const faceitLevel = faceitInfo.games.csgo.skill_level;
-
-      return html`
-        <a href=${getFaceitLink(faceitInfo.nickname)} target="_blank">
-          <img
-            class="faceit-logo"
-            src="${getFaceitLevelLogo(faceitLevel)}"
-            alt="${faceitLevel}"
-          />
-        </a>
-      `;
-    };
-
-    const steamRenderer = (steamId64: string | null): TemplateResult<1> => {
-      if (steamId64 === null) {
-        return html``;
-      }
-
-      return html`
-        <a href=${getSteamLink(steamId64)} target="_blank">
-          <img class="steam-logo" src="${getSteamLogo()}"/>
-        </a>
-      `;
-    };
-
-    render(
-      html`
-        <div class="profiles">
-          ${faceitRenderer(rowData.item.faceitInfo)}
-          ${steamRenderer(rowData.item.player.steamId64)}
-        </div>
-      `,
-      root,
-    );
   }
 }
 

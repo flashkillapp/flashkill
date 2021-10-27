@@ -1,7 +1,7 @@
-import { MatchTableItem } from '../components/MatchesTable';
-import { AjaxMatch, Division, Match } from '../model';
-import { cacheForOneDay, fetchCached, htmlExtractor } from '../util/fetchCached';
-import { notNull } from '../util';
+import { MatchTableItem } from '../../components/MatchesTable';
+import { AjaxMatch, Division, Match } from '../../model';
+import { cacheForOneDay, fetchCached, htmlExtractor } from '../../util/fetchCached';
+import { notNull } from '../../util';
 
 import { getMapScores, getMatchId, getSeason, getTeams } from './selectors';
 
@@ -45,29 +45,25 @@ const fetchDivisionMatches = async (
     const ajaxMatch = await fetchAjaxMatch(matchLink);
     const matchDoc = await fetchMatchPage(matchLink);
 
-    const [team_1, team_2] = getTeams(matchDoc);
+    const [team1, team2] = getTeams(matchDoc);
 
-    if (
-      ajaxMatch === null
-      || team_1 === null
-      || team_2 === null
-    ) return null;
+    if (!ajaxMatch || !team1 || !team2) return null;
 
     const mapScores = getMapScores(matchDoc);
 
     return {
-      match_id: ajaxMatch.match_id,
+      matchId: ajaxMatch.match_id,
       time: ajaxMatch.time,
-      score_1: ajaxMatch.score_1,
-      score_2: ajaxMatch.score_2,
-      team_1,
-      team_2,
+      score1: ajaxMatch.score_1,
+      score2: ajaxMatch.score_2,
+      team1: team1,
+      team2: team2,
       scores: mapScores,
-      draft_mapvoting_bans: ajaxMatch.draft_mapvoting_bans,
-      draft_mapvoting_picks: ajaxMatch.draft_mapvoting_picks,
-      draft_maps: ajaxMatch.draft_maps,
-      draft_opp1: ajaxMatch.draft_opp1,
-      draft_opp2: ajaxMatch.draft_opp2,
+      draftMapvotingBans: ajaxMatch.draft_mapvoting_bans,
+      draftMapvotingPicks: ajaxMatch.draft_mapvoting_picks,
+      draftMaps: ajaxMatch.draft_maps,
+      draftOpp1: ajaxMatch.draft_opp1,
+      draftOpp2: ajaxMatch.draft_opp2,
     };
   }));
 
@@ -78,14 +74,14 @@ const makeHomeMatches = (
   matchItems: MatchTableItem[], homeTeamId: number,
 ): MatchTableItem[] => (
   matchItems.map((matchItem) => {
-    if (matchItem.team_1?.id === homeTeamId) return matchItem;
+    if (matchItem.team1?.id === homeTeamId) return matchItem;
 
     return {
       ...matchItem,
-      team_1: matchItem.team_2,
-      team_2: matchItem.team_1,
-      score_1: matchItem.score_2,
-      score_2: matchItem.score_1,
+      team1: matchItem.team2,
+      team2: matchItem.team1,
+      score1: matchItem.score2,
+      score2: matchItem.score1,
     };
   })
 );
@@ -99,20 +95,19 @@ const getMatchTableItems = (
     return [{
       ...match,
       division,
-      season,
-      map: null,
+      ...season && { season },
     }];
   }
 
   return match.scores.map((score, index) => ({
     ...match,
     division,
-    season,
-    score_1: score.score_1,
-    score_2: score.score_2,
-    map: match.draft_maps.find(
-      (draft_map) => draft_map.id === match.draft_mapvoting_picks[index],
-    ) ?? null,
+    score1: score.score1,
+    score2: score.score2,
+    ...season && { season },
+    map: match.draftMaps.find(
+      (draftMap) => draftMap.id === match.draftMapvotingPicks[index],
+    ),
   }));
 };
 

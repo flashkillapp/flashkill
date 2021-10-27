@@ -1,4 +1,4 @@
-import '../components/HideMemberCardsButton';
+import '../../components/HideMemberCardsButton';
 
 export const hideMemberCards = (): void => {
   const membersHeader = document.querySelector('.league-team-members .section-title');

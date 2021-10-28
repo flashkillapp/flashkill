@@ -12,8 +12,10 @@ receiveMessage(
 );
 
 receiveMessage(
-  MessageName.GetPlayerInfo,
-  async (payload) => fetchPlayerInfo(payload.steamId64),
+  MessageName.GetPlayerInfos,
+  async (payload) => Promise.all(
+    payload.players.map((player) => fetchPlayerInfo(player)),
+  ),
 );
 
 receiveMessage(

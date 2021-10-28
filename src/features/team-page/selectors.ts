@@ -1,6 +1,8 @@
 import { ID } from '@node-steam/id';
 
-import { Division, Team, MapScore, Season } from '../../model';
+import {
+  Division, Team, MapScore, Season, Player,
+} from '../../model';
 import { notNull } from '../../util';
 
 export const getMemberCards = (): HTMLLIElement[] => (
@@ -128,5 +130,38 @@ export const getSeason = (divisionUrl: string): Season | null => {
     id: Number.parseInt(idString),
     order: Number.parseInt(seasonNumber),
     name: `Saison ${seasonNumber}`,
+  };
+};
+
+const getPlayerId = (url: string): number | null => {
+  const playerIdRegex = /users\/([0-9]+)-/;
+  const regexResult = url.match(playerIdRegex);
+  const idString = regexResult?.[1] ?? null;
+
+  if (!idString) return null;
+
+  return Number.parseInt(idString);
+};
+
+export const getPlayer = (memberCard: HTMLLIElement): Player | null => {
+  const url = memberCard.querySelector<HTMLLinkElement>('a.image-present')?.href;
+  const name = memberCard.querySelector('h3')?.textContent;
+  const role = memberCard.querySelector('.txt-subtitle')?.textContent;
+
+  if (!url || !name || !role) return null;
+
+  const playerId = getPlayerId(url);
+
+  if (!playerId) return null;
+
+  const steamId64 = getSteamId64(memberCard);
+  const status = memberCard.querySelector('[class^="txt-status"]')?.textContent;
+
+  return {
+    id: playerId,
+    name,
+    role,
+    ...steamId64 && { steamId64 },
+    ...status && { status },
   };
 };

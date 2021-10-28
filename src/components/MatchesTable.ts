@@ -16,7 +16,7 @@ import { customTheme } from '../util/theme';
 import { Division, Season, Team, DraftMap } from '../model';
 import { getDay } from '../util/dateHelpers';
 import { get99MatchLink, get99TeamLink } from '../util/getLink';
-import { isUndefined, notUndefined } from '../util';
+import { notUndefined } from '../util';
 
 registerStyles('vaadin-grid', css`
   .win { background-color: #374c37 !important; }
@@ -130,7 +130,7 @@ class MatchesTable extends LitElement {
     _: GridColumnElement<MatchTableItem>,
     rowData: GridItemModel<MatchTableItem>,
   ) {
-    if (isUndefined(rowData.item.map)) return;
+    if (!rowData.item.map) return;
 
     render(
       html`

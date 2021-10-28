@@ -23,6 +23,9 @@
             ],
             "js": [
                 "content/team-page/index.js"
+            ],
+            "css": [
+                "content/team-page/styles.css"
             ]
         }
     ],

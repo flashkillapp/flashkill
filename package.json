@@ -1,6 +1,6 @@
 {
   "name": "flashkill",
-  "version": "1.3.13",
+  "version": "2.0.0",
   "description": "This browser extension aims to improve the user experience on for both players and spectators of the 99Damage league websites.",
   "scripts": {
     "clean:license-details": "find dist/LICENSE-DETAILS.md | xargs --no-run-if-empty -t rm",

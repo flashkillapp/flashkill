@@ -39,8 +39,6 @@
     },
     "permissions": [
         "https://open.faceit.com/data/v4/players?game=csgo&game_player_id=*",
-        "https://flashkill.smatify.com/api/team/*",
-        "https://steamcommunity.com/profiles/*",
         "https://liga.99damage.de/*",
         "storage",
         "unlimitedStorage"

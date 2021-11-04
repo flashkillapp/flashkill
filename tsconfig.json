@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2019",
+      "dom",
+    ],
+  },
+  "include": [
+    ".eslintrc.js",
+    "./src/**/*",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

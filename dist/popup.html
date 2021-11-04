@@ -1,45 +1,45 @@
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>flashkill</title>
-    <link rel="stylesheet" type="text/css" href="popup.css">
-  </head>
-  <body style="width: 450px; height: 580px; background-color: #222; color: white">
-    <img src="https://i.ibb.co/7vC3dsf/flashkill-logo-white.png" style="margin-left:auto; margin-right:auto; display:block; height:50"/>
-    <h3>Einstellungen</h3>
-    <table>
-      <tr>
-        <td>
-          Map Übersicht automatisch laden
-        </td>
-        <td>
-          <label class="switch">
-            <input id="maps-table-auto-load" type="checkbox">
-            <span class="slider round"></span>
-            <script src="script/popup.js"></script>
-          </label>
-        </td>
-      </tr>
-    </table>
-    <div style="margin-top: 10px">
-    <button id="clear-cache-button">Cache leeren<script src="./popup.js"></script></button>
-    <!-- <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X489TLB8NSSPN&source=url" target="_blank">
-      <img src="https://i.ibb.co/vX4JLpg/clear-cache.png" width="100px"> -->
-    </div>
-    <h3>Feedback</h3>
-    <p>Wir arbeiten an weiteren Features und freuen uns auf euer Feedback, damit wir die Extension zum größtmöglichen Nutzen weiterentwickeln können.
-      Schreibt uns daher gerne eine E-Mail mit euren Verbesserungsvorschläge an <b>flashkillapp@gmail.com</b> 
-      oder postet unter <a href="https://www.reddit.com/r/FlashkillApp" target="_blank" style="color:white">r/FlashkillApp</a>.</p>
-    <h3>Spenden</h3>
-    <p>Wir arbeiten in unserer Freizeit an diesem Projekt und sind dankbar für jede Spende auf unser PayPal Konto.</p>
-    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X489TLB8NSSPN&source=url" target="_blank">
-      <img src="https://i.ibb.co/xXCmwJq/paypal-button-orange.png" width="150px">
-    </a>
-    <h3>About</h3>
-    <p>Version <script src="versionloader.js"></script></p>
-    <a id="license-link" target="_blank" style="color:white">Lizensinformationen zu verwendeter Open Source Software</a>
-    <script src="licenseDetailsLoader.js"></script>
-    <h3>Disclaimer</h3>
-    <p>Diese Extension steht in keiner direkten Verbindung zu 99Damage oder der Freaks 4U Gaming GmbH.</p>
+
+<head>
+  <meta charset="utf-8" />
+  <title>flashkill</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+  <script src="./popup.js" defer></script>
+</head>
+
+<body>
+  <img id="flashkill-logo" src="" alt="flashkill" />
+  <h3>Einstellungen</h3>
+  <div style="margin-top: 10px">
+    <button id="clear-cache-button">Cache leeren</button>
+  </div>
+  <h3>Feedback</h3>
+  <p>
+    Wir arbeiten an weiteren Features und freuen uns auf euer Feedback, damit wir die Extension zum größtmöglichen
+    Nutzen weiterentwickeln können.
+    Schreibt uns daher gerne eine E-Mail mit euren Verbesserungsvorschläge an <b>flashkillapp@gmail.com</b>
+    oder postet unter <a href="https://www.reddit.com/r/FlashkillApp" target="_blank">r/FlashkillApp</a>.
+  </p>
+  <h3>Spenden</h3>
+  <p>
+    Wir arbeiten in unserer Freizeit an diesem Projekt und sind dankbar für jede Spende auf unser PayPal Konto.
+  </p>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X489TLB8NSSPN&source=url"
+    target="_blank">
+    <img id="donation-button" src="" alt="Paypal" />
+  </a>
+  <h3>About</h3>
+  <p>
+    Version
+    <script src="versionloader.js"></script>
+  </p>
+  <a id="license-link" target="_blank">
+    Lizensinformationen zu verwendeter Open Source Software
+  </a>
+  <h3>Disclaimer</h3>
+  <p>
+    Diese Extension steht in keiner direkten Verbindung zu 99Damage oder der Freaks 4U Gaming GmbH.
+  </p>
 </body>
+
 </html>

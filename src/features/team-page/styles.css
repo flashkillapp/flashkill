@@ -1,0 +1,9 @@
+.hidden { 
+  display: none;
+}
+
+.league-team-members .section-title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

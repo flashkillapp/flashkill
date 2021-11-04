@@ -1,65 +1,71 @@
+const CopyPlugin = require('copy-webpack-plugin');
 
-const backgroundConfig = {
-    entry: [
-        './src/team-page/maps/background.ts',
-        './src/team-page/members/background.ts',
-        './src/team-page/seasons/background.ts',
-        './src/util/background/fetchCached.ts',
+const backgroundAndCssConfig = {
+  entry: [
+    './src/features/team-page/background.ts',
+  ],
+  mode: 'none',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.js$/,
+        use: ['source-map-loader'],
+        enforce: 'pre',
+      },
     ],
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                loader: 'babel-loader',
-            },
-            {
-                test: /\.js$/,
-                use: ['source-map-loader'],
-                enforce: 'pre',
-            },
-        ],
-    },
-    output: {
-        filename: 'background.js',
-    },
-    resolve: {
-        extensions: ['.ts', '.js']
-    },
-}
+  },
+  output: {
+    filename: 'background.js',
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/features/team-page/styles.css', to: 'content/team-page/styles.css' },
+      ],
+    }),
+  ],
+};
 
 const contentScripts = [
-    'content.ts',
-    'team-page/seasons/index.ts',
-    'team-page/members/index.ts',
+  'content.ts',
+  'team-page/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {
-    const jsFilePath = contentScriptPath.replace(".ts", ".js");
-    return {
-        entry: './src/' + contentScriptPath,
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    loader: 'babel-loader'
-                },
-                {
-                    test: /\.js$/,
-                    use: ['source-map-loader'],
-                    enforce: 'pre',
-                }
-            ]
+  const jsFilePath = contentScriptPath.replace('.ts', '.js');
+  return {
+    entry: './src/features/' + contentScriptPath,
+    mode: 'none',
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          loader: 'babel-loader',
         },
-        output: {
-            filename: 'content/' + jsFilePath,
+        {
+          test: /\.js$/,
+          use: ['source-map-loader'],
+          enforce: 'pre',
         },
-        resolve: {
-            extensions: ['.ts', '.js'],
-        },
-    }
+      ],
+    },
+    output: {
+      filename: 'content/' + jsFilePath.replace('content', 'index'),
+    },
+    resolve: {
+      extensions: ['.ts', '.js'],
+    },
+  };
 });
 
-const allConfigs = contentScriptConfigs;
-allConfigs.push(backgroundConfig);
-
-module.exports = allConfigs;
+module.exports = [
+  backgroundAndCssConfig,
+  ...contentScriptConfigs,
+];

@@ -1,5 +1,9 @@
-import { addAdditionalPlayerInfos } from './addAdditionalPlayerInfos';
 import { addAverageFaceitElo } from './addAverageFaceitElo';
+import { addMatchTable } from './addMatchTable';
+import { addPlayerTable } from './addPlayerTable';
+import { addHideMemberCardsButton } from './addHideMemberCardsButton';
 
-addAdditionalPlayerInfos();
 addAverageFaceitElo();
+addMatchTable();
+addPlayerTable();
+addHideMemberCardsButton();

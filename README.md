@@ -11,12 +11,13 @@ This browser extension aims to improve the user experience on for both players a
 
 # Features
 
-- Search teams by name across all divisions - now obsolete, [use this](https://liga.99damage.de/leagues/teams) instead
-- Show season results and match links on team page ❌️
-- Steam Profile Name/Link on team page ✔️
-- Faceit Rank/Elo/Link on team page ✔️
-- Show pick/ban/result statistics per map ❌️
-- Compare current lineup to previous seasons ❌️
+The Firefox version is not on version 2.0.0 yet, because we still have [some things to sort out with the web components setup](https://github.com/flashkillapp/flashkill/issues/63).
+
+* Team page
+  * Show members in a concise table instead of the member cards
+  * Show steam and faceit profiles for team members
+  * Show average elo of members
+  * Show map results for up to three seasons back
 
 # Links
 

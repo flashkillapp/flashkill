@@ -3,9 +3,9 @@ import { FaceitInfo } from '../../model';
 import { component } from '../../util/component';
 import '../../components/TeamEloHeader';
 import { MessageName, sendMessage } from '../../util/messages';
+import { avgFaceitElo } from '../../util/avgFaceitElo';
 
 import { getMemberCards, getSteamId64 } from './selectors';
-import { avgFaceitElo } from '../../util/avgFaceitElo';
 
 const injectAvgFaceitElo = (faceitInfos: Array<FaceitInfo | null>): void => {
   const avgElo = avgFaceitElo(faceitInfos);

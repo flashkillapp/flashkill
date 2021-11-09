@@ -1,7 +1,7 @@
 import { MessageName, receiveMessage } from '../../util/messages';
-import { fetchLineupPlayers } from './fetchLineupTableItems';
+import { fetchLineupTableItems } from './fetchLineupTableItems';
 
 receiveMessage(
   MessageName.GetMatchLineups,
-  async (payload) => fetchLineupPlayers(payload.matchId),
+  async (payload) => fetchLineupTableItems(payload.matchId),
 );

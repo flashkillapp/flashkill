@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import './FaceitEloBar';
-import './HideLineupCardsButton';
+import './ToggleContentButton';
 import './PlayerProfiles';
 import { customTheme } from '../util/theme';
 import { FaceitInfo, LineupPlayer } from '../model';
@@ -78,7 +78,10 @@ class LineupTables extends LitElement {
     return html`
       <div class="header">
         <h1>Lineups</h1>
-        <flashkill-hide-lineup-cards-button></flashkill-hide-lineup-cards-button>
+        <flashkill-toggle-content-button
+          label="Original"
+          selector=".content-match-lineups"
+        ></flashkill-toggle-content-button>
       </div>
 
       <flashkill-faceit-elo-bar

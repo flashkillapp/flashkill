@@ -23,7 +23,7 @@ async function extractLineup(ajaxLineup: AjaxLineup): Promise<LineupTableItem[]>
   return Promise.all(ajaxLineup.map(extractPlayer));
 }
 
-export async function fetchLineupPlayers(matchId: number): Promise<LineupTableItem[][] | null> {
+export async function fetchLineupTableItems(matchId: number): Promise<LineupTableItem[][] | null> {
   const ajaxMatch = await fetchAjaxMatch(matchId);
 
   if (!ajaxMatch) return Promise.resolve(null);

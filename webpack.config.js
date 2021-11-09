@@ -36,6 +36,7 @@ const backgroundAndCssConfig = {
 const contentScripts = [
   'content.ts',
   'team-page/content.ts',
+  'match-page/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {

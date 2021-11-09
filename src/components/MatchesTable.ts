@@ -36,9 +36,9 @@ export interface MatchTableItem {
   map?: DraftMap;
 }
 
-const matchesTable = 'flashkill-matches-table';
+export const flashkillMatchesTable = 'flashkill-matches-table';
 
-@customElement(matchesTable)
+@customElement(flashkillMatchesTable)
 class MatchesTable extends LitElement {
   @property({ type: Array }) matchItems!: MatchTableItem[];
 
@@ -271,6 +271,6 @@ class MatchesTable extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [matchesTable]: MatchesTable,
+    [flashkillMatchesTable]: MatchesTable,
   }
 }

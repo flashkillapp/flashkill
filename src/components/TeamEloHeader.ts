@@ -2,9 +2,9 @@ import '@webcomponents/custom-elements';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-const teamEloHeader = 'flashkill-team-elo-header';
+export const flashkillTeamEloHeader = 'flashkill-team-elo-header';
 
-@customElement(teamEloHeader)
+@customElement(flashkillTeamEloHeader)
 class TeamEloHeader extends LitElement {
   @property({ type: Number }) avgElo!: number;
 
@@ -28,6 +28,6 @@ class TeamEloHeader extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [teamEloHeader]: TeamEloHeader,
+    [flashkillTeamEloHeader]: TeamEloHeader,
   }
 }

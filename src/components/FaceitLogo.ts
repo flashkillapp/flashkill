@@ -5,9 +5,9 @@ import { customElement, property } from 'lit/decorators.js';
 import { FaceitInfo } from '../model';
 import { getFaceitLevelLogoLink, getFaceitLink } from '../util/getLink';
 
-const faceitLogo = 'flashkill-faceit-logo';
+const flashkillFaceitLogo = 'flashkill-faceit-logo';
 
-@customElement(faceitLogo)
+@customElement(flashkillFaceitLogo)
 class FaceitLogo extends LitElement {
   @property({ type: Object }) faceitInfo!: FaceitInfo;
 
@@ -36,6 +36,6 @@ class FaceitLogo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [faceitLogo]: FaceitLogo,
+    [flashkillFaceitLogo]: FaceitLogo,
   }
 }

@@ -19,9 +19,9 @@ export interface LineupTableItem {
   faceitInfo?: FaceitInfo;
 }
 
-const lineupTables = 'flashkill-lineup-tables';
+export const flashkillLineupTables = 'flashkill-lineup-tables';
 
-@customElement(lineupTables)
+@customElement(flashkillLineupTables)
 class LineupTables extends LitElement {
   @property({ type: Array }) lineupItems1!: LineupTableItem[];
   @property({ type: Array }) lineupItems2!: LineupTableItem[];
@@ -136,6 +136,6 @@ class LineupTables extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [lineupTables]: LineupTables,
+    [flashkillLineupTables]: LineupTables,
   }
 }

@@ -4,9 +4,9 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { getSteamLink, getSteamLogoLink } from '../util/getLink';
 
-const steamLogo = 'flashkill-steam-logo';
+const flashkillSteamLogo = 'flashkill-steam-logo';
 
-@customElement(steamLogo)
+@customElement(flashkillSteamLogo)
 class SteamLogo extends LitElement {
   @property() steamId64!: string;
 
@@ -30,6 +30,6 @@ class SteamLogo extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [steamLogo]: SteamLogo,
+    [flashkillSteamLogo]: SteamLogo,
   }
 }

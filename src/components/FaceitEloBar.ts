@@ -3,9 +3,9 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { getFaceitLevel } from '../util/getFaceitLevel';
 
-const faceitEloBar = 'flashkill-faceit-elo-bar';
+const flashkillFaceitEloBar = 'flashkill-faceit-elo-bar';
 
-@customElement(faceitEloBar)
+@customElement(flashkillFaceitEloBar)
 class FaceitEloBar extends LitElement {
   @property({ type: Number }) elo1!: number;
   @property({ type: Number }) elo2!: number;
@@ -83,6 +83,6 @@ class FaceitEloBar extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [faceitEloBar]: FaceitEloBar,
+    [flashkillFaceitEloBar]: FaceitEloBar,
   }
 }

@@ -6,9 +6,9 @@ import './FaceitLogo';
 import './SteamLogo';
 import { FaceitInfo } from '../model';
 
-const playerProfiles = 'flashkill-player-profiles';
+const flashkillPlayerProfiles = 'flashkill-player-profiles';
 
-@customElement(playerProfiles)
+@customElement(flashkillPlayerProfiles)
 class PlayerProfiles extends LitElement {
   @property() steamId64?: string;
   @property({ type: Object }) faceitInfo?: FaceitInfo;
@@ -35,6 +35,6 @@ class PlayerProfiles extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [playerProfiles]: PlayerProfiles,
+    [flashkillPlayerProfiles]: PlayerProfiles,
   }
 }

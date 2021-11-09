@@ -6,9 +6,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import { customTheme } from '../util/theme';
 
-const toggleContentButton = 'flashkill-toggle-content-button';
+export const flashkillToggleContentButton = 'flashkill-toggle-content-button';
 
-@customElement(toggleContentButton)
+@customElement(flashkillToggleContentButton)
 class ToggleContentButton extends LitElement {
   @property() label!: string;
   @property() selector!: string;
@@ -57,6 +57,6 @@ class ToggleContentButton extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [toggleContentButton]: ToggleContentButton,
+    [flashkillToggleContentButton]: ToggleContentButton,
   }
 }

@@ -1,5 +1,5 @@
 import '../../components/LineupTables';
-import { LineupTableItem } from '../../components/LineupTables';
+import { flashkillLineupTables, LineupTableItem } from '../../components/LineupTables';
 import { component } from '../../util/component';
 import { MessageName, sendMessage } from '../../util/messages';
 import { getMatchTabId } from './selectors';
@@ -8,7 +8,7 @@ function injectTables(lineups: LineupTableItem[][] | null): void {
   if (lineups?.length !== 2) return;
 
   const lineupTable = component(
-    'flashkill-lineup-tables',
+    flashkillLineupTables,
     { lineupItems1: lineups[0], lineupItems2: lineups[1] },
   );
 

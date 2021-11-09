@@ -18,9 +18,9 @@ export interface MemberTableItem {
   faceitInfo?: FaceitInfo;
 }
 
-const memberTable = 'flashkill-member-table';
+export const flashkillMemberTable = 'flashkill-member-table';
 
-@customElement(memberTable)
+@customElement(flashkillMemberTable)
 class MemberTable extends LitElement {
   @property({ type: Array }) memberItems!: MemberTableItem[];
   @property() remainingSubstitutions?: string;
@@ -109,6 +109,6 @@ class MemberTable extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [memberTable]: MemberTable,
+    [flashkillMemberTable]: MemberTable,
   }
 }

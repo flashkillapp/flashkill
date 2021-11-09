@@ -1,7 +1,7 @@
 import { component } from '../../util/component';
 import { sendMessage, MessageName } from '../../util/messages';
 import { notNull } from '../../util/index';
-import { MemberTableItem } from '../../components/MemberTable';
+import { flashkillMemberTable, MemberTableItem } from '../../components/MemberTable';
 import '../../components/MemberTable';
 
 import { getMemberCards, getPlayer } from './selectors';
@@ -12,7 +12,7 @@ const injectMemberTable = (memberItems: MemberTableItem[]): void => {
   )?.textContent;
   const header = document.querySelector('.content-portrait-head');
   const playerTable = component(
-    'flashkill-member-table',
+    flashkillMemberTable,
     {
       memberItems,
       ...remainingSubstitutions && { remainingSubstitutions },

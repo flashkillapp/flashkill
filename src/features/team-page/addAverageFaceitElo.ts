@@ -1,16 +1,17 @@
 import { notNull } from '../../util';
 import { FaceitInfo } from '../../model';
 import { component } from '../../util/component';
-import '../../components/TeamEloHeader';
 import { MessageName, sendMessage } from '../../util/messages';
 import { avgFaceitElo } from '../../util/avgFaceitElo';
+import '../../components/TeamEloHeader';
+import { flashkillTeamEloHeader } from '../../components/TeamEloHeader';
 
 import { getMemberCards, getSteamId64 } from './selectors';
 
 const injectAvgFaceitElo = (faceitInfos: Array<FaceitInfo | null>): void => {
   const avgElo = avgFaceitElo(faceitInfos);
   const teamHeader = document.querySelector('.content-portrait-head');
-  const teamEloHeader = component('flashkill-team-elo-header', { avgElo });
+  const teamEloHeader = component(flashkillTeamEloHeader, { avgElo });
   teamHeader?.parentNode?.appendChild(teamEloHeader);
 };
 

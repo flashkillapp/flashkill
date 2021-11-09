@@ -1,3 +1,3 @@
-import { addPlayerTable } from './addPlayerTable';
+import { addLineupTables } from './addLineupTables';
 
-addPlayerTable();
+addLineupTables();

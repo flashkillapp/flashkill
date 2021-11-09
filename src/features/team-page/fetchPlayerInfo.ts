@@ -1,9 +1,9 @@
 import { Player } from '../../model';
-import { PlayerTableItem } from '../../components/PlayerTable';
+import { MemberTableItem } from '../../components/MemberTable';
 
 import { fetchFaceitInfo } from './fetchFaceitInfo';
 
-export const fetchPlayerInfo = async (player: Player): Promise<PlayerTableItem> => {
+export const fetchPlayerInfo = async (player: Player): Promise<MemberTableItem> => {
   if (!player.steamId64) {
     return Promise.resolve({
       player,

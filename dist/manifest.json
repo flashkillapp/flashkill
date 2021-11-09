@@ -35,6 +35,9 @@
             "js": [
                 "content/match-page/index.js"
             ],
+            "css": [
+                "content/match-page/styles.css"
+            ]
         }
     ],
     "browser_action": {

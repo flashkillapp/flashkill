@@ -24,7 +24,10 @@ class PlayerProfiles extends LitElement {
   render() {
     return html`
       ${this.faceitInfo && html`
-        <flashkill-faceit-logo .faceitInfo=${this.faceitInfo}></flashkill-faceit-logo>
+        <flashkill-faceit-logo
+          .nickname=${this.faceitInfo.nickname}
+          .skillLevel=${this.faceitInfo.games.csgo.skill_level}
+        ></flashkill-faceit-logo>
       `}
       ${this.steamId64 && html`
         <flashkill-steam-logo .steamId64=${this.steamId64}></flashkill-steam-logo>

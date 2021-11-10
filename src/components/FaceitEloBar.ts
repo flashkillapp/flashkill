@@ -10,29 +10,37 @@ class FaceitEloBar extends LitElement {
   @property({ type: Number }) elo1!: number;
   @property({ type: Number }) elo2!: number;
 
+  private static height = 30;
+
   static styles = css`
     .root {
       width: 100%;
-      height: 30px;
+      height: ${FaceitEloBar.height}px;
     }
 
-    .divider {
+    .mask-rect {
+      width: 100%;
+      fill: white;
+    }
+
+    .mask-divider {
       width: 4px;
-      height: 30px;
+      height: ${FaceitEloBar.height}px;
+    }
+
+    .mask-text {
+      font-weight: bold;
+      stroke-width: 1px;
+      text-anchor: middle;
     }
 
     .bar {
-      height: 30px;
+      height: ${FaceitEloBar.height}px;
     }
 
     .eloBar {
       fill-opacity: 0.8;
-      clip-path: url(#round-corners);
-    }
-
-    .eloText {
-      stroke-width: 1px;
-      text-anchor: middle;
+      mask: url(#mask);
     }
   `;
 
@@ -45,37 +53,35 @@ class FaceitEloBar extends LitElement {
 
     return html`
       <style>
-        .divider {
+        .mask-divider {
           transform: translateX(calc(${percentage}% - 2px));
         }
 
-        .eloTextLeft {
+        .eloLeft {
           transform: translateX(calc(${percentage / 2}%)) translateY(calc(50% + 22px));
         }
 
-        .eloTextRight {
+        .eloRight {
           transform: translateX(calc(${percentage + ((100 - percentage) / 2)}%)) translateY(calc(50% + 22px));
         }
       </style>
 
       <svg class="root">
         <defs y="50%">
-          <clipPath id="round-corners" >
-            <rect class="bar" x="0px" width="100%" rx="20"/>
-          </clipPath>
+          <mask id="mask">
+            <rect class="bar mask-rect" x="0px" rx="20"/>
+            <rect class="mask-divider"/>
+            <text class="mask-text eloLeft" y="-50%">
+              ${`${roundedElos[0]} Elo`}
+            </text>
+            <text class="mask-text eloRight" y="-50%">
+              ${`${ roundedElos[1] } Elo`}
+            </text>
+          </mask>
         </defs>
 
         <rect class="bar eloBar" fill=${colors[0]} width="${percentage}%"/>
         <rect class="bar eloBar" fill=${colors[1]} width="${remainder}%" x="${percentage}%"/>
-        <rect class="divider"/>
-
-        <text class="eloText eloTextLeft" y="-50%">
-          ${`${roundedElos[0]} Elo`}
-        </text>
-
-        <text class="eloText eloTextRight" y="-50%">
-          ${`${ roundedElos[1] } Elo`}
-        </text>
       </svg>
     `;
   }

@@ -90,45 +90,27 @@ class LineupTables extends LitElement {
       ></flashkill-faceit-elo-bar>
 
       <div class="lineups">
-        <vaadin-grid .items="${this.lineupItems1}" .allRowsVisible=${true}>
-          <vaadin-grid-column
-            header="Name"
-            auto-width
-            text-align="start"
-            .renderer="${this.nameRenderer}"
-          ></vaadin-grid-column>
-          <vaadin-grid-column
-            header="Profiles"
-            auto-width
-            text-align="center"
-            .renderer="${this.profilesRenderer}"
-          ></vaadin-grid-column>
-          <vaadin-grid-column
-            header="Faceit Elo"
-            path="faceitInfo.games.csgo.faceit_elo"
-            text-align="end"
-          ></vaadin-grid-column>
-        </vaadin-grid>
-
-        <vaadin-grid .items="${this.lineupItems2}" .allRowsVisible=${true}>
-          <vaadin-grid-column
-            header="Faceit Elo"
-            path="faceitInfo.games.csgo.faceit_elo"
-            text-align="start"
-          ></vaadin-grid-column>
-          <vaadin-grid-column
-            header="Profiles"
-            auto-width
-            text-align="center"
-            .renderer="${this.profilesRenderer}"
-          ></vaadin-grid-column>
-          <vaadin-grid-column
-            header="Name"
-            auto-width
-            text-align="end"
-            .renderer="${this.nameRenderer}"
-          ></vaadin-grid-column>
-        </vaadin-grid>
+        ${[this.lineupItems1, this.lineupItems2].map((lineupItems) => html`
+          <vaadin-grid .items="${lineupItems}" .allRowsVisible=${true}>
+            <vaadin-grid-column
+              header="Name"
+              auto-width
+              text-align="start"
+              .renderer="${this.nameRenderer}"
+            ></vaadin-grid-column>
+            <vaadin-grid-column
+              header="Faceit Elo"
+              path="faceitInfo.games.csgo.faceit_elo"
+              text-align="end"
+            ></vaadin-grid-column>
+            <vaadin-grid-column
+              header="Profiles"
+              auto-width
+              text-align="center"
+              .renderer="${this.profilesRenderer}"
+            ></vaadin-grid-column>
+          </vaadin-grid>
+        `)}
       </div>
     `;
   }

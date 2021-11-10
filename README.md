@@ -1,6 +1,6 @@
 # flashkill Browser Extension
 
-This browser extension aims to improve the user experience on for both players and spectators of the 99Damage league websites.
+This browser extension aims to improve the user experience for both players and spectators of the 99Damage league websites.
 
 # Install
 

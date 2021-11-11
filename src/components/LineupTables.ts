@@ -38,6 +38,7 @@ class LineupTables extends LitElement {
 
     :host > .lineups {
       display: flex;
+      gap: 4px;
     }
   `;
 

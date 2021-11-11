@@ -5,7 +5,7 @@ interface StatusStu {
     msg: string;
 }
 
-interface AjaxPlayer {
+export interface AjaxPlayer {
     id: number;
     name: string;
     link: string;
@@ -16,7 +16,7 @@ interface AjaxPlayer {
     status_stu: StatusStu;
 }
 
-type AjaxLineup = AjaxPlayer[];
+export type AjaxLineup = AjaxPlayer[];
 
 export enum AjaxMap {
   DeAncient = 0,
@@ -56,7 +56,7 @@ export interface AjaxMatch {
     scheduling_mode: string;
     scheduling_replytime: number;
     match_lineup_mode: string;
-    lineups: AjaxLineup[];
+    lineups: { 1: AjaxLineup, 2: AjaxLineup };
     lineups_readyup_enabled: number;
     lineup_submit_time: number;
     lineup_readyup_time: number;

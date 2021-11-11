@@ -2,52 +2,27 @@ import '@webcomponents/custom-elements';
 import '@vaadin/vaadin-material-styles';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
-import { LitElement, css, html, render, HTMLTemplateResult } from 'lit';
+import { LitElement, css, html, render } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
+import './PlayerProfiles';
 import { FaceitInfo, Player } from '../model';
 import { customTheme } from '../util/theme';
 import {
   get99PlayerLink,
-  getFaceitLevelLogoLink,
-  getFaceitLink,
-  getSteamLink,
-  getSteamLogoLink,
 } from '../util/getLink';
 
-function faceitRenderer(faceitInfo: FaceitInfo): HTMLTemplateResult {
-  const faceitLevel = faceitInfo.games.csgo.skill_level;
-
-  return html`
-    <a href=${getFaceitLink(faceitInfo.nickname)} target="_blank">
-      <img
-        class="faceit-logo"
-        src=${getFaceitLevelLogoLink(faceitLevel)}
-        alt=${faceitLevel}
-      />
-    </a>
-  `;
-}
-
-function steamRenderer(steamId64: string): HTMLTemplateResult {
-  return html`
-    <a href=${getSteamLink(steamId64)} target="_blank">
-      <img class="steam-logo" src=${getSteamLogoLink()} />
-    </a>
-  `;
-}
-
-export interface PlayerTableItem {
+export interface MemberTableItem {
   player: Player;
   faceitInfo?: FaceitInfo;
 }
 
-const playerTable = 'flashkill-player-table';
+export const flashkillMemberTable = 'flashkill-member-table';
 
-@customElement(playerTable)
-class PlayerTable extends LitElement {
-  @property({ type: Array }) playerItems!: PlayerTableItem[];
+@customElement(flashkillMemberTable)
+class MemberTable extends LitElement {
+  @property({ type: Array }) memberItems!: MemberTableItem[];
   @property() remainingSubstitutions?: string;
 
   static styles = css`
@@ -58,31 +33,12 @@ class PlayerTable extends LitElement {
       justify-content: space-between;
       width: 100%;
     }
-
-    .profiles {
-      display: flex;
-      gap: 8px;
-    }
-
-    .steam-logo {
-      display: inline-block;
-      vertical-align: middle;
-      width: 28px;
-      height: 28px;
-    }
-
-    .faceit-logo {
-      display: inline-block;
-      vertical-align: middle;
-      width: 28px;
-      height: 28px;
-    }
   `;
 
   private nameRenderer(
     root: HTMLElement,
-    _: GridColumnElement<PlayerTableItem>,
-    rowData: GridItemModel<PlayerTableItem>,
+    _: GridColumnElement<MemberTableItem>,
+    rowData: GridItemModel<MemberTableItem>,
   ) {
     render(
       html`
@@ -96,17 +52,17 @@ class PlayerTable extends LitElement {
 
   private profilesRenderer(
     root: HTMLElement,
-    _: GridColumnElement<PlayerTableItem>,
-    rowData: GridItemModel<PlayerTableItem>,
+    _: GridColumnElement<MemberTableItem>,
+    rowData: GridItemModel<MemberTableItem>,
   ) {
     const { faceitInfo, player: {steamId64} } = rowData.item;
 
     render(
       html`
-        <div class="profiles">
-          ${faceitInfo && faceitRenderer(faceitInfo)}
-          ${steamId64 && steamRenderer(steamId64)}
-        </div>
+        <flashkill-player-profiles
+          .faceitInfo=${faceitInfo}
+          .steamId64=${steamId64}
+        ></flashkill-player-profiles>
       `,
       root,
     );
@@ -120,7 +76,7 @@ class PlayerTable extends LitElement {
           <h3>${this.remainingSubstitutions}</h3>
         `}
       </div>
-      <vaadin-grid .items="${this.playerItems}">
+      <vaadin-grid .items="${this.memberItems}" .allRowsVisible=${true}>
         <vaadin-grid-column
           header="Name"
           auto-width
@@ -143,6 +99,7 @@ class PlayerTable extends LitElement {
         ></vaadin-grid-column>
         <vaadin-grid-column
           header="Profiles"
+          text-align="center"
           .renderer="${this.profilesRenderer}"
         ></vaadin-grid-column>
       </vaadin-grid>
@@ -152,6 +109,6 @@ class PlayerTable extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    [playerTable]: PlayerTable,
+    [flashkillMemberTable]: MemberTable,
   }
 }

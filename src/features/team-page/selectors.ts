@@ -18,12 +18,6 @@ export const getSteamId64 = (memberCard: HTMLLIElement): string | null => {
   }
 };
 
-export const getMatchId = (matchLink: string): number | null => {
-  const matchIdRegex = /leagues\/matches\/([0-9]+)-/;
-  const matchId = matchLink.match(matchIdRegex)?.[1];
-  return matchId ? Number.parseInt(matchId) : null;
-};
-
 const getTeamIdFromUrl = (url: string): number | null => {
   const teamIdRegex = /\/teams\/([0-9]+)-/;
   const teamId = url.match(teamIdRegex)?.[1];
@@ -133,15 +127,16 @@ export const getSeason = (divisionUrl: string): Season | null => {
   };
 };
 
-const getPlayerId = (url: string): number | null => {
+function getPlayerId(url: string): number | null {
   const playerIdRegex = /users\/([0-9]+)-/;
   const regexResult = url.match(playerIdRegex);
   const idString = regexResult?.[1] ?? null;
 
-  if (!idString) return null;
+  if (!idString)
+    return null;
 
   return Number.parseInt(idString);
-};
+}
 
 export const getPlayer = (memberCard: HTMLLIElement): Player | null => {
   const url = memberCard.querySelector<HTMLLinkElement>('a.image-present')?.href;

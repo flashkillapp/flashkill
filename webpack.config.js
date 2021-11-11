@@ -3,6 +3,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const backgroundAndCssConfig = {
   entry: [
     './src/features/team-page/background.ts',
+    './src/features/match-page/background.ts',
   ],
   mode: 'none',
   module: {
@@ -28,6 +29,7 @@ const backgroundAndCssConfig = {
     new CopyPlugin({
       patterns: [
         { from: 'src/features/team-page/styles.css', to: 'content/team-page/styles.css' },
+        { from: 'src/features/match-page/styles.css', to: 'content/match-page/styles.css' },
       ],
     }),
   ],
@@ -36,6 +38,7 @@ const backgroundAndCssConfig = {
 const contentScripts = [
   'content.ts',
   'team-page/content.ts',
+  'match-page/content.ts',
 ];
 
 const contentScriptConfigs = contentScripts.map(contentScriptPath => {

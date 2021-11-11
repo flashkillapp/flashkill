@@ -1,22 +1,11 @@
 import { MatchTableItem } from '../../components/MatchesTable';
-import { AjaxMatch, Division, Match } from '../../model';
+import { Division, Match } from '../../model';
 import { cacheForOneDay, fetchCached, htmlExtractor } from '../../util/fetchCached';
 import { notNull } from '../../util';
+import { fetchAjaxMatch } from '../../util/fetchAjaxMatch';
+import { getMatchId } from '../../util/getMatchId';
 
-import { getMapScores, getMatchId, getSeason, getTeams } from './selectors';
-
-const ajaxMatchExtractor = (ajaxMatchResponse: Response): Promise<AjaxMatch | null> => {
-  if (ajaxMatchResponse.ok) {
-    return ajaxMatchResponse.json();
-  } else {
-    return Promise.resolve(null);
-  }
-};
-
-const fetchAjaxMatch = async (matchLink: string): Promise<AjaxMatch | null> => {
-  const url = `https://liga.99damage.de/ajax/leagues_match?id=${getMatchId(matchLink)}&action=init`;
-  return fetchCached<AjaxMatch | null>(url, cacheForOneDay, ajaxMatchExtractor);
-};
+import { getMapScores, getSeason, getTeams } from './selectors';
 
 const fetchMatchPage = async (matchLink: string): Promise<Document> => {
   const html = await fetchCached<string>(matchLink, cacheForOneDay, htmlExtractor);
@@ -42,7 +31,12 @@ const fetchDivisionMatches = async (
     .filter((matchLink) => matchLink.includes(teamShortName));
 
   const matches = await Promise.all(matchLinks.map(async (matchLink) => {
-    const ajaxMatch = await fetchAjaxMatch(matchLink);
+    const matchId = getMatchId(matchLink);
+
+    const ajaxMatch = matchId
+      ? await fetchAjaxMatch(matchId)
+      : null;
+
     const matchDoc = await fetchMatchPage(matchLink);
 
     const [team1, team2] = getTeams(matchDoc);

@@ -27,6 +27,17 @@
             "css": [
                 "content/team-page/styles.css"
             ]
+        },
+        {
+            "matches": [
+                "https://liga.99damage.de/leagues/matches/*-*"
+            ],
+            "js": [
+                "content/match-page/index.js"
+            ],
+            "css": [
+                "content/match-page/styles.css"
+            ]
         }
     ],
     "browser_action": {

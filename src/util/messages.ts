@@ -1,11 +1,13 @@
+import { LineupTableItem } from '../components/LineupTables';
 import { MatchTableItem } from '../components/MatchesTable';
-import { PlayerTableItem } from '../components/PlayerTable';
+import { MemberTableItem } from '../components/MemberTable';
 import { Division, FaceitInfo, Player } from '../model';
 
 export enum MessageName {
   GetFaceitInfos = 'getFaceitInfos',
   GetDivisionMatches = 'getDivisionMatches',
   GetPlayerInfos = 'getPlayerInfos',
+  GetMatchLineups = 'getMatchLineups',
 }
 
 interface Message {
@@ -32,7 +34,13 @@ interface Messages extends Partial<Record<MessageName, Message>> {
     payload: {
       players: Player[];
     };
-    response: PlayerTableItem[];
+    response: MemberTableItem[];
+  };
+  [MessageName.GetMatchLineups]: {
+    payload: {
+      matchId: number;
+    };
+    response: LineupTableItem[][] | null;
   };
 }
 

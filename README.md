@@ -18,6 +18,10 @@ The Firefox version is not on version 2.0.0 yet, because we still have [some thi
   * Show steam and faceit profiles for team members
   * Show average elo of members
   * Show map results for up to three seasons back
+* Match page
+  * Visualize faceit elo difference between the lineups
+  * Show lineups in a concise table instead of the lineup cards
+  * Show steam and faceit profiles for lineups
 
 # Links
 

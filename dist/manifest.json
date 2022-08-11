@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "flashkill",
     "description": "Diese Extension soll den Umgang mit der 99Damage Homepage erleichtern.",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "background": {
         "scripts": [
             "background.js"

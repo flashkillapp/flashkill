@@ -2,8 +2,9 @@ import '@webcomponents/custom-elements';
 import '@vaadin/vaadin-material-styles';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/material/vaadin-grid-column-group';
+import '@vaadin/vaadin-grid/theme/material/vaadin-grid-selection-column';
 import { LitElement, css, html, render } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { GridColumnElement, GridItemModel } from '@vaadin/vaadin-grid';
 
 import './PlayerProfiles';
@@ -12,6 +13,7 @@ import { customTheme } from '../util/theme';
 import {
   get99PlayerLink,
 } from '../util/getLink';
+import { avgFaceitElo } from '../util/avgFaceitElo';
 
 export interface MemberTableItem {
   player: Player;
@@ -24,6 +26,12 @@ export const flashkillMemberTable = 'flashkill-member-table';
 class MemberTable extends LitElement {
   @property({ type: Array }) memberItems!: MemberTableItem[];
   @property() remainingSubstitutions?: string;
+  @state() private selectedPlayers: MemberTableItem[] = [];
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.selectedPlayers = this.memberItems;
+  }
 
   static styles = css`
     ${customTheme}
@@ -68,19 +76,43 @@ class MemberTable extends LitElement {
     );
   }
 
+  private updatePlayerSelection(selection: CustomEvent<{ value: MemberTableItem[] }>): void {
+    this.selectedPlayers = selection.detail.value;
+    this.requestUpdate();
+  }
+
+  private getSelectedAvgElo(): number {
+    return avgFaceitElo(this.selectedPlayers.map(({ faceitInfo }) => faceitInfo));
+  }
+
   render() {
+    const avgElo = Math.round(this.getSelectedAvgElo());
+
     return html`
+      <h1>Mitglieder</h1>
       <div class="header">
-        <h1>Spieler</h1>
+        <h2 title="Durchschnittliche FACEIT-Elo">
+          FACEIT-Elo: ${Number.isFinite(avgElo) ? avgElo : '-'}
+        </h2>
         ${this.remainingSubstitutions && html`
           <h3>${this.remainingSubstitutions}</h3>
         `}
       </div>
-      <vaadin-grid .items="${this.memberItems}" .allRowsVisible=${true}>
+      <vaadin-grid
+        .items=${this.memberItems}
+        .allRowsVisible=${true}
+        @selected-items-changed=${this.updatePlayerSelection}
+        .selectedItems=${this.selectedPlayers}
+      >
+        <vaadin-grid-selection-column
+          auto-select
+          select-all
+        ></vaadin-grid-selection-column>
         <vaadin-grid-column
           header="Name"
           auto-width
-          .renderer="${this.nameRenderer}"
+          path="player.name"
+          .renderer=${this.nameRenderer}
         ></vaadin-grid-column>
         <vaadin-grid-column
           header="Rolle"
@@ -100,7 +132,7 @@ class MemberTable extends LitElement {
         <vaadin-grid-column
           header="Profiles"
           text-align="center"
-          .renderer="${this.profilesRenderer}"
+          .renderer=${this.profilesRenderer}
         ></vaadin-grid-column>
       </vaadin-grid>
     `;

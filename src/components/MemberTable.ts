@@ -26,7 +26,7 @@ export const flashkillMemberTable = 'flashkill-member-table';
 class MemberTable extends LitElement {
   @property({ type: Array }) memberItems!: MemberTableItem[];
   @property() remainingSubstitutions?: string;
-  @state() selectedPlayers: MemberTableItem[] = [];
+  @state() private selectedPlayers: MemberTableItem[] = [];
 
   connectedCallback() {
     super.connectedCallback();

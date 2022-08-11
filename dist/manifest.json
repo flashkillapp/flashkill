@@ -11,7 +11,7 @@
     "content_scripts": [
         {
             "matches": [
-                "https://liga.99damage.de/*"
+                "https://liga.esl-meisterschaft.de/*"
             ],
             "js": [
                 "content/index.js"
@@ -19,7 +19,7 @@
         },
         {
             "matches": [
-                "https://liga.99damage.de/leagues/teams/*-*"
+                "https://liga.esl-meisterschaft.de/leagues/teams/*-*"
             ],
             "js": [
                 "content/team-page/index.js"
@@ -30,7 +30,7 @@
         },
         {
             "matches": [
-                "https://liga.99damage.de/leagues/matches/*-*"
+                "https://liga.esl-meisterschaft.de/leagues/matches/*-*"
             ],
             "js": [
                 "content/match-page/index.js"
@@ -50,7 +50,7 @@
     },
     "permissions": [
         "https://open.faceit.com/data/v4/players?game=csgo&game_player_id=*",
-        "https://liga.99damage.de/*",
+        "https://liga.esl-meisterschaft.de/*",
         "storage",
         "unlimitedStorage"
     ],

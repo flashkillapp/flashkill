@@ -1,3 +1,13 @@
+> [!WARNING]
+> **This repository is no longer maintained and has been archived.**
+> 
+> Sadly, the **99Damage** and **ESL Meisterschaft** leagues that this project was built for no longer exist and [do not appear to be coming back](https://www.99damage.de/news/149463-99damage-geht-in-unbestimmte-pause).
+> 
+> As a result, this extension is no longer functional, and development and maintenance have been inactive for quite some time.  
+> The browser extension has also been removed from the extension stores.  
+>  
+> Thank you to everyone who contributed to this project, helped improve it, or used it over the years ❤️
+
 # flashkill Browser Extension
 
 This browser extension aims to improve the user experience for both players and spectators of the 99Damage league websites.
